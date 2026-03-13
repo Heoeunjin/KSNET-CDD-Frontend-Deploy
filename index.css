@@ -1,0 +1,125 @@
+/* ============================================================
+   KSNET KYC - 메인 시작 화면 스타일
+   ============================================================ */
+
+#main {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #EBF0FB 0%, #FFFFFF 50%);
+    justify-content: center;
+}
+
+.main-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 40px;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* --- 로고 --- */
+.main-logo-area {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ksnet-logo {
+    margin-bottom: 4px;
+}
+
+.logo-sub {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+/* --- 메인 카드 --- */
+.main-card {
+    width: 100%;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px 24px 28px;
+    box-shadow: 0 4px 24px rgba(26, 76, 192, 0.08);
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.main-icon {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.main-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    word-break: keep-all;
+}
+
+.main-desc {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 24px;
+}
+
+/* --- 준비물 체크리스트 --- */
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+    background-color: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+.check-icon {
+    flex-shrink: 0;
+}
+
+/* --- 버튼 --- */
+.main-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.main-btns .btn-primary {
+    height: 56px;
+    font-size: 17px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(26, 76, 192, 0.3);
+}
+
+.btn-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-sub);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.btn-text:hover {
+    color: var(--primary);
+}

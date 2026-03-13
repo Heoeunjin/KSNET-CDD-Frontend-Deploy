@@ -1,0 +1,58 @@
+/* ============================================================
+   KSNET KYC - 추가 기본정보 입력 스타일
+   ============================================================ */
+
+/* 인증 완료 정보 카드 */
+.verified-info-card {
+    background-color: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+}
+
+.verified-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.verified-row:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+    padding-bottom: 12px;
+}
+
+.verified-label {
+    font-size: 13px;
+    color: var(--text-hint);
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.verified-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* 여권 영문명 행 */
+.passport-name-row {
+    display: flex;
+    gap: 10px;
+}
+
+.passport-name-row .input-box {
+    flex: 1;
+}
+
+/* 주소 검색 행 */
+.address-search-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.address-search-row .input-box {
+    flex: 1;
+}

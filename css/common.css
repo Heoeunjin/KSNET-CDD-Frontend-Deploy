@@ -1,0 +1,529 @@
+/* ============================================================
+   KSNET 고객확인제도 (KYC) - 공통 스타일
+   ============================================================ */
+
+/* --- CSS 변수 --- */
+:root {
+    --primary: #1A4CC0;
+    --primary-dark: #1238A0;
+    --primary-light: #EBF0FB;
+    --text: #111111;
+    --text-sub: #555555;
+    --text-hint: #AAAAAA;
+    --border: #E5E5E5;
+    --border-focus: #1A4CC0;
+    --bg: #F5F7FA;
+    --bg-input: #FFFFFF;
+    --bg-disabled: #F2F2F2;
+    --error: #E84040;
+    --error-bg: #FFF0F0;
+    --success: #00B84C;
+    --white: #FFFFFF;
+    --black: #111111;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+
+    --transition: 0.2s ease;
+
+    --font-base: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+
+    --header-h: 56px;
+    --bottom-btn-h: 84px;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-base);
+    font-size: 15px;
+    color: var(--text);
+    background-color: var(--bg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* --- 레이아웃 --- */
+.kyc-wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.kyc-body {
+    flex: 1;
+    padding: 28px 20px;
+    padding-bottom: calc(var(--bottom-btn-h) + 20px);
+}
+
+/* --- 헤더 (뒤로가기) --- */
+.kyc-header {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    position: sticky;
+    top: 0;
+    background-color: var(--white);
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+}
+
+.kyc-header .btn-back {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color var(--transition);
+}
+
+.kyc-header .btn-back:active {
+    background-color: var(--bg);
+}
+
+.kyc-header .btn-back svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--text);
+}
+
+.kyc-header .header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    text-align: center;
+    margin-right: 44px;
+}
+
+/* --- 페이지 제목 --- */
+.page-title {
+    margin-bottom: 28px;
+}
+
+.page-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.page-title p {
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+/* --- 폼 그룹 --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+
+/* --- 인풋 박스 --- */
+.input-box {
+    display: flex;
+    align-items: center;
+    height: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-input);
+    padding: 0 14px;
+    transition: border-color var(--transition);
+    gap: 8px;
+}
+
+.input-box:focus-within {
+    border-color: var(--border-focus);
+}
+
+.input-box.is-error {
+    border-color: var(--error);
+    background-color: var(--error-bg);
+}
+
+.input-box.is-readonly {
+    background-color: var(--bg-disabled);
+    border-color: var(--border);
+}
+
+.input-box input {
+    flex: 1;
+    height: 100%;
+    font-size: 15px;
+    color: var(--text);
+    width: 100%;
+}
+
+.input-box input::placeholder {
+    color: var(--text-hint);
+}
+
+.input-box input:disabled {
+    color: var(--text-sub);
+}
+
+.input-box .input-suffix {
+    font-size: 14px;
+    color: var(--text-hint);
+    white-space: nowrap;
+}
+
+/* 주민등록번호 구분선 */
+.ssn-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ssn-wrap .input-box {
+    flex: 1;
+}
+
+.ssn-wrap .ssn-dash {
+    color: var(--text-hint);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* --- 셀렉트 박스 --- */
+.select-box {
+    display: flex;
+    align-items: center;
+    height: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-input);
+    padding: 0 14px;
+    transition: border-color var(--transition);
+    position: relative;
+}
+
+.select-box:focus-within {
+    border-color: var(--border-focus);
+}
+
+.select-box select {
+    flex: 1;
+    height: 100%;
+    font-size: 15px;
+    color: var(--text);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    width: 100%;
+    padding-right: 20px;
+}
+
+.select-box select:invalid,
+.select-box select option[value=""] {
+    color: var(--text-hint);
+}
+
+.select-box .select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-hint);
+}
+
+/* --- 에러 메시지 --- */
+.error-msg {
+    display: none;
+    font-size: 13px;
+    color: var(--error);
+    margin-top: 6px;
+    padding-left: 2px;
+}
+
+.error-msg.is-show {
+    display: block;
+}
+
+/* --- 버튼 --- */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    transition: opacity var(--transition), background-color var(--transition);
+    cursor: pointer;
+}
+
+.btn:active {
+    opacity: 0.85;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:disabled {
+    background-color: #C8D4EE;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.btn-secondary {
+    background-color: var(--bg);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+}
+
+.btn-outline {
+    background-color: var(--white);
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+}
+
+.btn-sm {
+    height: 40px;
+    font-size: 14px;
+    border-radius: var(--radius-xs);
+    padding: 0 16px;
+    width: auto;
+    min-width: 96px;
+}
+
+/* --- 하단 고정 버튼 영역 --- */
+.bottom-btn-area {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    padding: 16px 20px;
+    background-color: var(--white);
+    border-top: 1px solid var(--border);
+}
+
+/* --- 인증번호 타이머 --- */
+.timer-wrap {
+    position: relative;
+}
+
+.timer-count {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--error);
+}
+
+/* --- 탭 --- */
+.tab-wrap {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+}
+
+.tab-item {
+    flex: 1;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-hint);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.tab-item.is-active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    font-weight: 700;
+}
+
+/* --- 라디오 버튼 그룹 --- */
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-item {
+    flex: 1;
+    height: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.radio-item.is-selected {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+/* --- 구분선 --- */
+.divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 24px 0;
+}
+
+.divider-section {
+    height: 8px;
+    background-color: var(--bg);
+    margin: 0 -20px;
+}
+
+/* --- 안내 텍스트 박스 --- */
+.info-box {
+    background-color: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+.info-box .info-title {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+/* --- 모달 (팝업) --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+}
+
+.modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-box {
+    background-color: var(--white);
+    border-radius: var(--radius);
+    padding: 28px 24px 24px;
+    width: 100%;
+    max-width: 320px;
+    transform: scale(0.95);
+    transition: transform var(--transition);
+}
+
+.modal-overlay.is-open .modal-box {
+    transform: scale(1);
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.modal-desc {
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.modal-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-btns .btn {
+    height: 46px;
+    font-size: 15px;
+}

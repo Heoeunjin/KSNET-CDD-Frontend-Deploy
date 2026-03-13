@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>계좌 인증 - KSNET 고객확인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/module/progress.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="kyc-wrap">
+
+    <!-- 헤더 -->
+    <header class="kyc-header">
+        <button class="btn-back" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">고객확인제도</span>
+    </header>
+
+    <!-- 진행 단계 -->
+    <div class="progress-wrap">
+        <div class="progress-steps">
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">기본정보</div>
+            </div>
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">추가정보</div>
+            </div>
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">직업/목적</div>
+            </div>
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">신분증</div>
+            </div>
+            <div class="progress-step is-active">
+                <div class="step-dot">5</div>
+                <div class="step-label">계좌인증</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 본문 -->
+    <div class="kyc-body">
+
+        <div class="page-title">
+            <h2>계좌 인증을 진행해주세요.</h2>
+            <p>본인 명의의 계좌로만 인증이 가능합니다.</p>
+        </div>
+
+        <form id="accountForm" autocomplete="off">
+
+            <!-- 은행/증권사 선택 -->
+            <div class="form-group">
+                <label class="form-label" for="selectBank">입금은행/증권사</label>
+                <div class="select-box" id="bankBox">
+                    <select id="selectBank">
+                        <option value="" disabled selected>은행/증권사</option>
+                        <optgroup label="은행">
+                            <option value="KB">KB국민은행</option>
+                            <option value="SHINHAN">신한은행</option>
+                            <option value="WOORI">우리은행</option>
+                            <option value="HANA">하나은행</option>
+                            <option value="IBK">IBK기업은행</option>
+                            <option value="NH">NH농협은행</option>
+                            <option value="SC">SC제일은행</option>
+                            <option value="KAKAO">카카오뱅크</option>
+                            <option value="TOSS">토스뱅크</option>
+                            <option value="KBANK">케이뱅크</option>
+                            <option value="BUSAN">부산은행</option>
+                            <option value="DAEGU">대구은행</option>
+                            <option value="GYEONGNAM">경남은행</option>
+                            <option value="GWANGJU">광주은행</option>
+                            <option value="JEONBUK">전북은행</option>
+                            <option value="JEJU">제주은행</option>
+                            <option value="POST">우체국</option>
+                            <option value="SAVINGS">저축은행</option>
+                        </optgroup>
+                        <optgroup label="증권사">
+                            <option value="MIRAE">미래에셋증권</option>
+                            <option value="SAMSUNG">삼성증권</option>
+                            <option value="NH_SEC">NH투자증권</option>
+                            <option value="KB_SEC">KB증권</option>
+                            <option value="KIWOOM">키움증권</option>
+                            <option value="SHINHAN_SEC">신한투자증권</option>
+                            <option value="HANA_SEC">하나증권</option>
+                        </optgroup>
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 계좌번호 + 인증 요청 -->
+            <div class="form-group">
+                <label class="form-label" for="inputAccountNo">계좌번호</label>
+                <div class="account-row">
+                    <div class="input-box" id="accountNoBox">
+                        <input type="text"
+                               id="inputAccountNo"
+                               placeholder="계좌번호 입력 (- 없이)"
+                               maxlength="20"
+                               inputmode="numeric">
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" id="btnRequestVerify" disabled onclick="requestVerify()">
+                        인증번호 요청
+                    </button>
+                </div>
+                <p class="error-msg" id="accountError"></p>
+            </div>
+
+            <!-- 1원 입금 확인 (요청 후 표시) -->
+            <div id="verifySection" style="display:none;">
+
+                <!-- 안내 박스 -->
+                <div class="deposit-guide-box">
+                    <div class="deposit-row">
+                        <span class="deposit-label">입금자명</span>
+                        <span class="deposit-value" id="displayDepositorName">****</span>
+                    </div>
+                    <div class="deposit-row">
+                        <span class="deposit-label">입금액</span>
+                        <span class="deposit-value highlight">1원</span>
+                    </div>
+                    <p class="deposit-guide-text">입금자명을 확인해주세요.</p>
+                </div>
+
+                <!-- 인증번호 입력 -->
+                <div class="form-group">
+                    <label class="form-label">입금자명의 숫자 4자리 입력</label>
+                    <div class="input-box timer-wrap" id="verifyCodeBox">
+                        <input type="text"
+                               id="inputVerifyCode"
+                               placeholder="입금자명 숫자 4자리"
+                               maxlength="4"
+                               inputmode="numeric">
+                        <span class="timer-count" id="timerCount">03:00</span>
+                    </div>
+                    <p class="error-msg" id="verifyCodeError"></p>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="bottom-btn-area">
+        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+            다음
+        </button>
+    </div>
+
+</div>
+
+<!-- 예금주 불일치 모달 -->
+<div class="modal-overlay" id="modalOwnerMismatch">
+    <div class="modal-box">
+        <div class="modal-title">본인 명의 계좌 필요</div>
+        <div class="modal-desc">본인 명의의 계좌만 인증 가능합니다.<br>입력한 계좌 정보와 본인 정보가 일치하지 않습니다.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalOwnerMismatch')">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 계좌 정보 불일치 모달 -->
+<div class="modal-overlay" id="modalAccountMismatch">
+    <div class="modal-box">
+        <div class="modal-title">계좌 정보 불일치</div>
+        <div class="modal-desc">계좌 정보가 일치하지 않습니다.<br>은행명과 계좌번호를 다시 확인해주세요.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalAccountMismatch')">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 인증시간 만료 모달 -->
+<div class="modal-overlay" id="modalExpired">
+    <div class="modal-box">
+        <div class="modal-title">인증시간 만료</div>
+        <div class="modal-desc">인증시간이 만료되었습니다.<br>인증번호를 다시 요청해주세요.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalExpired')">확인</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/common.js"></script>
+<script src="../js/module/timer.js"></script>
+<script src="../js/module/validation.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

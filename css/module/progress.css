@@ -1,0 +1,85 @@
+/* ============================================================
+   KSNET KYC - 진행 단계 표시 (Progress)
+   ============================================================ */
+
+.progress-wrap {
+    padding: 12px 20px;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border);
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: calc(50% + 14px);
+    right: calc(-50% + 14px);
+    height: 2px;
+    background-color: var(--border);
+    z-index: 0;
+}
+
+.progress-step.is-done:not(:last-child)::after,
+.progress-step.is-active:not(:last-child)::after {
+    background-color: var(--primary);
+}
+
+.step-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background-color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-hint);
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s ease;
+}
+
+.progress-step.is-done .step-dot {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.progress-step.is-active .step-dot {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.step-label {
+    font-size: 10px;
+    color: var(--text-hint);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.progress-step.is-active .step-label {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.progress-step.is-done .step-label {
+    color: var(--primary);
+}

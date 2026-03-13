@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>고객확인제도 - KSNET</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="kyc-wrap" id="main">
+
+    <div class="main-inner">
+
+        <!-- 로고 영역 -->
+        <div class="main-logo-area">
+            <div class="ksnet-logo">
+                <svg width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="28" font-family="Pretendard, sans-serif" font-size="26" font-weight="800" fill="#1A4CC0">KSNET</text>
+                </svg>
+            </div>
+            <p class="logo-sub">선불지갑</p>
+        </div>
+
+        <!-- 메인 카드 -->
+        <div class="main-card">
+            <div class="main-icon">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="52" height="52" rx="14" fill="#EBF0FB"/>
+                    <path d="M26 14C21.032 14 17 18.032 17 23C17 26.186 18.708 28.974 21.25 30.546V34C21.25 34.414 21.586 34.75 22 34.75H30C30.414 34.75 30.75 34.414 30.75 34V30.546C33.292 28.974 35 26.186 35 23C35 18.032 30.968 14 26 14Z" fill="#1A4CC0" opacity="0.2"/>
+                    <path d="M26 16C22.134 16 19 19.134 19 23C19 25.824 20.618 28.266 23 29.562V33H29V29.562C31.382 28.266 33 25.824 33 23C33 19.134 29.866 16 26 16ZM26 18C28.762 18 31 20.238 31 23C31 25.076 29.8 26.874 28 27.8V31H24V27.8C22.2 26.874 21 25.076 21 23C21 20.238 23.238 18 26 18Z" fill="#1A4CC0"/>
+                    <circle cx="26" cy="23" r="3" fill="#1A4CC0"/>
+                </svg>
+            </div>
+            <h1 class="main-title">케이에스넷 선불지갑 사용을 위한<br>고객확인을 시작합니다.</h1>
+            <p class="main-desc">본인 명의의 휴대폰과 신분증을 준비해 주세요.</p>
+
+            <!-- 준비물 -->
+            <div class="checklist">
+                <div class="check-item">
+                    <span class="check-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#EBF0FB"/>
+                            <path d="M4.5 8L7 10.5L11.5 5.5" stroke="#1A4CC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>본인 명의의 휴대폰</span>
+                </div>
+                <div class="check-item">
+                    <span class="check-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#EBF0FB"/>
+                            <path d="M4.5 8L7 10.5L11.5 5.5" stroke="#1A4CC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>신분증 (주민등록증 또는 운전면허증)</span>
+                </div>
+                <div class="check-item">
+                    <span class="check-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#EBF0FB"/>
+                            <path d="M4.5 8L7 10.5L11.5 5.5" stroke="#1A4CC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>본인 명의의 입출금 통장</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="main-btns">
+            <button class="btn btn-primary" onclick="KYC.goTo('basic-info/index.html')">
+                고객확인하기
+            </button>
+            <button class="btn btn-text" onclick="KYC.goTo('intro/index.html')">
+                고객확인제도란?
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/common.js"></script>
+</body>
+</html>

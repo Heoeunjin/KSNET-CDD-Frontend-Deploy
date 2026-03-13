@@ -1,0 +1,38 @@
+/* ============================================================
+   KSNET KYC - 기본정보 입력 스타일
+   ============================================================ */
+
+/* 주민등록번호 뒷자리 박스 */
+.ssn-back-box {
+    flex: 1.2;
+}
+
+/* 주민등록번호 뒷자리 마스킹 텍스트 색상 */
+#inputSsnBack {
+    letter-spacing: 4px;
+}
+
+/* 휴대폰 번호 + 버튼 행 */
+.phone-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.phone-row .input-box {
+    flex: 1;
+}
+
+/* 인증번호 행 */
+.verify-row {
+    margin-bottom: 10px;
+}
+
+/* SMS 안내 문구 */
+.sms-guide {
+    font-size: 12px;
+    color: var(--text-hint);
+    line-height: 1.6;
+    margin-top: 6px;
+}

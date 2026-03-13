@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>추가정보 입력 - KSNET 고객확인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/module/progress.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="kyc-wrap">
+
+    <!-- 헤더 -->
+    <header class="kyc-header">
+        <button class="btn-back" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">고객확인제도</span>
+    </header>
+
+    <!-- 진행 단계 -->
+    <div class="progress-wrap">
+        <div class="progress-steps">
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">기본정보</div>
+            </div>
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">추가정보</div>
+            </div>
+            <div class="progress-step is-active">
+                <div class="step-dot">3</div>
+                <div class="step-label">직업/목적</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">4</div>
+                <div class="step-label">신분증</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">5</div>
+                <div class="step-label">계좌인증</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 본문 -->
+    <div class="kyc-body">
+
+        <div class="page-title">
+            <h2>추가정보를 입력해주세요.</h2>
+        </div>
+
+        <form id="additionalInfoForm" autocomplete="off">
+
+            <!-- 직업 -->
+            <div class="form-group">
+                <label class="form-label" for="selectOccupation">직업</label>
+                <div class="select-box" id="occupationBox">
+                    <select id="selectOccupation">
+                        <option value="" disabled selected>직업 구분</option>
+                        <option value="employee">직장인 (일반)</option>
+                        <option value="executive">직장인 (법인대표 및 임원)</option>
+                        <option value="self_employed">자영업자</option>
+                        <option value="unemployed">무직</option>
+                        <option value="student">학생</option>
+                        <option value="housewife">주부</option>
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 거래 자금의 원천 -->
+            <div class="form-group">
+                <label class="form-label" for="selectFundSource">거래 자금의 원천</label>
+                <div class="select-box" id="fundSourceBox">
+                    <select id="selectFundSource">
+                        <option value="" disabled selected>자금 원천</option>
+                        <option value="salary">근로 및 연금소득</option>
+                        <option value="retirement">퇴직소득</option>
+                        <option value="loan">대출금</option>
+                        <option value="allowance">용돈/생활비</option>
+                        <option value="inheritance">상속/증여</option>
+                        <option value="property_sale">일시재산양도로 인한 소득</option>
+                        <option value="business">사업소득</option>
+                        <option value="rental">임대소득</option>
+                        <option value="capital_gain">양도소득</option>
+                        <option value="financial">금융소득 (이자/배당)</option>
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 거래 목적 -->
+            <div class="form-group">
+                <label class="form-label" for="selectTxPurpose">거래 목적</label>
+                <div class="select-box" id="txPurposeBox">
+                    <select id="selectTxPurpose">
+                        <option value="" disabled selected>거래 목적</option>
+                        <option value="shopping">상품구매</option>
+                        <option value="investment">투자</option>
+                        <option value="business">사업 관련</option>
+                        <option value="living">생활비</option>
+                        <option value="online_shopping">온라인쇼핑</option>
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 실소유자 여부 -->
+            <div class="form-group">
+                <label class="form-label">실소유자 여부</label>
+                <p class="owner-guide">본 서비스의 실제 이용자가 본인 자신인지 확인해주세요.</p>
+                <div class="radio-group" id="ownerGroup">
+                    <div class="radio-item is-selected" id="ownerYes" onclick="selectOwner('yes')">
+                        예, 실소유자에요
+                    </div>
+                    <div class="radio-item" id="ownerNo" onclick="selectOwner('no')">
+                        아니오
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="bottom-btn-area">
+        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+            다음
+        </button>
+    </div>
+
+</div>
+
+<!-- 실소유자 아님 안내 모달 -->
+<div class="modal-overlay" id="modalNotOwner">
+    <div class="modal-box">
+        <div class="modal-title">서비스 이용 불가</div>
+        <div class="modal-desc">실소유자가 아닌 경우<br>케이에스넷 선불 서비스 이용이 불가합니다.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="closeNotOwnerModal()">확인</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/common.js"></script>
+<script src="../js/module/validation.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

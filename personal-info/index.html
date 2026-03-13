@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>추가 기본정보 - KSNET 고객확인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/module/progress.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="kyc-wrap">
+
+    <!-- 헤더 -->
+    <header class="kyc-header">
+        <button class="btn-back" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">고객확인제도</span>
+    </header>
+
+    <!-- 진행 단계 -->
+    <div class="progress-wrap">
+        <div class="progress-steps">
+            <div class="progress-step is-done">
+                <div class="step-dot">✓</div>
+                <div class="step-label">기본정보</div>
+            </div>
+            <div class="progress-step is-active">
+                <div class="step-dot">2</div>
+                <div class="step-label">추가정보</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">3</div>
+                <div class="step-label">직업/목적</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">4</div>
+                <div class="step-label">신분증</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">5</div>
+                <div class="step-label">계좌인증</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 본문 -->
+    <div class="kyc-body">
+
+        <div class="page-title">
+            <h2>기본정보를 입력해주세요.</h2>
+        </div>
+
+        <form id="personalInfoForm" autocomplete="off">
+
+            <!-- 인증 완료 정보 (수정 불가) -->
+            <div class="verified-info-card">
+                <div class="verified-row">
+                    <span class="verified-label">이름</span>
+                    <span class="verified-value" id="displayName">-</span>
+                </div>
+                <div class="verified-row">
+                    <span class="verified-label">휴대폰번호</span>
+                    <span class="verified-value" id="displayPhone">-</span>
+                </div>
+            </div>
+
+            <!-- 여권 영문명 -->
+            <div class="form-group">
+                <label class="form-label" for="inputPassportLastName">여권 영문명</label>
+                <div class="passport-name-row">
+                    <div class="input-box" id="passportLastNameBox">
+                        <input type="text"
+                               id="inputPassportLastName"
+                               placeholder="성 (HONG)"
+                               maxlength="20"
+                               inputmode="text">
+                    </div>
+                    <div class="input-box" id="passportFirstNameBox">
+                        <input type="text"
+                               id="inputPassportFirstName"
+                               placeholder="이름 (GILDONG)"
+                               maxlength="20"
+                               inputmode="text">
+                    </div>
+                </div>
+                <p class="error-msg" id="passportError"></p>
+            </div>
+
+            <!-- 국적 -->
+            <div class="form-group">
+                <label class="form-label" for="selectNationality">국적</label>
+                <div class="select-box" id="nationalityBox">
+                    <select id="selectNationality">
+                        <option value="" disabled selected>국적 검색</option>
+                        <option value="KR">대한민국</option>
+                        <option value="US">미국</option>
+                        <option value="CN">중국</option>
+                        <option value="JP">일본</option>
+                        <option value="GB">영국</option>
+                        <option value="DE">독일</option>
+                        <option value="FR">프랑스</option>
+                        <option value="CA">캐나다</option>
+                        <option value="AU">호주</option>
+                        <option value="IN">인도</option>
+                        <option value="BR">브라질</option>
+                        <option value="MX">멕시코</option>
+                        <option value="RU">러시아</option>
+                        <option value="IT">이탈리아</option>
+                        <option value="ES">스페인</option>
+                        <option value="NL">네덜란드</option>
+                        <option value="SE">스웨덴</option>
+                        <option value="NO">노르웨이</option>
+                        <option value="CH">스위스</option>
+                        <option value="SG">싱가포르</option>
+                        <option value="HK">홍콩</option>
+                        <option value="TW">대만</option>
+                        <option value="TH">태국</option>
+                        <option value="VN">베트남</option>
+                        <option value="PH">필리핀</option>
+                        <option value="ID">인도네시아</option>
+                        <option value="MY">말레이시아</option>
+                        <option value="NZ">뉴질랜드</option>
+                        <option value="ZA">남아프리카공화국</option>
+                        <option value="EG">이집트</option>
+                        <!-- 나머지 국가는 실제 연동 시 195개 전체 표시 -->
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <p class="error-msg" id="nationalityError"></p>
+            </div>
+
+            <!-- 거주지 주소 -->
+            <div class="form-group">
+                <label class="form-label">거주지 주소</label>
+
+                <!-- 주소 검색 -->
+                <div class="address-search-row" style="margin-bottom:10px;">
+                    <div class="input-box is-readonly" id="addressBox">
+                        <input type="text"
+                               id="inputAddress"
+                               placeholder="주소 검색"
+                               readonly>
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" id="btnSearchAddress" onclick="searchAddress()">
+                        주소 검색
+                    </button>
+                </div>
+
+                <!-- 상세주소 -->
+                <div class="input-box" id="addressDetailBox" style="display:none;">
+                    <input type="text"
+                           id="inputAddressDetail"
+                           placeholder="상세주소 입력"
+                           maxlength="50">
+                </div>
+
+                <p class="error-msg" id="addressError"></p>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="bottom-btn-area">
+        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+            다음
+        </button>
+    </div>
+
+</div>
+
+<script src="../js/common.js"></script>
+<script src="../js/module/validation.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

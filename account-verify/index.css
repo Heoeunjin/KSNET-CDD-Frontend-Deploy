@@ -1,0 +1,58 @@
+/* ============================================================
+   KSNET KYC - 계좌 인증 스타일
+   ============================================================ */
+
+/* 계좌번호 + 버튼 행 */
+.account-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.account-row .input-box {
+    flex: 1;
+}
+
+/* 1원 입금 안내 박스 */
+.deposit-guide-box {
+    background-color: var(--primary-light);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.deposit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+.deposit-row:not(:last-of-type) {
+    border-bottom: 1px solid rgba(26, 76, 192, 0.1);
+    margin-bottom: 6px;
+    padding-bottom: 12px;
+}
+
+.deposit-label {
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.deposit-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.deposit-value.highlight {
+    color: var(--primary);
+}
+
+.deposit-guide-text {
+    font-size: 12px;
+    color: var(--primary);
+    margin-top: 10px;
+    font-weight: 500;
+}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>고객확인제도란? - KSNET</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        .intro-body {
+            padding: 28px 20px 40px;
+        }
+
+        .intro-section {
+            margin-bottom: 28px;
+        }
+
+        .intro-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .intro-section h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .intro-section p {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.8;
+            word-break: keep-all;
+        }
+
+        .highlight-box {
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .highlight-box .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .highlight-box ul {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .highlight-box ul li {
+            font-size: 13px;
+            color: var(--text-sub);
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .highlight-box ul li::before {
+            content: '·';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        .step-text strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .ready-box {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+        }
+
+        .ready-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ready-item:last-child {
+            border-bottom: none;
+        }
+
+        .ready-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .ready-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .ready-text span {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-hint);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="kyc-wrap">
+
+    <!-- 헤더 -->
+    <header class="kyc-header">
+        <button class="btn-back" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">고객확인제도란?</span>
+    </header>
+
+    <!-- 본문 -->
+    <div class="intro-body">
+
+        <!-- 제도 설명 -->
+        <div class="intro-section">
+            <h3>고객확인제도 (CDD/EDD)</h3>
+            <p>고객확인제도는 금융거래의 안전성을 높이고 자금세탁 등 불법 금융거래를 예방하기 위해 시행되는 <strong>법적 의무 제도</strong>입니다.</p>
+            <p style="margin-top:10px;">이에 따라 서비스 이용 시 고객님의 성명, 주소, 연락처 등 기본 신원 정보와 거래 목적 등에 대한 확인 절차가 진행될 수 있습니다.</p>
+
+            <div class="highlight-box">
+                <div class="title">확인된 정보는 이렇게 사용됩니다</div>
+                <ul>
+                    <li>관련 법령에 따라 안전하게 관리됩니다</li>
+                    <li>고객님의 안전한 금융거래를 위해서만 사용됩니다</li>
+                    <li>제3자에게 무단 제공되지 않습니다</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 진행 절차 -->
+        <div class="intro-section">
+            <h3>진행 절차</h3>
+            <div class="step-list">
+                <div class="step-row">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>기본정보 입력</strong><br>이름, 주민등록번호 입력 후 휴대폰 본인인증</div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">2</div>
+                    <div class="step-text"><strong>추가 기본정보 입력</strong><br>여권 영문명, 국적, 거주지 주소</div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">3</div>
+                    <div class="step-text"><strong>추가정보 입력</strong><br>직업, 거래 자금의 원천, 거래 목적</div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">4</div>
+                    <div class="step-text"><strong>신분증 인증</strong><br>주민등록증 또는 운전면허증으로 인증</div>
+                </div>
+                <div class="step-row">
+                    <div class="step-num">5</div>
+                    <div class="step-text"><strong>계좌 인증</strong><br>본인 명의 계좌로 1원 인증</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 준비물 -->
+        <div class="intro-section">
+            <h3>필요한 준비물</h3>
+            <div class="ready-box">
+                <div class="ready-item">
+                    <div class="ready-icon">📱</div>
+                    <div class="ready-text">
+                        본인 명의의 휴대폰
+                        <span>SMS 인증번호 수신용</span>
+                    </div>
+                </div>
+                <div class="ready-item">
+                    <div class="ready-icon">🪪</div>
+                    <div class="ready-text">
+                        신분증
+                        <span>주민등록증 또는 운전면허증</span>
+                    </div>
+                </div>
+                <div class="ready-item">
+                    <div class="ready-icon">🏦</div>
+                    <div class="ready-text">
+                        본인 명의의 입출금 통장
+                        <span>계좌 1원 인증용</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="bottom-btn-area">
+        <button class="btn btn-primary" onclick="KYC.goTo('../basic-info/index.html')">
+            고객확인 시작하기
+        </button>
+    </div>
+
+</div>
+
+<script src="../js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>기본정보 입력 - KSNET 고객확인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/module/progress.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="kyc-wrap">
+
+    <!-- 헤더 -->
+    <header class="kyc-header">
+        <button class="btn-back" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">고객확인제도</span>
+    </header>
+
+    <!-- 진행 단계 -->
+    <div class="progress-wrap">
+        <div class="progress-steps">
+            <div class="progress-step is-active">
+                <div class="step-dot">1</div>
+                <div class="step-label">기본정보</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">2</div>
+                <div class="step-label">추가정보</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">3</div>
+                <div class="step-label">직업/목적</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">4</div>
+                <div class="step-label">신분증</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">5</div>
+                <div class="step-label">계좌인증</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 본문 -->
+    <div class="kyc-body">
+
+        <div class="page-title">
+            <h2>기본정보를 입력해주세요.</h2>
+        </div>
+
+        <form id="basicInfoForm" autocomplete="off">
+
+            <!-- 이름 -->
+            <div class="form-group">
+                <label class="form-label" for="inputName">이름</label>
+                <div class="input-box" id="nameBox">
+                    <input type="text"
+                           id="inputName"
+                           placeholder="홍길동"
+                           maxlength="10"
+                           inputmode="text">
+                </div>
+                <p class="error-msg" id="nameError"></p>
+            </div>
+
+            <!-- 주민등록번호 -->
+            <div class="form-group">
+                <label class="form-label" for="inputSsnFront">주민등록번호</label>
+                <div class="ssn-wrap">
+                    <div class="input-box" id="ssnFrontBox">
+                        <input type="text"
+                               id="inputSsnFront"
+                               placeholder="123456"
+                               maxlength="6"
+                               inputmode="numeric"
+                               pattern="[0-9]*">
+                    </div>
+                    <span class="ssn-dash">-</span>
+                    <div class="input-box ssn-back-box" id="ssnBackBox">
+                        <input type="text"
+                               id="inputSsnBack"
+                               placeholder="●●●●●●●"
+                               maxlength="7"
+                               inputmode="numeric"
+                               pattern="[0-9]*">
+                    </div>
+                </div>
+                <p class="error-msg" id="ssnError"></p>
+            </div>
+
+            <!-- 휴대폰 인증 -->
+            <div class="form-group">
+                <label class="form-label">휴대폰</label>
+
+                <!-- 통신사 선택 -->
+                <div class="select-box" id="carrierBox" style="margin-bottom:10px;">
+                    <select id="selectCarrier">
+                        <option value="" disabled selected>통신사</option>
+                        <option value="SKT">SKT</option>
+                        <option value="KT">KT</option>
+                        <option value="LGU">LGU+</option>
+                        <option value="SKT_MVNO">SKT 알뜰폰</option>
+                        <option value="KT_MVNO">KT 알뜰폰</option>
+                        <option value="LGU_MVNO">LGU+ 알뜰폰</option>
+                    </select>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- 휴대폰 번호 + 인증번호 요청 -->
+                <div class="phone-row">
+                    <div class="input-box" id="phoneBox">
+                        <input type="tel"
+                               id="inputPhone"
+                               placeholder="휴대폰 번호 입력"
+                               maxlength="13"
+                               inputmode="numeric">
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" id="btnRequestCode" disabled>
+                        인증번호 요청
+                    </button>
+                </div>
+
+                <!-- 인증번호 입력 (요청 후 표시) -->
+                <div class="verify-row" id="verifyRow" style="display:none;">
+                    <div class="input-box timer-wrap" id="codeBox">
+                        <input type="text"
+                               id="inputCode"
+                               placeholder="인증번호 6자리"
+                               maxlength="6"
+                               inputmode="numeric">
+                        <span class="timer-count" id="timerCount">03:00</span>
+                    </div>
+                </div>
+
+                <p class="sms-guide" id="smsGuide" style="display:none;">
+                    입력하신 휴대폰번호로 SMS 인증번호를 전송합니다.<br>[인증번호 요청]을 눌러 SMS 인증번호를 인증해주세요.
+                </p>
+
+                <p class="error-msg" id="phoneError"></p>
+                <p class="error-msg" id="codeError"></p>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="bottom-btn-area">
+        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+            다음
+        </button>
+    </div>
+
+</div>
+
+<!-- 인증번호 불일치 모달 -->
+<div class="modal-overlay" id="modalCodeError">
+    <div class="modal-box">
+        <div class="modal-title">인증번호 불일치</div>
+        <div class="modal-desc">인증번호가 일치하지 않습니다.<br>인증번호를 확인해주세요.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalCodeError')">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 인증시간 만료 모달 -->
+<div class="modal-overlay" id="modalExpired">
+    <div class="modal-box">
+        <div class="modal-title">인증시간 만료</div>
+        <div class="modal-desc">인증시간이 만료되었습니다.<br>인증번호를 다시 요청해주세요.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalExpired')">확인</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/common.js"></script>
+<script src="../js/module/timer.js"></script>
+<script src="../js/module/validation.js"></script>
+<script src="index.js"></script>
+</body>
+</html>
