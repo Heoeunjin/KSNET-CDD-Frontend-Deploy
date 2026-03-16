@@ -3,7 +3,8 @@
  */
 
 const timerEl = document.getElementById('timerCount');
-const timer = new CountdownTimer(timerEl, 180, onTimerExpire);
+// TODO: 실제 서비스 시 180(3분)으로 변경
+const timer = new CountdownTimer(timerEl, 30, onTimerExpire);
 
 let isPhoneVerified = false;
 
@@ -132,18 +133,28 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
 /* --- 휴대폰 번호 입력 --- */
 document.getElementById('inputPhone').addEventListener('input', function () {
     this.value = KYC.formatPhone(this.value.replace(/\D/g, ''));
+
+    // 번호 변경 시 버튼을 "인증번호 요청"으로 복원, 인증창 초기화
+    const btn = document.getElementById('btnRequestCode');
+    if (btn && btn.textContent.trim() === '재전송') {
+        btn.textContent = '인증번호 요청';
+        document.getElementById('verifyRow').style.display = 'none';
+        document.getElementById('smsGuide').style.display = 'block';
+        document.getElementById('smsGuideSent').style.display = 'none';
+        timer.stop();
+        isPhoneVerified = false;
+    }
+
     checkRequestBtn();
     checkNextBtn();
 });
 
-/* --- 인증번호 요청 버튼 --- */
+/* --- 인증번호 요청 / 재전송 버튼 --- */
 document.getElementById('btnRequestCode').addEventListener('click', function () {
     const carrier = document.getElementById('selectCarrier').value;
     const phone = document.getElementById('inputPhone').value;
 
-    if (!carrier) {
-        return;
-    }
+    if (!carrier) return;
     if (!KYC.validatePhone(phone)) {
         Validation.showError(
             document.getElementById('phoneBox'),
@@ -160,9 +171,19 @@ document.getElementById('btnRequestCode').addEventListener('click', function () 
 
     // 인증번호 입력창 표시
     document.getElementById('verifyRow').style.display = 'block';
-    document.getElementById('smsGuide').style.display = 'block';
     document.getElementById('inputCode').value = '';
     document.getElementById('codeError').classList.remove('is-show');
+
+    // 안내 문구 전환: 기본 → 전송 완료
+    document.getElementById('smsGuide').style.display = 'none';
+    document.getElementById('smsGuideSent').style.display = 'block';
+
+    // 인증확인 버튼 초기화
+    const btnVerify = document.getElementById('btnVerifyCode');
+    if (btnVerify) btnVerify.disabled = true;
+
+    // 버튼 텍스트 → 재전송으로 변경
+    this.textContent = '재전송';
 
     // 타이머 시작
     timer.start();
@@ -170,18 +191,18 @@ document.getElementById('btnRequestCode').addEventListener('click', function () 
     checkNextBtn();
 });
 
-/* --- 인증번호 입력 --- */
+/* --- 인증번호 입력 → 6자리 완성 시 자동 인증 --- */
 document.getElementById('inputCode').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '');
     Validation.clearError(
         document.getElementById('codeBox'),
         document.getElementById('codeError')
     );
-
     if (this.value.length === 6) {
         verifyCode(this.value);
     }
 });
+
 
 /* --- 인증번호 검증 (실제 서버 연동 시 API 호출로 대체) --- */
 function verifyCode(code) {

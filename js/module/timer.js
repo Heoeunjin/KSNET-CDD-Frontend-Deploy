@@ -17,6 +17,7 @@ class CountdownTimer {
     }
 
     start() {
+        this.stop(); // 기존 interval 정리 후 시작
         this.remaining = this.totalSeconds;
         this.render();
         this.intervalId = setInterval(() => {
@@ -39,8 +40,9 @@ class CountdownTimer {
     }
 
     render() {
-        const m = String(Math.floor(this.remaining / 60)).padStart(2, '0');
-        const s = String(this.remaining % 60).padStart(2, '0');
+        const clamped = Math.max(0, this.remaining);
+        const m = String(Math.floor(clamped / 60)).padStart(2, '0');
+        const s = String(clamped % 60).padStart(2, '0');
         if (this.el) {
             this.el.textContent = `${m}:${s}`;
         }

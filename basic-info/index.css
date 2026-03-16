@@ -34,6 +34,15 @@
     position: relative;
     padding-right: 36px; /* 화살표 여백 */
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.carrier-select:focus,
+.carrier-select:active,
+.carrier-select:focus-within {
+    background-color: var(--bg-input);
+    outline: none;
 }
 
 .carrier-display {
@@ -76,11 +85,15 @@
     font-size: 14px;
     color: var(--text-sub);
     background-color: transparent;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
-.carrier-option:hover {
-    background-color: var(--primary-light);
-    color: var(--primary);
+.carrier-option:hover,
+.carrier-option:focus,
+.carrier-option:active {
+    background-color: var(--bg);
+    color: var(--text);
 }
 
 .carrier-option.is-active {
@@ -99,6 +112,37 @@
 /* 인증번호 행 */
 .verify-row {
     margin-bottom: 10px;
+}
+
+.verify-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    margin-bottom: 8px;
+}
+
+.verify-input-row .input-box {
+    flex: 1;
+}
+
+.verify-input-row .btn-sm {
+    height: 52px;
+}
+
+/* 재전송 버튼 */
+.btn-resend {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    padding: 4px 2px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* SMS 안내 문구 */

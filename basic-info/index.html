@@ -148,18 +148,24 @@
 
                 <!-- 인증번호 입력 (요청 후 표시) -->
                 <div class="verify-row" id="verifyRow" style="display:none;">
-                    <div class="input-box timer-wrap" id="codeBox">
-                        <input type="text"
-                               id="inputCode"
-                               placeholder="인증번호 6자리"
-                               maxlength="6"
-                               inputmode="numeric">
-                        <span class="timer-count" id="timerCount">03:00</span>
+                    <div class="verify-input-row">
+                        <div class="input-box timer-wrap" id="codeBox">
+                            <input type="text"
+                                   id="inputCode"
+                                   placeholder="인증번호 6자리"
+                                   maxlength="6"
+                                   inputmode="numeric">
+                            <span class="timer-count" id="timerCount">00:30</span>
+                        </div>
                     </div>
                 </div>
 
-                <p class="sms-guide" id="smsGuide" style="display:none;">
-                    입력하신 휴대폰번호로 SMS 인증번호를 전송합니다.<br>[인증번호 요청]을 눌러 SMS 인증번호를 인증해주세요.
+                <p class="sms-guide" id="smsGuide">
+                    입력하신 휴대폰번호로 SMS 인증번호를 전송합니다.<br>
+                    [인증번호 요청]을 눌러 SMS 인증번호를 인증해주세요.
+                </p>
+                <p class="sms-guide sms-guide--sent" id="smsGuideSent" style="display:none;">
+                    인증번호가 전송되었습니다. 인증번호 6자리를 입력해주세요.
                 </p>
 
                 <p class="error-msg" id="phoneError"></p>
