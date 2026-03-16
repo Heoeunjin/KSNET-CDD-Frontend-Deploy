@@ -18,18 +18,30 @@ function switchTab(tab) {
 }
 
 /* --- 주민등록증 폼 이벤트 --- */
-document.getElementById('inputResidentName').addEventListener('input', function () {
+document.getElementById('inputResidentName').addEventListener('input', function (e) {
+    if (e.isComposing) return;
     this.value = this.value.replace(/[^가-힣]/g, '');
     checkNextBtn();
 });
 
 document.getElementById('inputResidentSsnFront').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+    this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    if (this.value.length === 6) {
+        document.getElementById('inputResidentSsnBack').focus();
+    }
     checkNextBtn();
 });
 
 document.getElementById('inputResidentSsnBack').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+    const real = document.getElementById('inputResidentSsnBackReal');
+    const digits = this.value.replace(/\D/g, '').slice(0, 1);
+    real.value = digits;
+    if (digits.length === 0) {
+        this.value = '';
+    } else {
+        this.value = digits + '●'.repeat(6);
+        try { this.setSelectionRange(1, 1); } catch (e) {}
+    }
     checkNextBtn();
 });
 
@@ -39,18 +51,30 @@ document.getElementById('inputResidentIssueDate').addEventListener('input', func
 });
 
 /* --- 운전면허증 폼 이벤트 --- */
-document.getElementById('inputLicenseName').addEventListener('input', function () {
+document.getElementById('inputLicenseName').addEventListener('input', function (e) {
+    if (e.isComposing) return;
     this.value = this.value.replace(/[^가-힣]/g, '');
     checkNextBtn();
 });
 
 document.getElementById('inputLicenseSsnFront').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+    this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    if (this.value.length === 6) {
+        document.getElementById('inputLicenseSsnBack').focus();
+    }
     checkNextBtn();
 });
 
 document.getElementById('inputLicenseSsnBack').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+    const real = document.getElementById('inputLicenseSsnBackReal');
+    const digits = this.value.replace(/\D/g, '').slice(0, 1);
+    real.value = digits;
+    if (digits.length === 0) {
+        this.value = '';
+    } else {
+        this.value = digits + '●'.repeat(6);
+        try { this.setSelectionRange(1, 1); } catch (e) {}
+    }
     checkNextBtn();
 });
 
@@ -224,21 +248,21 @@ function checkNextBtn() {
     if (currentTab === 'resident') {
         const name = document.getElementById('inputResidentName').value;
         const ssnFront = document.getElementById('inputResidentSsnFront').value;
-        const ssnBack = document.getElementById('inputResidentSsnBack').value;
+        const ssnBack = document.getElementById('inputResidentSsnBackReal').value;
         const issueDate = document.getElementById('inputResidentIssueDate').value;
         isValid = name.length > 0
             && ssnFront.length === 6
-            && ssnBack.length === 7
+            && ssnBack.length === 1
             && issueDate.length === 10;
     } else {
         const name = document.getElementById('inputLicenseName').value;
         const ssnFront = document.getElementById('inputLicenseSsnFront').value;
-        const ssnBack = document.getElementById('inputLicenseSsnBack').value;
+        const ssnBack = document.getElementById('inputLicenseSsnBackReal').value;
         const licenseNo = document.getElementById('inputLicenseNo').value;
         const serial = document.getElementById('inputLicenseSerial').value;
         isValid = name.length > 0
             && ssnFront.length === 6
-            && ssnBack.length === 7
+            && ssnBack.length === 1
             && licenseNo.length >= 13
             && serial.length > 0;
     }
