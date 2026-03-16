@@ -10,3 +10,47 @@
 #inputLicenseSsnBack {
     letter-spacing: 4px;
 }
+
+/* 신분증 미리보기 카드 */
+.id-preview-card {
+    width: 100%;
+    max-width: 320px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg);
+    margin: 0 auto 12px;
+}
+
+.id-preview-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* 신분증 미리보기 + 버튼 정렬 */
+.id-preview-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.id-capture-group {
+    display: block;
+}
+
+.id-capture-group .btn-sm {
+    width: 100%;
+    max-width: 100%;
+}
+
+.id-preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.id-preview-actions .btn-sm {
+    min-width: 120px;
+}

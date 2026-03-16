@@ -71,6 +71,35 @@
         <div id="formResident">
             <form autocomplete="off">
 
+                <!-- 자동 인식 버튼 -->
+                <div class="form-group id-capture-group" id="residentCaptureGroup">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnResidentCapture">
+                        신분증 촬영으로 자동 입력
+                    </button>
+                    <input type="file"
+                           id="residentCaptureInput"
+                           accept="image/*"
+                           capture="environment"
+                           style="display:none;">
+                </div>
+
+                <!-- 주민등록증 미리보기 -->
+                <div class="form-group">
+                    <div class="id-preview-wrap">
+                        <div class="id-preview-card" id="residentPreviewCard" style="display:none;">
+                            <img src=""
+                                 alt="주민등록증 미리보기"
+                                 id="residentPreview"
+                                 class="id-preview-image">
+                        </div>
+                        <div class="id-preview-actions" id="residentPreviewActions" style="display:none;">
+                            <button type="button" class="btn btn-outline btn-sm" id="btnResidentRetake">
+                                다시 촬영하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 이름 -->
                 <div class="form-group">
                     <label class="form-label" for="inputResidentName">이름</label>
@@ -126,6 +155,35 @@
         <!-- 운전면허증 폼 -->
         <div id="formLicense" style="display:none;">
             <form autocomplete="off">
+
+                <!-- 자동 인식 버튼 -->
+                <div class="form-group id-capture-group" id="licenseCaptureGroup">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnLicenseCapture">
+                        면허증 촬영으로 자동 입력
+                    </button>
+                    <input type="file"
+                           id="licenseCaptureInput"
+                           accept="image/*"
+                           capture="environment"
+                           style="display:none;">
+                </div>
+
+                <!-- 운전면허증 미리보기 -->
+                <div class="form-group">
+                    <div class="id-preview-wrap">
+                        <div class="id-preview-card" id="licensePreviewCard" style="display:none;">
+                            <img src=""
+                                 alt="운전면허증 미리보기"
+                                 id="licensePreview"
+                                 class="id-preview-image">
+                        </div>
+                        <div class="id-preview-actions" id="licensePreviewActions" style="display:none;">
+                            <button type="button" class="btn btn-outline btn-sm" id="btnLicenseRetake">
+                                다시 촬영하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 이름 -->
                 <div class="form-group">
