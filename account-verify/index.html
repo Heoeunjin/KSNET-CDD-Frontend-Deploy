@@ -61,44 +61,16 @@
 
             <!-- 은행/증권사 선택 -->
             <div class="form-group">
-                <label class="form-label" for="selectBank">입금은행/증권사</label>
-                <div class="select-box" id="bankBox">
-                    <select id="selectBank">
-                        <option value="" disabled selected>은행/증권사</option>
-                        <optgroup label="은행">
-                            <option value="KB">KB국민은행</option>
-                            <option value="SHINHAN">신한은행</option>
-                            <option value="WOORI">우리은행</option>
-                            <option value="HANA">하나은행</option>
-                            <option value="IBK">IBK기업은행</option>
-                            <option value="NH">NH농협은행</option>
-                            <option value="SC">SC제일은행</option>
-                            <option value="KAKAO">카카오뱅크</option>
-                            <option value="TOSS">토스뱅크</option>
-                            <option value="KBANK">케이뱅크</option>
-                            <option value="BUSAN">부산은행</option>
-                            <option value="DAEGU">대구은행</option>
-                            <option value="GYEONGNAM">경남은행</option>
-                            <option value="GWANGJU">광주은행</option>
-                            <option value="JEONBUK">전북은행</option>
-                            <option value="JEJU">제주은행</option>
-                            <option value="POST">우체국</option>
-                            <option value="SAVINGS">저축은행</option>
-                        </optgroup>
-                        <optgroup label="증권사">
-                            <option value="MIRAE">미래에셋증권</option>
-                            <option value="SAMSUNG">삼성증권</option>
-                            <option value="NH_SEC">NH투자증권</option>
-                            <option value="KB_SEC">KB증권</option>
-                            <option value="KIWOOM">키움증권</option>
-                            <option value="SHINHAN_SEC">신한투자증권</option>
-                            <option value="HANA_SEC">하나증권</option>
-                        </optgroup>
-                    </select>
+                <label class="form-label">입금은행/증권사</label>
+                <div class="bank-trigger" id="bankTrigger" onclick="openBankSheet()">
+                    <div class="bank-trigger-inner" id="bankTriggerInner">
+                        <span class="bank-trigger-placeholder" id="bankTriggerText">은행/증권사</span>
+                    </div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
+                <input type="hidden" id="selectBank">
             </div>
 
             <!-- 계좌번호 + 인증 요청 -->
@@ -160,6 +132,27 @@
         <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
             다음
         </button>
+    </div>
+
+    <!-- 은행/증권사 바텀시트 -->
+    <div class="bank-sheet-backdrop" id="bankSheetBackdrop" onclick="closeBankSheet()"></div>
+    <div class="bank-sheet" id="bankSheet">
+        <div class="bank-sheet-handle"></div>
+        <div class="bank-sheet-header">
+            <span class="bank-sheet-title">은행/증권사</span>
+            <button type="button" class="bank-sheet-close" onclick="closeBankSheet()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="bank-sheet-tabs">
+            <div class="bank-sheet-tab is-active" id="sheetTabBank" onclick="switchSheetTab('bank')">은행</div>
+            <div class="bank-sheet-tab" id="sheetTabSec" onclick="switchSheetTab('sec')">증권사</div>
+        </div>
+        <div class="bank-sheet-body">
+            <div class="bank-grid" id="bankGrid"></div>
+        </div>
     </div>
 
 </div>
