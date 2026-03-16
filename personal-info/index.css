@@ -36,23 +36,158 @@
     color: var(--text);
 }
 
-/* 여권 영문명 행 */
+/* 여권 영문명 행 (성:이름 = 4:6 비율) */
 .passport-name-row {
     display: flex;
     gap: 10px;
 }
 
-.passport-name-row .input-box {
+.passport-name-row .input-box:first-child {
+    flex: 4;
+}
+
+.passport-name-row .input-box:last-child {
+    flex: 6;
+}
+
+/* ============================================================
+   국적 커스텀 드롭다운
+   ============================================================ */
+.nationality-select {
+    position: relative;
+    background-color: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0 36px 0 16px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: border-color 0.15s;
+}
+
+.nationality-select:focus-within {
+    border-color: var(--primary);
+}
+
+.nationality-select .select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--text-hint);
+    pointer-events: none;
+    transition: transform 0.2s;
+}
+
+.nationality-select.is-open .select-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.nationality-display {
+    font-size: 15px;
+    color: var(--text-hint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nationality-display.is-selected {
+    color: var(--text);
+}
+
+.nationality-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    z-index: 200;
+    overflow: hidden;
+}
+
+.nationality-select.is-open .nationality-dropdown {
+    display: block;
+}
+
+
+.nationality-list {
+    max-height: 220px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nationality-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.1s;
+}
+
+.nationality-option:hover,
+.nationality-option:active {
+    background-color: var(--bg);
+}
+
+.nationality-option.is-selected {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.nationality-option .flag {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.nationality-option .country-name {
     flex: 1;
+}
+
+.nationality-empty {
+    padding: 20px 16px;
+    font-size: 14px;
+    color: var(--text-hint);
+    text-align: center;
+}
+
+.nationality-section-label {
+    padding: 8px 16px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
 }
 
 /* 주소 검색 행 */
 .address-search-row {
     display: flex;
     gap: 10px;
-    align-items: center;
+    align-items: stretch;
 }
 
 .address-search-row .input-box {
     flex: 1;
 }
+
+.address-search-row .btn-sm {
+    height: auto;
+}
+

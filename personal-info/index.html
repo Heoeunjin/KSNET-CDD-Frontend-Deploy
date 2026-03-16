@@ -92,47 +92,18 @@
                 <p class="error-msg" id="passportError"></p>
             </div>
 
-            <!-- 국적 -->
+            <!-- 국적 (커스텀 드롭다운) -->
             <div class="form-group">
-                <label class="form-label" for="selectNationality">국적</label>
-                <div class="select-box" id="nationalityBox">
-                    <select id="selectNationality">
-                        <option value="" disabled selected>국적 검색</option>
-                        <option value="KR">대한민국</option>
-                        <option value="US">미국</option>
-                        <option value="CN">중국</option>
-                        <option value="JP">일본</option>
-                        <option value="GB">영국</option>
-                        <option value="DE">독일</option>
-                        <option value="FR">프랑스</option>
-                        <option value="CA">캐나다</option>
-                        <option value="AU">호주</option>
-                        <option value="IN">인도</option>
-                        <option value="BR">브라질</option>
-                        <option value="MX">멕시코</option>
-                        <option value="RU">러시아</option>
-                        <option value="IT">이탈리아</option>
-                        <option value="ES">스페인</option>
-                        <option value="NL">네덜란드</option>
-                        <option value="SE">스웨덴</option>
-                        <option value="NO">노르웨이</option>
-                        <option value="CH">스위스</option>
-                        <option value="SG">싱가포르</option>
-                        <option value="HK">홍콩</option>
-                        <option value="TW">대만</option>
-                        <option value="TH">태국</option>
-                        <option value="VN">베트남</option>
-                        <option value="PH">필리핀</option>
-                        <option value="ID">인도네시아</option>
-                        <option value="MY">말레이시아</option>
-                        <option value="NZ">뉴질랜드</option>
-                        <option value="ZA">남아프리카공화국</option>
-                        <option value="EG">이집트</option>
-                        <!-- 나머지 국가는 실제 연동 시 195개 전체 표시 -->
-                    </select>
+                <label class="form-label">국적</label>
+                <div class="nationality-select" id="nationalityBox">
+                    <div class="nationality-display" id="nationalityDisplay">국적 선택</div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+                    <div class="nationality-dropdown" id="nationalityDropdown">
+                        <div class="nationality-list" id="nationalityList"></div>
+                    </div>
+                    <input type="hidden" id="selectNationality">
                 </div>
                 <p class="error-msg" id="nationalityError"></p>
             </div>
@@ -178,6 +149,8 @@
 
 </div>
 
+
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/module/validation.js"></script>
 <script src="index.js"></script>
