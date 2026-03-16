@@ -96,15 +96,21 @@
 
                 <!-- 안내 박스 -->
                 <div class="deposit-guide-box">
-                    <div class="deposit-row">
-                        <span class="deposit-label">입금자명</span>
-                        <span class="deposit-value" id="displayDepositorName">****</span>
+                    <div class="deposit-col">
+                        <span class="deposit-col-label">입금자명</span>
+                        <span class="deposit-col-prefix" id="displayDepositorPrefix">케스넷</span>
+                        <div class="deposit-mask-boxes">
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                        </div>
                     </div>
-                    <div class="deposit-row">
-                        <span class="deposit-label">입금액</span>
-                        <span class="deposit-value highlight">1원</span>
+                    <div class="deposit-divider"></div>
+                    <div class="deposit-col deposit-col--right">
+                        <span class="deposit-col-label">입금</span>
+                        <span class="deposit-amount">1<em>원</em></span>
                     </div>
-                    <p class="deposit-guide-text">입금자명을 확인해주세요.</p>
                 </div>
 
                 <!-- 인증번호 입력 -->

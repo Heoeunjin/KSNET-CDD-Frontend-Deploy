@@ -246,45 +246,77 @@
 }
 
 /* 1원 입금 안내 박스 */
+/* 1원 입금 안내 박스 */
 .deposit-guide-box {
-    background-color: var(--primary-light);
+    background: #fff;
+    border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 16px;
+    padding: 10px 16px;
     margin-bottom: 16px;
-}
-
-.deposit-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
+    gap: 0;
 }
 
-.deposit-row:not(:last-of-type) {
-    border-bottom: 1px solid rgba(26, 76, 192, 0.1);
-    margin-bottom: 6px;
-    padding-bottom: 12px;
+.deposit-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
 }
 
-.deposit-label {
-    font-size: 13px;
-    color: var(--primary);
+.deposit-col--right {
+    align-items: flex-end;
+}
+
+.deposit-col-label {
+    font-size: 11px;
+    color: var(--text-hint);
     font-weight: 500;
 }
 
-.deposit-value {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-}
-
-.deposit-value.highlight {
-    color: var(--primary);
-}
-
-.deposit-guide-text {
+.deposit-col-prefix {
     font-size: 12px;
-    color: var(--primary);
-    margin-top: 10px;
-    font-weight: 500;
+    color: var(--text-hint);
+}
+
+.deposit-mask-boxes {
+    display: flex;
+    gap: 4px;
+}
+
+.deposit-mask-box {
+    width: 26px;
+    height: 26px;
+    background: var(--primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+}
+
+.deposit-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+    margin: 0 16px;
+    flex-shrink: 0;
+}
+
+.deposit-amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+}
+
+.deposit-amount em {
+    font-size: 13px;
+    font-weight: 600;
+    font-style: normal;
+    margin-left: 2px;
+    color: var(--text-hint);
 }

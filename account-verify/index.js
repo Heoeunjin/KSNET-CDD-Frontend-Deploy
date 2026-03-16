@@ -173,13 +173,33 @@ function selectBank(code, name, color, text, textColor) {
         <span class="bank-trigger-name">${name}</span>
     `;
 
+    // 은행 변경 시 인증 상태 초기화
+    const btn = document.getElementById('btnRequestVerify');
+    if (btn.textContent.trim() === '재전송') {
+        btn.textContent = '인증번호 요청';
+        document.getElementById('verifySection').style.display = 'none';
+        timer.stop();
+        isVerified = false;
+        checkNextBtn();
+    }
+
     closeBankSheet();
     checkRequestBtn();
 }
 
-/* --- 계좌번호 입력 --- */
+/* --- 계좌번호 입력 → 재전송 상태면 초기화 --- */
 document.getElementById('inputAccountNo').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '');
+
+    const btn = document.getElementById('btnRequestVerify');
+    if (btn.textContent.trim() === '재전송') {
+        btn.textContent = '인증번호 요청';
+        document.getElementById('verifySection').style.display = 'none';
+        timer.stop();
+        isVerified = false;
+        checkNextBtn();
+    }
+
     checkRequestBtn();
 });
 
@@ -197,12 +217,14 @@ function requestVerify() {
     if (!bank || accountNo.length < 6) return;
 
     // TODO: 서버 API 연동 - 1원 입금 요청
-    const mockDepositorName = '케스넷' + Math.floor(Math.random() * 9000 + 1000);
-    document.getElementById('displayDepositorName').textContent = mockDepositorName;
+    document.getElementById('displayDepositorPrefix').textContent = '케스넷';
 
     document.getElementById('verifySection').style.display = 'block';
     document.getElementById('inputVerifyCode').value = '';
     document.getElementById('verifyCodeError').classList.remove('is-show');
+
+    // 버튼 텍스트 → 재전송
+    document.getElementById('btnRequestVerify').textContent = '재전송';
 
     timer.start();
     isVerified = false;
