@@ -20,27 +20,301 @@ document.getElementById('inputPassportFirstName').addEventListener('input', func
     checkNextBtn();
 });
 
-/* --- 국적 선택 --- */
-document.getElementById('selectNationality').addEventListener('change', function () {
-    checkNextBtn();
-});
+/* --- 국적 데이터 (195개국, 대한민국 최상단) --- */
+const COUNTRIES = [
+    { code: 'KR', name: '대한민국', flag: '🇰🇷' },
+    { code: 'AF', name: '아프가니스탄', flag: '🇦🇫' },
+    { code: 'AL', name: '알바니아', flag: '🇦🇱' },
+    { code: 'DZ', name: '알제리', flag: '🇩🇿' },
+    { code: 'AD', name: '안도라', flag: '🇦🇩' },
+    { code: 'AO', name: '앙골라', flag: '🇦🇴' },
+    { code: 'AG', name: '앤티가 바부다', flag: '🇦🇬' },
+    { code: 'AR', name: '아르헨티나', flag: '🇦🇷' },
+    { code: 'AM', name: '아르메니아', flag: '🇦🇲' },
+    { code: 'AU', name: '호주', flag: '🇦🇺' },
+    { code: 'AT', name: '오스트리아', flag: '🇦🇹' },
+    { code: 'AZ', name: '아제르바이잔', flag: '🇦🇿' },
+    { code: 'BS', name: '바하마', flag: '🇧🇸' },
+    { code: 'BH', name: '바레인', flag: '🇧🇭' },
+    { code: 'BD', name: '방글라데시', flag: '🇧🇩' },
+    { code: 'BB', name: '바베이도스', flag: '🇧🇧' },
+    { code: 'BY', name: '벨라루스', flag: '🇧🇾' },
+    { code: 'BE', name: '벨기에', flag: '🇧🇪' },
+    { code: 'BZ', name: '벨리즈', flag: '🇧🇿' },
+    { code: 'BJ', name: '베냉', flag: '🇧🇯' },
+    { code: 'BT', name: '부탄', flag: '🇧🇹' },
+    { code: 'BO', name: '볼리비아', flag: '🇧🇴' },
+    { code: 'BA', name: '보스니아 헤르체고비나', flag: '🇧🇦' },
+    { code: 'BW', name: '보츠와나', flag: '🇧🇼' },
+    { code: 'BR', name: '브라질', flag: '🇧🇷' },
+    { code: 'BN', name: '브루나이', flag: '🇧🇳' },
+    { code: 'BG', name: '불가리아', flag: '🇧🇬' },
+    { code: 'BF', name: '부르키나파소', flag: '🇧🇫' },
+    { code: 'BI', name: '부룬디', flag: '🇧🇮' },
+    { code: 'CV', name: '카보베르데', flag: '🇨🇻' },
+    { code: 'KH', name: '캄보디아', flag: '🇰🇭' },
+    { code: 'CM', name: '카메룬', flag: '🇨🇲' },
+    { code: 'CA', name: '캐나다', flag: '🇨🇦' },
+    { code: 'CF', name: '중앙아프리카공화국', flag: '🇨🇫' },
+    { code: 'TD', name: '차드', flag: '🇹🇩' },
+    { code: 'CL', name: '칠레', flag: '🇨🇱' },
+    { code: 'CN', name: '중국', flag: '🇨🇳' },
+    { code: 'CO', name: '콜롬비아', flag: '🇨🇴' },
+    { code: 'KM', name: '코모로', flag: '🇰🇲' },
+    { code: 'CG', name: '콩고 공화국', flag: '🇨🇬' },
+    { code: 'CD', name: '콩고 민주공화국', flag: '🇨🇩' },
+    { code: 'CR', name: '코스타리카', flag: '🇨🇷' },
+    { code: 'CI', name: '코트디부아르', flag: '🇨🇮' },
+    { code: 'HR', name: '크로아티아', flag: '🇭🇷' },
+    { code: 'CU', name: '쿠바', flag: '🇨🇺' },
+    { code: 'CY', name: '키프로스', flag: '🇨🇾' },
+    { code: 'CZ', name: '체코', flag: '🇨🇿' },
+    { code: 'DK', name: '덴마크', flag: '🇩🇰' },
+    { code: 'DJ', name: '지부티', flag: '🇩🇯' },
+    { code: 'DM', name: '도미니카 연방', flag: '🇩🇲' },
+    { code: 'DO', name: '도미니카 공화국', flag: '🇩🇴' },
+    { code: 'EC', name: '에콰도르', flag: '🇪🇨' },
+    { code: 'EG', name: '이집트', flag: '🇪🇬' },
+    { code: 'SV', name: '엘살바도르', flag: '🇸🇻' },
+    { code: 'GQ', name: '적도 기니', flag: '🇬🇶' },
+    { code: 'ER', name: '에리트레아', flag: '🇪🇷' },
+    { code: 'EE', name: '에스토니아', flag: '🇪🇪' },
+    { code: 'SZ', name: '에스와티니', flag: '🇸🇿' },
+    { code: 'ET', name: '에티오피아', flag: '🇪🇹' },
+    { code: 'FJ', name: '피지', flag: '🇫🇯' },
+    { code: 'FI', name: '핀란드', flag: '🇫🇮' },
+    { code: 'FR', name: '프랑스', flag: '🇫🇷' },
+    { code: 'GA', name: '가봉', flag: '🇬🇦' },
+    { code: 'GM', name: '감비아', flag: '🇬🇲' },
+    { code: 'GE', name: '조지아', flag: '🇬🇪' },
+    { code: 'DE', name: '독일', flag: '🇩🇪' },
+    { code: 'GH', name: '가나', flag: '🇬🇭' },
+    { code: 'GR', name: '그리스', flag: '🇬🇷' },
+    { code: 'GD', name: '그레나다', flag: '🇬🇩' },
+    { code: 'GT', name: '과테말라', flag: '🇬🇹' },
+    { code: 'GN', name: '기니', flag: '🇬🇳' },
+    { code: 'GW', name: '기니비사우', flag: '🇬🇼' },
+    { code: 'GY', name: '가이아나', flag: '🇬🇾' },
+    { code: 'HT', name: '아이티', flag: '🇭🇹' },
+    { code: 'HN', name: '온두라스', flag: '🇭🇳' },
+    { code: 'HU', name: '헝가리', flag: '🇭🇺' },
+    { code: 'IS', name: '아이슬란드', flag: '🇮🇸' },
+    { code: 'IN', name: '인도', flag: '🇮🇳' },
+    { code: 'ID', name: '인도네시아', flag: '🇮🇩' },
+    { code: 'IR', name: '이란', flag: '🇮🇷' },
+    { code: 'IQ', name: '이라크', flag: '🇮🇶' },
+    { code: 'IE', name: '아일랜드', flag: '🇮🇪' },
+    { code: 'IL', name: '이스라엘', flag: '🇮🇱' },
+    { code: 'IT', name: '이탈리아', flag: '🇮🇹' },
+    { code: 'JM', name: '자메이카', flag: '🇯🇲' },
+    { code: 'JP', name: '일본', flag: '🇯🇵' },
+    { code: 'JO', name: '요르단', flag: '🇯🇴' },
+    { code: 'KZ', name: '카자흐스탄', flag: '🇰🇿' },
+    { code: 'KE', name: '케냐', flag: '🇰🇪' },
+    { code: 'KI', name: '키리바시', flag: '🇰🇮' },
+    { code: 'KW', name: '쿠웨이트', flag: '🇰🇼' },
+    { code: 'KG', name: '키르기스스탄', flag: '🇰🇬' },
+    { code: 'LA', name: '라오스', flag: '🇱🇦' },
+    { code: 'LV', name: '라트비아', flag: '🇱🇻' },
+    { code: 'LB', name: '레바논', flag: '🇱🇧' },
+    { code: 'LS', name: '레소토', flag: '🇱🇸' },
+    { code: 'LR', name: '라이베리아', flag: '🇱🇷' },
+    { code: 'LY', name: '리비아', flag: '🇱🇾' },
+    { code: 'LI', name: '리히텐슈타인', flag: '🇱🇮' },
+    { code: 'LT', name: '리투아니아', flag: '🇱🇹' },
+    { code: 'LU', name: '룩셈부르크', flag: '🇱🇺' },
+    { code: 'MG', name: '마다가스카르', flag: '🇲🇬' },
+    { code: 'MW', name: '말라위', flag: '🇲🇼' },
+    { code: 'MY', name: '말레이시아', flag: '🇲🇾' },
+    { code: 'MV', name: '몰디브', flag: '🇲🇻' },
+    { code: 'ML', name: '말리', flag: '🇲🇱' },
+    { code: 'MT', name: '몰타', flag: '🇲🇹' },
+    { code: 'MH', name: '마셜 제도', flag: '🇲🇭' },
+    { code: 'MR', name: '모리타니', flag: '🇲🇷' },
+    { code: 'MU', name: '모리셔스', flag: '🇲🇺' },
+    { code: 'MX', name: '멕시코', flag: '🇲🇽' },
+    { code: 'FM', name: '미크로네시아', flag: '🇫🇲' },
+    { code: 'MD', name: '몰도바', flag: '🇲🇩' },
+    { code: 'MC', name: '모나코', flag: '🇲🇨' },
+    { code: 'MN', name: '몽골', flag: '🇲🇳' },
+    { code: 'ME', name: '몬테네그로', flag: '🇲🇪' },
+    { code: 'MA', name: '모로코', flag: '🇲🇦' },
+    { code: 'MZ', name: '모잠비크', flag: '🇲🇿' },
+    { code: 'MM', name: '미얀마', flag: '🇲🇲' },
+    { code: 'NA', name: '나미비아', flag: '🇳🇦' },
+    { code: 'NR', name: '나우루', flag: '🇳🇷' },
+    { code: 'NP', name: '네팔', flag: '🇳🇵' },
+    { code: 'NL', name: '네덜란드', flag: '🇳🇱' },
+    { code: 'NZ', name: '뉴질랜드', flag: '🇳🇿' },
+    { code: 'NI', name: '니카라과', flag: '🇳🇮' },
+    { code: 'NE', name: '니제르', flag: '🇳🇪' },
+    { code: 'NG', name: '나이지리아', flag: '🇳🇬' },
+    { code: 'MK', name: '북마케도니아', flag: '🇲🇰' },
+    { code: 'NO', name: '노르웨이', flag: '🇳🇴' },
+    { code: 'OM', name: '오만', flag: '🇴🇲' },
+    { code: 'PK', name: '파키스탄', flag: '🇵🇰' },
+    { code: 'PW', name: '팔라우', flag: '🇵🇼' },
+    { code: 'PA', name: '파나마', flag: '🇵🇦' },
+    { code: 'PG', name: '파푸아뉴기니', flag: '🇵🇬' },
+    { code: 'PY', name: '파라과이', flag: '🇵🇾' },
+    { code: 'PE', name: '페루', flag: '🇵🇪' },
+    { code: 'PH', name: '필리핀', flag: '🇵🇭' },
+    { code: 'PL', name: '폴란드', flag: '🇵🇱' },
+    { code: 'PT', name: '포르투갈', flag: '🇵🇹' },
+    { code: 'QA', name: '카타르', flag: '🇶🇦' },
+    { code: 'RO', name: '루마니아', flag: '🇷🇴' },
+    { code: 'RU', name: '러시아', flag: '🇷🇺' },
+    { code: 'RW', name: '르완다', flag: '🇷🇼' },
+    { code: 'KN', name: '세인트키츠 네비스', flag: '🇰🇳' },
+    { code: 'LC', name: '세인트루시아', flag: '🇱🇨' },
+    { code: 'VC', name: '세인트빈센트 그레나딘', flag: '🇻🇨' },
+    { code: 'WS', name: '사모아', flag: '🇼🇸' },
+    { code: 'SM', name: '산마리노', flag: '🇸🇲' },
+    { code: 'ST', name: '상투메 프린시페', flag: '🇸🇹' },
+    { code: 'SA', name: '사우디아라비아', flag: '🇸🇦' },
+    { code: 'SN', name: '세네갈', flag: '🇸🇳' },
+    { code: 'RS', name: '세르비아', flag: '🇷🇸' },
+    { code: 'SC', name: '세이셸', flag: '🇸🇨' },
+    { code: 'SL', name: '시에라리온', flag: '🇸🇱' },
+    { code: 'SG', name: '싱가포르', flag: '🇸🇬' },
+    { code: 'SK', name: '슬로바키아', flag: '🇸🇰' },
+    { code: 'SI', name: '슬로베니아', flag: '🇸🇮' },
+    { code: 'SB', name: '솔로몬 제도', flag: '🇸🇧' },
+    { code: 'SO', name: '소말리아', flag: '🇸🇴' },
+    { code: 'ZA', name: '남아프리카공화국', flag: '🇿🇦' },
+    { code: 'SS', name: '남수단', flag: '🇸🇸' },
+    { code: 'ES', name: '스페인', flag: '🇪🇸' },
+    { code: 'LK', name: '스리랑카', flag: '🇱🇰' },
+    { code: 'SD', name: '수단', flag: '🇸🇩' },
+    { code: 'SR', name: '수리남', flag: '🇸🇷' },
+    { code: 'SE', name: '스웨덴', flag: '🇸🇪' },
+    { code: 'CH', name: '스위스', flag: '🇨🇭' },
+    { code: 'SY', name: '시리아', flag: '🇸🇾' },
+    { code: 'TW', name: '대만', flag: '🇹🇼' },
+    { code: 'TJ', name: '타지키스탄', flag: '🇹🇯' },
+    { code: 'TZ', name: '탄자니아', flag: '🇹🇿' },
+    { code: 'TH', name: '태국', flag: '🇹🇭' },
+    { code: 'TL', name: '동티모르', flag: '🇹🇱' },
+    { code: 'TG', name: '토고', flag: '🇹🇬' },
+    { code: 'TO', name: '통가', flag: '🇹🇴' },
+    { code: 'TT', name: '트리니다드 토바고', flag: '🇹🇹' },
+    { code: 'TN', name: '튀니지', flag: '🇹🇳' },
+    { code: 'TR', name: '튀르키예', flag: '🇹🇷' },
+    { code: 'TM', name: '투르크메니스탄', flag: '🇹🇲' },
+    { code: 'TV', name: '투발루', flag: '🇹🇻' },
+    { code: 'UG', name: '우간다', flag: '🇺🇬' },
+    { code: 'UA', name: '우크라이나', flag: '🇺🇦' },
+    { code: 'AE', name: '아랍에미리트', flag: '🇦🇪' },
+    { code: 'GB', name: '영국', flag: '🇬🇧' },
+    { code: 'US', name: '미국', flag: '🇺🇸' },
+    { code: 'UY', name: '우루과이', flag: '🇺🇾' },
+    { code: 'UZ', name: '우즈베키스탄', flag: '🇺🇿' },
+    { code: 'VU', name: '바누아투', flag: '🇻🇺' },
+    { code: 'VE', name: '베네수엘라', flag: '🇻🇪' },
+    { code: 'VN', name: '베트남', flag: '🇻🇳' },
+    { code: 'YE', name: '예멘', flag: '🇾🇪' },
+    { code: 'ZM', name: '잠비아', flag: '🇿🇲' },
+    { code: 'ZW', name: '짐바브웨', flag: '🇿🇼' },
+    { code: 'HK', name: '홍콩', flag: '🇭🇰' },
+    { code: 'MO', name: '마카오', flag: '🇲🇴' },
+    { code: 'PS', name: '팔레스타인', flag: '🇵🇸' },
+    { code: 'XK', name: '코소보', flag: '🇽🇰' },
+];
+
+/* --- 국적 커스텀 드롭다운 --- */
+(function initNationalityDropdown() {
+    const box = document.getElementById('nationalityBox');
+    const display = document.getElementById('nationalityDisplay');
+    const dropdown = document.getElementById('nationalityDropdown');
+    const list = document.getElementById('nationalityList');
+    const hiddenInput = document.getElementById('selectNationality');
+
+    let selectedCode = '';
+
+    function renderList() {
+        list.innerHTML = '';
+        // 대한민국 최상단, 이후 전체 국가 섹션
+        list.appendChild(makeOption(COUNTRIES[0]));
+        const sep = document.createElement('div');
+        sep.className = 'nationality-section-label';
+        sep.textContent = '전체 국가';
+        list.appendChild(sep);
+        COUNTRIES.slice(1).forEach(c => list.appendChild(makeOption(c)));
+    }
+
+    function makeOption(country) {
+        const el = document.createElement('div');
+        el.className = 'nationality-option' + (country.code === selectedCode ? ' is-selected' : '');
+        el.dataset.code = country.code;
+        el.innerHTML = `<span class="flag">${country.flag}</span><span class="country-name">${country.name}</span>`;
+        el.addEventListener('click', function (e) {
+            e.stopPropagation();
+            selectCountry(country);
+        });
+        return el;
+    }
+
+    function selectCountry(country) {
+        selectedCode = country.code;
+        hiddenInput.value = country.code;
+        display.textContent = country.flag + '  ' + country.name;
+        display.classList.add('is-selected');
+        closeDropdown();
+        checkNextBtn();
+    }
+
+    function openDropdown() {
+        box.classList.add('is-open');
+        renderList();
+    }
+
+    function closeDropdown() {
+        box.classList.remove('is-open');
+    }
+
+    box.addEventListener('click', function (e) {
+        if (box.classList.contains('is-open')) {
+            closeDropdown();
+        } else {
+            openDropdown();
+        }
+    });
+
+    dropdown.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!box.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+
+    renderList();
+})();
 
 /* --- 상세주소 입력 --- */
 document.getElementById('inputAddressDetail').addEventListener('input', function () {
     checkNextBtn();
 });
 
-/* --- 주소 검색 (다음 우편번호 서비스 연동) --- */
+/* --- 주소 검색 (카카오 우편번호 서비스) --- */
 function searchAddress() {
-    // TODO: 실제 서비스 시 다음(카카오) 우편번호 서비스 API 연동
-    // new daum.Postcode({ ... }).open();
+    const width = 500;
+    const height = 600;
+    const left = Math.round((window.screen.width - width) / 2);
+    const top = Math.round((window.screen.height - height) / 2);
 
-    // 개발 임시 처리
-    const mockAddress = '서울특별시 강남구 테헤란로 152';
-    document.getElementById('inputAddress').value = mockAddress;
-    document.getElementById('addressDetailBox').style.display = 'flex';
-    document.getElementById('inputAddressDetail').focus();
-    checkNextBtn();
+    new daum.Postcode({
+        oncomplete: function (data) {
+            const address = data.roadAddress || data.jibunAddress;
+            document.getElementById('inputAddress').value = address;
+            document.getElementById('addressDetailBox').style.display = 'flex';
+            document.getElementById('inputAddressDetail').value = '';
+            document.getElementById('inputAddressDetail').focus();
+            checkNextBtn();
+        }
+    }).open({ left, top, popupTitle: '주소 검색' });
 }
 
 /* --- 다음 버튼 활성화 조건 --- */

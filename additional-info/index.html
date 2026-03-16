@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>추가정보 입력 - KSNET 고객확인</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/module/progress.css">
@@ -60,61 +61,64 @@
 
             <!-- 직업 -->
             <div class="form-group">
-                <label class="form-label" for="selectOccupation">직업</label>
-                <div class="select-box" id="occupationBox">
-                    <select id="selectOccupation">
-                        <option value="" disabled selected>직업 구분</option>
-                        <option value="employee">직장인 (일반)</option>
-                        <option value="executive">직장인 (법인대표 및 임원)</option>
-                        <option value="self_employed">자영업자</option>
-                        <option value="unemployed">무직</option>
-                        <option value="student">학생</option>
-                        <option value="housewife">주부</option>
-                    </select>
+                <label class="form-label">직업</label>
+                <div class="custom-select" id="occupationBox">
+                    <div class="custom-select-display" id="occupationDisplay">직업 구분</div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+                    <div class="custom-select-dropdown" id="occupationDropdown">
+                        <div class="custom-select-option" data-value="employee">직장인 (일반)</div>
+                        <div class="custom-select-option" data-value="executive">직장인 (법인대표 및 임원)</div>
+                        <div class="custom-select-option" data-value="self_employed">자영업자</div>
+                        <div class="custom-select-option" data-value="unemployed">무직</div>
+                        <div class="custom-select-option" data-value="student">학생</div>
+                        <div class="custom-select-option" data-value="housewife">주부</div>
+                    </div>
+                    <input type="hidden" id="selectOccupation">
                 </div>
             </div>
 
             <!-- 거래 자금의 원천 -->
             <div class="form-group">
-                <label class="form-label" for="selectFundSource">거래 자금의 원천</label>
-                <div class="select-box" id="fundSourceBox">
-                    <select id="selectFundSource">
-                        <option value="" disabled selected>자금 원천</option>
-                        <option value="salary">근로 및 연금소득</option>
-                        <option value="retirement">퇴직소득</option>
-                        <option value="loan">대출금</option>
-                        <option value="allowance">용돈/생활비</option>
-                        <option value="inheritance">상속/증여</option>
-                        <option value="property_sale">일시재산양도로 인한 소득</option>
-                        <option value="business">사업소득</option>
-                        <option value="rental">임대소득</option>
-                        <option value="capital_gain">양도소득</option>
-                        <option value="financial">금융소득 (이자/배당)</option>
-                    </select>
+                <label class="form-label">거래 자금의 원천</label>
+                <div class="custom-select" id="fundSourceBox">
+                    <div class="custom-select-display" id="fundSourceDisplay">자금 원천</div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+                    <div class="custom-select-dropdown" id="fundSourceDropdown">
+                        <div class="custom-select-option" data-value="salary">근로 및 연금소득</div>
+                        <div class="custom-select-option" data-value="retirement">퇴직소득</div>
+                        <div class="custom-select-option" data-value="loan">대출금</div>
+                        <div class="custom-select-option" data-value="allowance">용돈/생활비</div>
+                        <div class="custom-select-option" data-value="inheritance">상속/증여</div>
+                        <div class="custom-select-option" data-value="property_sale">일시재산양도로 인한 소득</div>
+                        <div class="custom-select-option" data-value="business">사업소득</div>
+                        <div class="custom-select-option" data-value="rental">임대소득</div>
+                        <div class="custom-select-option" data-value="capital_gain">양도소득</div>
+                        <div class="custom-select-option" data-value="financial">금융소득 (이자/배당)</div>
+                    </div>
+                    <input type="hidden" id="selectFundSource">
                 </div>
             </div>
 
             <!-- 거래 목적 -->
             <div class="form-group">
-                <label class="form-label" for="selectTxPurpose">거래 목적</label>
-                <div class="select-box" id="txPurposeBox">
-                    <select id="selectTxPurpose">
-                        <option value="" disabled selected>거래 목적</option>
-                        <option value="shopping">상품구매</option>
-                        <option value="investment">투자</option>
-                        <option value="business">사업 관련</option>
-                        <option value="living">생활비</option>
-                        <option value="online_shopping">온라인쇼핑</option>
-                    </select>
+                <label class="form-label">거래 목적</label>
+                <div class="custom-select" id="txPurposeBox">
+                    <div class="custom-select-display" id="txPurposeDisplay">거래 목적</div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+                    <div class="custom-select-dropdown" id="txPurposeDropdown">
+                        <div class="custom-select-option" data-value="shopping">상품구매</div>
+                        <div class="custom-select-option" data-value="investment">투자</div>
+                        <div class="custom-select-option" data-value="business">사업 관련</div>
+                        <div class="custom-select-option" data-value="living">생활비</div>
+                        <div class="custom-select-option" data-value="online_shopping">온라인쇼핑</div>
+                    </div>
+                    <input type="hidden" id="selectTxPurpose">
                 </div>
             </div>
 

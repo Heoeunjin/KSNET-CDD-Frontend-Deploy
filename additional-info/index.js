@@ -4,9 +4,48 @@
 
 let ownerStatus = 'yes'; // 기본값: 실소유자
 
-/* --- 셀렉트 변경 시 버튼 체크 --- */
-['selectOccupation', 'selectFundSource', 'selectTxPurpose'].forEach(function (id) {
-    document.getElementById(id).addEventListener('change', checkNextBtn);
+/* --- 커스텀 드롭다운 공통 초기화 --- */
+function initCustomSelect(boxId, displayId, hiddenId) {
+    const box = document.getElementById(boxId);
+    const display = document.getElementById(displayId);
+    const hidden = document.getElementById(hiddenId);
+    const dropdown = box.querySelector('.custom-select-dropdown');
+    const options = box.querySelectorAll('.custom-select-option');
+
+    box.addEventListener('click', function (e) {
+        const isOpen = box.classList.contains('is-open');
+        // 다른 열린 드롭다운 닫기
+        document.querySelectorAll('.custom-select.is-open').forEach(el => {
+            if (el !== box) el.classList.remove('is-open');
+        });
+        box.classList.toggle('is-open', !isOpen);
+    });
+
+    dropdown.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const opt = e.target.closest('.custom-select-option');
+        if (!opt) return;
+        const value = opt.dataset.value;
+        const label = opt.textContent.trim();
+
+        hidden.value = value;
+        display.textContent = label;
+        display.classList.add('is-selected');
+
+        options.forEach(o => o.classList.toggle('is-selected', o === opt));
+        box.classList.remove('is-open');
+        checkNextBtn();
+    });
+}
+
+initCustomSelect('occupationBox', 'occupationDisplay', 'selectOccupation');
+initCustomSelect('fundSourceBox', 'fundSourceDisplay', 'selectFundSource');
+initCustomSelect('txPurposeBox', 'txPurposeDisplay', 'selectTxPurpose');
+
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.custom-select')) {
+        document.querySelectorAll('.custom-select.is-open').forEach(el => el.classList.remove('is-open'));
+    }
 });
 
 /* --- 실소유자 선택 --- */

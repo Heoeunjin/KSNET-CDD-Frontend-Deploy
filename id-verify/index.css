@@ -2,6 +2,89 @@
    KSNET KYC - 신분증 인증 스타일
    ============================================================ */
 
+/* 1단계: 촬영 안내 화면 */
+.id-verify .page-title {
+    margin-top: 8px;
+}
+
+.id-guide-section {
+    padding: 12px 0 100px;
+}
+
+.id-guide-icons {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 8px;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 400px) {
+    .id-guide-icons { gap: 48px; }
+}
+
+@media (min-width: 520px) {
+    .id-guide-icons { gap: 72px; }
+}
+
+.id-guide-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.id-guide-icon-img {
+    width: 64px;
+    height: 50px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--text-sub);
+}
+
+.id-guide-icon-img svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@media (min-width: 400px) {
+    .id-guide-icon-img {
+        width: 72px;
+        height: 56px;
+    }
+}
+
+
+.id-guide-icon span {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.id-guide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px;
+}
+
+.id-guide-list li {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+.id-guide-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+}
+
 .ssn-back-box {
     flex: 1.2;
 }
@@ -9,4 +92,48 @@
 #inputResidentSsnBack,
 #inputLicenseSsnBack {
     letter-spacing: 4px;
+}
+
+/* 신분증 미리보기 카드 */
+.id-preview-card {
+    width: 100%;
+    max-width: 320px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg);
+    margin: 0 auto 12px;
+}
+
+.id-preview-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* 신분증 미리보기 + 버튼 정렬 */
+.id-preview-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.id-capture-group {
+    display: block;
+}
+
+.id-capture-group .btn-sm {
+    width: 100%;
+    max-width: 100%;
+}
+
+.id-preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.id-preview-actions .btn-sm {
+    min-width: 120px;
 }

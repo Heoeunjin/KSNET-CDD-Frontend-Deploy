@@ -67,6 +67,8 @@ button {
     font-family: inherit;
     font-size: inherit;
     color: inherit;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 input, select, textarea {
@@ -95,6 +97,7 @@ img {
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
 }
 
 .kyc-body {
@@ -345,6 +348,14 @@ img {
     background-color: var(--white);
     color: var(--primary);
     border: 1.5px solid var(--primary);
+}
+
+.btn-outline:disabled {
+    background-color: var(--white);
+    color: var(--text-hint);
+    border-color: var(--border);
+    cursor: not-allowed;
+    opacity: 1;
 }
 
 .btn-sm {

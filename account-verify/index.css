@@ -2,11 +2,243 @@
    KSNET KYC - 계좌 인증 스타일
    ============================================================ */
 
+/* 은행 트리거 */
+.bank-trigger {
+    position: relative;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 36px 0 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: border-color 0.15s;
+}
+
+.bank-trigger:active {
+    border-color: var(--primary);
+}
+
+.bank-trigger .select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--text-hint);
+    pointer-events: none;
+}
+
+.bank-trigger-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.bank-trigger-placeholder {
+    font-size: 15px;
+    color: var(--text-hint);
+}
+
+.bank-trigger-name {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* 은행 아이콘 (트리거 내부) */
+.bank-icon-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
+}
+
+/* 바텀시트 backdrop */
+.bank-sheet-backdrop {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 300;
+    border-radius: inherit;
+}
+
+.bank-sheet-backdrop.is-open {
+    display: block;
+}
+
+/* 바텀시트 */
+.bank-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    z-index: 301;
+    display: flex;
+    flex-direction: column;
+    height: 62%;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+                height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.bank-sheet.is-open {
+    transform: translateY(0);
+}
+
+.bank-sheet.is-expanded {
+    height: 82%;
+}
+
+.bank-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+    cursor: grab;
+}
+
+.bank-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 0;
+    flex-shrink: 0;
+}
+
+.bank-sheet-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.bank-sheet-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-hint);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bank-sheet-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* 탭 */
+.bank-sheet-tabs {
+    display: flex;
+    padding: 0 20px;
+    margin-top: 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.bank-sheet-tab {
+    padding: 10px 16px;
+    font-size: 15px;
+    color: var(--text-hint);
+    cursor: pointer;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    font-weight: 500;
+}
+
+.bank-sheet-tab.is-active {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.bank-sheet-tab.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px 2px 0 0;
+}
+
+/* 그리드 */
+.bank-sheet-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 12px 40px;
+    overscroll-behavior: contain;
+}
+
+.bank-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+
+.bank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+}
+
+.bank-item:active,
+.bank-item.is-selected {
+    background: var(--bg);
+}
+
+.bank-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
+}
+
+.bank-item-name {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
 /* 계좌번호 + 버튼 행 */
 .account-row {
     display: flex;
     gap: 10px;
-    align-items: center;
+    align-items: stretch;
+}
+
+.account-row .btn-sm {
+    height: auto;
 }
 
 .account-row .input-box {
@@ -14,45 +246,77 @@
 }
 
 /* 1원 입금 안내 박스 */
+/* 1원 입금 안내 박스 */
 .deposit-guide-box {
-    background-color: var(--primary-light);
+    background: #fff;
+    border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 16px;
+    padding: 10px 16px;
     margin-bottom: 16px;
-}
-
-.deposit-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
+    gap: 0;
 }
 
-.deposit-row:not(:last-of-type) {
-    border-bottom: 1px solid rgba(26, 76, 192, 0.1);
-    margin-bottom: 6px;
-    padding-bottom: 12px;
+.deposit-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
 }
 
-.deposit-label {
-    font-size: 13px;
-    color: var(--primary);
+.deposit-col--right {
+    align-items: flex-end;
+}
+
+.deposit-col-label {
+    font-size: 11px;
+    color: var(--text-hint);
     font-weight: 500;
 }
 
-.deposit-value {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-}
-
-.deposit-value.highlight {
-    color: var(--primary);
-}
-
-.deposit-guide-text {
+.deposit-col-prefix {
     font-size: 12px;
-    color: var(--primary);
-    margin-top: 10px;
-    font-weight: 500;
+    color: var(--text-hint);
+}
+
+.deposit-mask-boxes {
+    display: flex;
+    gap: 4px;
+}
+
+.deposit-mask-box {
+    width: 26px;
+    height: 26px;
+    background: var(--primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+}
+
+.deposit-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+    margin: 0 16px;
+    flex-shrink: 0;
+}
+
+.deposit-amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+}
+
+.deposit-amount em {
+    font-size: 13px;
+    font-weight: 600;
+    font-style: normal;
+    margin-left: 2px;
+    color: var(--text-hint);
 }
