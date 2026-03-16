@@ -3,8 +3,7 @@
  */
 
 const timerEl = document.getElementById('timerCount');
-// TODO: 실제 서비스 시 180(3분)으로 변경
-const timer = new CountdownTimer(timerEl, 30, onTimerExpire);
+const timer = new CountdownTimer(timerEl, 180, onTimerExpire);
 
 let isPhoneVerified = false;
 

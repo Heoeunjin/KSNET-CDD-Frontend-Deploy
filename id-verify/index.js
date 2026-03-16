@@ -4,6 +4,24 @@
 
 let currentTab = 'resident';
 
+/* --- 1단계: 촬영 안내 → 2단계: 입력 폼 전환 --- */
+function showIdForm() {
+    document.getElementById('idGuideSection').style.display = 'none';
+    document.getElementById('idFormSection').style.display = 'block';
+    document.getElementById('btnIdCapture').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'block';
+    checkNextBtn();
+}
+
+function openCameraForId() {
+    KYC.openModal('modalCameraPermission');
+}
+
+function closeCameraModalAndProceed() {
+    KYC.closeModal('modalCameraPermission');
+    showIdForm();
+}
+
 /* --- 탭 전환 --- */
 function switchTab(tab) {
     currentTab = tab;
