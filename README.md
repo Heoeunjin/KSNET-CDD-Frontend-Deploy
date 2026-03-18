@@ -15,11 +15,12 @@
 ## 🎯 주요 기능
 
 ### 📱 KYC 단계별 인증 플로우
+
 - 기본정보 입력 (이름, 주민등록번호, 휴대폰 본인인증)
 - 추가 기본정보 (여권 영문명, 국적, 거주지 주소)
 - 추가정보 (직업, 거래 자금의 원천, 거래 목적, 실소유자 여부)
-- 신분증 인증 (주민등록증 / 운전면허증)
 - 계좌 인증 (1원 인증)
+- 신분증 인증 (주민등록증 / 운전면허증)
 
 ---
 
@@ -63,13 +64,13 @@ KSNET_CDD/
 │   ├── index.css
 │   └── index.js
 │
-├── id-verify/              # 신분증 인증 (Step 4)
-│   ├── index.html          # 주민등록증 / 운전면허증 탭
+├── account-verify/         # 계좌 인증 (Step 4)
+│   ├── index.html          # 은행 선택, 계좌번호, 1원 인증
 │   ├── index.css
 │   └── index.js
 │
-├── account-verify/         # 계좌 인증 (Step 5)
-│   ├── index.html          # 은행 선택, 계좌번호, 1원 인증
+├── id-verify/              # 신분증 인증 (Step 5)
+│   ├── index.html          # 주민등록증 / 운전면허증 탭
 │   ├── index.css
 │   └── index.js
 │
@@ -82,6 +83,7 @@ KSNET_CDD/
 ## 🛠 기술 스택
 
 ### Frontend
+
 - **HTML5** - 마크업
 - **CSS3** - 스타일링 (CSS 변수, Flexbox, Grid)
 - **JavaScript (Vanilla JS)** - 인터랙션 및 동적 기능
@@ -90,17 +92,17 @@ KSNET_CDD/
 
 ## 📂 주요 디렉토리 설명
 
-| 디렉토리 | 설명 |
-|---------|------|
-| **`/css`** | 전역 스타일 및 모듈별 CSS |
-| **`/js`** | 전역 공통 스크립트 및 모듈별 JS |
-| **`/intro`** | 고객확인제도 안내 및 설명 페이지 |
-| **`/basic-info`** | KYC Step 1: 기본정보 입력 + 휴대폰 인증 |
-| **`/personal-info`** | KYC Step 2: 여권영문명, 국적, 주소 입력 |
-| **`/additional-info`** | KYC Step 3: 직업, 자금원천, 거래목적 |
-| **`/id-verify`** | KYC Step 4: 신분증 인증 |
-| **`/account-verify`** | KYC Step 5: 계좌 1원 인증 |
-| **`/complete`** | 고객확인 완료 페이지 |
+| 디렉토리               | 설명                                    |
+| ---------------------- | --------------------------------------- |
+| **`/css`**             | 전역 스타일 및 모듈별 CSS               |
+| **`/js`**              | 전역 공통 스크립트 및 모듈별 JS         |
+| **`/intro`**           | 고객확인제도 안내 및 설명 페이지        |
+| **`/basic-info`**      | KYC Step 1: 기본정보 입력 + 휴대폰 인증 |
+| **`/personal-info`**   | KYC Step 2: 여권영문명, 국적, 주소 입력 |
+| **`/additional-info`** | KYC Step 3: 직업, 자금원천, 거래목적    |
+| **`/account-verify`**  | KYC Step 4: 계좌 1원 인증               |
+| **`/id-verify`**       | KYC Step 5: 신분증 인증                 |
+| **`/complete`**        | 고객확인 완료 페이지                    |
 
 ---
 
@@ -120,10 +122,10 @@ KSNET_CDD/
                           추가정보 입력 (additional-info/)
                                │
                                ↓
-                          신분증 인증 (id-verify/)
+                          계좌 인증 (account-verify/)
                                │
                                ↓
-                          계좌 인증 (account-verify/)
+                          신분증 인증 (id-verify/)
                                │
                                ↓
                           고객확인 완료 (complete/)

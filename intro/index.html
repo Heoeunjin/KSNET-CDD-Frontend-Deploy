@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="../css/common.css">
     <style>
         .intro-body {
-            padding: 28px 20px 40px;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 28px 20px calc(var(--bottom-btn-h));
         }
 
         .intro-section {
@@ -134,15 +138,11 @@
         }
 
         .ready-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background-color: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 18px;
+            font-size: 28px;
         }
 
         .ready-text {
@@ -211,11 +211,11 @@
                 </div>
                 <div class="step-row">
                     <div class="step-num">4</div>
-                    <div class="step-text"><strong>신분증 인증</strong><br>주민등록증 또는 운전면허증으로 인증</div>
+                    <div class="step-text"><strong>계좌 인증</strong><br>본인 명의 계좌로 1원 인증</div>
                 </div>
                 <div class="step-row">
                     <div class="step-num">5</div>
-                    <div class="step-text"><strong>계좌 인증</strong><br>본인 명의 계좌로 1원 인증</div>
+                    <div class="step-text"><strong>신분증 인증</strong><br>주민등록증 또는 운전면허증으로 인증</div>
                 </div>
             </div>
         </div>

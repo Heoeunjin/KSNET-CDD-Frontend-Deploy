@@ -4,24 +4,6 @@
 
 let currentTab = 'resident';
 
-/* --- 1단계: 촬영 안내 → 2단계: 입력 폼 전환 --- */
-function showIdForm() {
-    document.getElementById('idGuideSection').style.display = 'none';
-    document.getElementById('idFormSection').style.display = 'block';
-    document.getElementById('btnIdCapture').style.display = 'none';
-    document.getElementById('btnNext').style.display = 'block';
-    checkNextBtn();
-}
-
-function openCameraForId() {
-    KYC.openModal('modalCameraPermission');
-}
-
-function closeCameraModalAndProceed() {
-    KYC.closeModal('modalCameraPermission');
-    showIdForm();
-}
-
 /* --- 탭 전환 --- */
 function switchTab(tab) {
     currentTab = tab;
@@ -111,154 +93,6 @@ document.getElementById('inputLicenseSerial').addEventListener('input', function
     checkNextBtn();
 });
 
-/* --- 신분증 자동 인식 (촬영/업로드 + OCR API 연동용) --- */
-(function initIdCapture() {
-    const residentBtn = document.getElementById('btnResidentCapture');
-    const residentInput = document.getElementById('residentCaptureInput');
-    const licenseBtn = document.getElementById('btnLicenseCapture');
-    const licenseInput = document.getElementById('licenseCaptureInput');
-    const residentRetake = document.getElementById('btnResidentRetake');
-    const licenseRetake = document.getElementById('btnLicenseRetake');
-
-    if (residentBtn && residentInput) {
-        residentBtn.addEventListener('click', function () {
-            residentInput.click();
-        });
-
-        residentInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) {
-                handleIdOcr('resident', this.files[0]);
-                // 파일 참조는 즉시 제거
-                this.value = '';
-            }
-        });
-
-        if (residentRetake) {
-            residentRetake.addEventListener('click', function () {
-                residentInput.click();
-            });
-        }
-    }
-
-    if (licenseBtn && licenseInput) {
-        licenseBtn.addEventListener('click', function () {
-            licenseInput.click();
-        });
-
-        licenseInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) {
-                handleIdOcr('license', this.files[0]);
-                this.value = '';
-            }
-        });
-
-        if (licenseRetake) {
-            licenseRetake.addEventListener('click', function () {
-                licenseInput.click();
-            });
-        }
-    }
-})();
-
-/**
- * 신분증 OCR 처리 (현재는 미리보기만, 실제 OCR API 없음)
- * type: 'resident' | 'license'
- */
-function handleIdOcr(type, file) {
-    // 선택한 이미지 미리보기 업데이트만 수행
-    const url = URL.createObjectURL(file);
-    if (type === 'resident') {
-        const card = document.getElementById('residentPreviewCard');
-        const actions = document.getElementById('residentPreviewActions');
-        const img = document.getElementById('residentPreview');
-        const captureGroup = document.getElementById('residentCaptureGroup');
-        if (img) img.src = url;
-        if (card) card.style.display = 'block';
-        if (actions) actions.style.display = 'flex';
-        if (captureGroup) captureGroup.style.display = 'none';
-    } else {
-        const card = document.getElementById('licensePreviewCard');
-        const actions = document.getElementById('licensePreviewActions');
-        const img = document.getElementById('licensePreview');
-        const captureGroup = document.getElementById('licenseCaptureGroup');
-        if (img) img.src = url;
-        if (card) card.style.display = 'block';
-        if (actions) actions.style.display = 'flex';
-        if (captureGroup) captureGroup.style.display = 'none';
-    }
-
-    // TODO: 실제 OCR API 연동 시
-    // 1) 여기서 FormData 생성 + 서버 호출
-    // 2) 서버에서 OCR 처리 후 원본 이미지는 즉시 삭제
-    // 3) 응답 데이터는 applyOcrResult(type, data) 형태로 전달
-}
-
-/**
- * OCR 결과를 폼 필드에 반영
- * data 예시 (서버에서 이 형태로 맞춰주면 됨):
- *  주민등록증: { name, ssnFront, ssnBack, issueDate }
- *  운전면허증: { name, ssnFront, ssnBack, licenseNo, serial, issueDate }
- * 현재는 실제 OCR API가 없으므로 사용되지 않음.
- * 추후 백엔드 연동 시 호출 지점만 추가하면 됨.
- */
-function applyOcrResult(type, data) {
-    if (!data) return;
-
-    if (type === 'resident') {
-        if (data.name) {
-            const el = document.getElementById('inputResidentName');
-            el.value = data.name;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.ssnFront) {
-            const el = document.getElementById('inputResidentSsnFront');
-            el.value = data.ssnFront;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.ssnBack) {
-            const el = document.getElementById('inputResidentSsnBack');
-            el.value = data.ssnBack;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.issueDate) {
-            const el = document.getElementById('inputResidentIssueDate');
-            el.value = KYC.formatDate(data.issueDate.replace(/\D/g, ''));
-            el.dispatchEvent(new Event('input'));
-        }
-    } else {
-        if (data.name) {
-            const el = document.getElementById('inputLicenseName');
-            el.value = data.name;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.ssnFront) {
-            const el = document.getElementById('inputLicenseSsnFront');
-            el.value = data.ssnFront;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.ssnBack) {
-            const el = document.getElementById('inputLicenseSsnBack');
-            el.value = data.ssnBack;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.licenseNo) {
-            const el = document.getElementById('inputLicenseNo');
-            el.value = data.licenseNo;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.serial) {
-            const el = document.getElementById('inputLicenseSerial');
-            el.value = data.serial;
-            el.dispatchEvent(new Event('input'));
-        }
-        if (data.issueDate) {
-            // 운전면허증 발급일자도 필요하면 여기에 필드 추가 후 적용
-        }
-    }
-
-    checkNextBtn();
-}
-
 /* --- 다음 버튼 활성화 조건 --- */
 function checkNextBtn() {
     let isValid = false;
@@ -296,5 +130,7 @@ function goNext() {
     KYC.saveStep({
         idType: currentTab
     });
-    KYC.goTo('../account-verify/index.html');
+    KYC.goTo('../complete/index.html');
 }
+
+checkNextBtn();

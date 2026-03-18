@@ -39,13 +39,13 @@
                 <div class="step-dot">✓</div>
                 <div class="step-label">직업/목적</div>
             </div>
-            <div class="progress-step is-done">
-                <div class="step-dot">✓</div>
-                <div class="step-label">신분증</div>
-            </div>
             <div class="progress-step is-active">
-                <div class="step-dot">5</div>
+                <div class="step-dot">4</div>
                 <div class="step-label">계좌인증</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-dot">5</div>
+                <div class="step-label">신분증</div>
             </div>
         </div>
     </div>
@@ -95,25 +95,6 @@
             <!-- 1원 입금 확인 (요청 후 표시) -->
             <div id="verifySection" style="display:none;">
 
-                <!-- 안내 박스 -->
-                <div class="deposit-guide-box">
-                    <div class="deposit-col">
-                        <span class="deposit-col-label">입금자명</span>
-                        <span class="deposit-col-prefix" id="displayDepositorPrefix">케스넷</span>
-                        <div class="deposit-mask-boxes">
-                            <div class="deposit-mask-box">*</div>
-                            <div class="deposit-mask-box">*</div>
-                            <div class="deposit-mask-box">*</div>
-                            <div class="deposit-mask-box">*</div>
-                        </div>
-                    </div>
-                    <div class="deposit-divider"></div>
-                    <div class="deposit-col deposit-col--right">
-                        <span class="deposit-col-label">입금</span>
-                        <span class="deposit-amount">1<em>원</em></span>
-                    </div>
-                </div>
-
                 <!-- 인증번호 입력 -->
                 <div class="form-group">
                     <label class="form-label">입금자명의 숫자 4자리 입력</label>
@@ -126,6 +107,24 @@
                         <span class="timer-count" id="timerCount">03:00</span>
                     </div>
                     <p class="error-msg" id="verifyCodeError"></p>
+                </div>
+
+                <!-- 안내 박스 -->
+                <div class="deposit-guide-box">
+                    <div class="deposit-col">
+                        <span class="deposit-col-label">입금자명</span>
+                        <div class="deposit-mask-boxes">
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                            <div class="deposit-mask-box">*</div>
+                        </div>
+                    </div>
+                    <div class="deposit-divider"></div>
+                    <div class="deposit-col deposit-col--right">
+                        <span class="deposit-col-label">입금</span>
+                        <span class="deposit-amount">1<em>원</em></span>
+                    </div>
                 </div>
 
             </div>
@@ -182,6 +181,17 @@
         <div class="modal-desc">계좌 정보가 일치하지 않습니다.<br>은행명과 계좌번호를 다시 확인해주세요.</div>
         <div class="modal-btns">
             <button class="btn btn-primary" onclick="KYC.closeModal('modalAccountMismatch')">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 인증횟수 초과 모달 -->
+<div class="modal-overlay" id="modalLimitExceeded">
+    <div class="modal-box">
+        <div class="modal-title">인증횟수 초과</div>
+        <div class="modal-desc">일일 인증 요청 횟수를 초과하였습니다.<br>내일 다시 시도해 주세요.</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="KYC.closeModal('modalLimitExceeded')">확인</button>
         </div>
     </div>
 </div>

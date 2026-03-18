@@ -217,7 +217,7 @@ function requestVerify() {
     if (!bank || accountNo.length < 6) return;
 
     // TODO: 서버 API 연동 - 1원 입금 요청
-    document.getElementById('displayDepositorPrefix').textContent = '케스넷';
+    // 인증횟수 초과 시: KYC.openModal('modalLimitExceeded');
 
     document.getElementById('verifySection').style.display = 'block';
     document.getElementById('inputVerifyCode').value = '';
@@ -275,5 +275,5 @@ function goNext() {
         bank: document.getElementById('selectBank').value,
         accountVerified: true
     });
-    KYC.goTo('../complete/index.html');
+    KYC.goTo('../id-verify/index.html');
 }

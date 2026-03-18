@@ -90,5 +90,5 @@ function goNext() {
         txPurpose: document.getElementById('selectTxPurpose').value,
         isBeneficialOwner: true
     });
-    KYC.goTo('../id-verify/index.html');
+    KYC.goTo('../account-verify/index.html');
 }
