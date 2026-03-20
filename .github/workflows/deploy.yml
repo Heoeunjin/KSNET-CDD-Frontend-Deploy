@@ -12,14 +12,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Push to fork repo
+        env:
+          MY_TOKEN: ${{ secrets.FORK_DISPATCH_TOKEN }}
         run: |
           git config user.name "Heoeunjin"
           git config user.email "${{ secrets.GIT_EMAIL }}"
-          # 기존 remote 삭제 후 다시 등록 (안전하게)
+          
           git remote remove fork || true
-          # 토큰을 직접 URL에 넣는 방식
-          git remote add fork https://${{ secrets.FORK_DISPATCH_TOKEN }}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
-          # 강제 푸시
-          git push fork develop --force
+          
+          # URL 형식을 가장 확실한 방법으로 변경했습니다.
+          git remote add fork https://${MY_TOKEN}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
+          
+          git push fork develop:develop --force
