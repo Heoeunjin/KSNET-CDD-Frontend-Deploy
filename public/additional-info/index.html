@@ -74,6 +74,9 @@
                         <div class="custom-select-option" data-value="unemployed">무직</div>
                         <div class="custom-select-option" data-value="student">학생</div>
                         <div class="custom-select-option" data-value="housewife">주부</div>
+                        <div class="custom-select-option" data-value="retired">퇴직·연금수급</div>
+                        <div class="custom-select-option" data-value="public_official">공무원</div>
+                        <div class="custom-select-option" data-value="professional">전문직</div>
                     </div>
                     <input type="hidden" id="selectOccupation">
                 </div>
@@ -122,6 +125,107 @@
                 </div>
             </div>
 
+            <!-- 직장명·부서 (선택, 명세 comp_nm / dept_nm) -->
+            <div class="form-group">
+                <label class="form-label" for="inputCompNm">직장명 (선택)</label>
+                <div class="input-box">
+                    <input type="text" id="inputCompNm" placeholder="직장명" maxlength="50" autocomplete="organization">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="inputDeptNm">부서·직위 (선택)</label>
+                <div class="input-box">
+                    <input type="text" id="inputDeptNm" placeholder="부서 또는 직위" maxlength="50">
+                </div>
+            </div>
+
+            <!-- 연소득 (명세 ann_incm_cd) -->
+            <div class="form-group">
+                <label class="form-label">연소득 구간</label>
+                <div class="custom-select" id="annIncmBox">
+                    <div class="custom-select-display" id="annIncmDisplay">구간 선택</div>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-option" data-value="U2000">2천만원 미만</div>
+                        <div class="custom-select-option" data-value="2000_5000">2천만원 이상 ~ 5천만원 미만</div>
+                        <div class="custom-select-option" data-value="5000_1E">5천만원 이상 ~ 1억 미만</div>
+                        <div class="custom-select-option" data-value="1E_3E">1억 이상 ~ 3억 미만</div>
+                        <div class="custom-select-option" data-value="03E">3억 이상</div>
+                    </div>
+                    <input type="hidden" id="selectAnnIncm">
+                </div>
+            </div>
+
+            <!-- PEP (명세 pep_yn) -->
+            <div class="form-group">
+                <label class="form-label">PEP(공직자 등) 해당 여부</label>
+                <div class="custom-select" id="pepBox">
+                    <div class="custom-select-display" id="pepDisplay">아니오</div>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-option is-selected" data-value="N">아니오</div>
+                        <div class="custom-select-option" data-value="Y">예</div>
+                    </div>
+                    <input type="hidden" id="selectPep" value="N">
+                </div>
+            </div>
+
+            <!-- 실거주 ≠ 등록주소 (명세 live_same_yn / live_*) -->
+            <div class="form-group">
+                <label class="form-check-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="chkLiveDifferent" onchange="toggleLiveAddress()">
+                    <span>실거주 주소가 등록 주소와 다릅니다</span>
+                </label>
+            </div>
+            <div id="liveAddressBlock" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label" for="inputLiveZip">실거주 우편번호</label>
+                    <div class="input-box">
+                        <input type="text" id="inputLiveZip" inputmode="numeric" maxlength="5" placeholder="12345">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="inputLiveAddr1">실거주 기본주소</label>
+                    <div class="input-box">
+                        <input type="text" id="inputLiveAddr1" maxlength="200" placeholder="도로명 주소">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="inputLiveAddr2">실거주 상세주소</label>
+                    <div class="input-box">
+                        <input type="text" id="inputLiveAddr2" maxlength="200" placeholder="동·호수">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 외국인 추가 (명세 frgn_yn=Y 시) -->
+            <div id="foreignerBlock" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label" for="inputFrgnRegNo">외국인등록번호</label>
+                    <div class="input-box">
+                        <input type="text" id="inputFrgnRegNo" maxlength="20" placeholder="- 없이 입력">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="inputRsdncCntry">거주국가</label>
+                    <div class="input-box">
+                        <input type="text" id="inputRsdncCntry" maxlength="50" placeholder="예: US">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기타 자금출처 상세 (fund_etc_yn=Y 일 때) -->
+            <div class="form-group" id="fundEtcBlock" style="display:none;">
+                <label class="form-label" for="inputFundEtcCntn">기타 자금출처 내용</label>
+                <div class="input-box">
+                    <input type="text" id="inputFundEtcCntn" maxlength="200" placeholder="기타 선택 시 입력">
+                </div>
+            </div>
+
             <!-- 실소유자 여부 -->
             <div class="form-group">
                 <label class="form-label">실소유자 여부</label>
@@ -133,6 +237,31 @@
                     <div class="radio-item" id="ownerNo" onclick="selectOwner('no')">
                         아니오
                     </div>
+                </div>
+            </div>
+
+            <!-- 실소유자 아님 시 (명세 real_own_yn=N + real_own_nm, real_own_rltn) -->
+            <div id="realOwnerBlock" class="form-group" style="display:none;">
+                <p class="owner-guide">실소유자 정보를 입력해 주세요.</p>
+                <label class="form-label" for="inputRealOwnNm">실소유자 성명</label>
+                <div class="input-box" style="margin-bottom:12px;">
+                    <input type="text" id="inputRealOwnNm" maxlength="30" placeholder="실명">
+                </div>
+                <label class="form-label">실소유자와의 관계</label>
+                <div class="custom-select" id="realOwnRltnBox">
+                    <div class="custom-select-display" id="realOwnRltnDisplay">관계 선택</div>
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-option" data-value="PARENT">부모</div>
+                        <div class="custom-select-option" data-value="SPOUSE">배우자</div>
+                        <div class="custom-select-option" data-value="CHILD">자녀</div>
+                        <div class="custom-select-option" data-value="SIBLING">형제자매</div>
+                        <div class="custom-select-option" data-value="CORPORATE">법인·단체</div>
+                        <div class="custom-select-option" data-value="OTHER">기타</div>
+                    </div>
+                    <input type="hidden" id="selectRealOwnRltn">
                 </div>
             </div>
 
@@ -160,7 +289,9 @@
     </div>
 </div>
 
+<script src="../js/config.js"></script>
 <script src="../js/common.js"></script>
+<script src="../js/api/kyc-api.js"></script>
 <script src="../js/module/validation.js"></script>
 <script src="index.js"></script>
 </body>

@@ -2,11 +2,14 @@
  * KSNET KYC - 계좌 인증 스크립트
  */
 
+(function () { if (typeof KYC !== 'undefined') KYC.captureCallbackFromUrl(); })();
+
 const timerEl = document.getElementById('timerCount');
 const timer = new CountdownTimer(timerEl, 180, onTimerExpire);
 
 let isVerified = false;
 let currentSheetTab = 'bank';
+let acnCerTrUky = null; // gubun=6 응답값 (gubun=7에서 사용)
 
 /* --- 은행/증권사 데이터 --- */
 const BANKS = [
@@ -210,25 +213,58 @@ function checkRequestBtn() {
     document.getElementById('btnRequestVerify').disabled = !(bank && accountNo.length >= 6);
 }
 
-/* --- 1원 인증 요청 --- */
-function requestVerify() {
+/* --- 1원 인증 요청 (gubun=6 API) --- */
+async function requestVerify() {
     const bank = document.getElementById('selectBank').value;
     const accountNo = document.getElementById('inputAccountNo').value;
     if (!bank || accountNo.length < 6) return;
 
-    // TODO: 서버 API 연동 - 1원 입금 요청
-    // 인증횟수 초과 시: KYC.openModal('modalLimitExceeded');
+    const kycData = KYC.loadStep();
+    const cerTrUky = kycData.cer_tr_uky;
+    if (!cerTrUky) {
+        alert('인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.');
+        KYC.goTo('../basic-info/index.html');
+        return;
+    }
 
-    document.getElementById('verifySection').style.display = 'block';
-    document.getElementById('inputVerifyCode').value = '';
-    document.getElementById('verifyCodeError').classList.remove('is-show');
+    const btn = document.getElementById('btnRequestVerify');
+    btn.disabled = true;
 
-    // 버튼 텍스트 → 재전송
-    document.getElementById('btnRequestVerify').textContent = '재전송';
+    try {
+        const res = await KYC_API.requestAccountVerify({
+            cer_tr_uky: cerTrUky,
+            bankCode: bank,
+            acno: accountNo,
+            acntNm: kycData.auth_nm || ''
+        });
 
-    timer.start();
-    isVerified = false;
-    checkNextBtn();
+        const header = res.response_header || {};
+        const data = res.response_data || {};
+
+        if (header.result_code !== '0') {
+            const msg = header.std_mesg_content || data.std_mesg_content || '인증 요청에 실패했습니다.';
+            if (msg.includes('초과') || msg.includes('횟수')) {
+                KYC.openModal('modalLimitExceeded');
+            } else {
+                alert(msg);
+            }
+            btn.disabled = false;
+            return;
+        }
+
+        acnCerTrUky = data.acn_cer_tr_uky || null;
+        document.getElementById('verifySection').style.display = 'block';
+        document.getElementById('inputVerifyCode').value = '';
+        document.getElementById('verifyCodeError').classList.remove('is-show');
+        btn.textContent = '재전송';
+        timer.start();
+        isVerified = false;
+        checkNextBtn();
+    } catch (err) {
+        console.error('1원 인증 요청 오류:', err);
+        alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+    btn.disabled = false;
 }
 
 /* --- 인증번호 입력 --- */
@@ -238,23 +274,53 @@ document.getElementById('inputVerifyCode').addEventListener('input', function ()
         document.getElementById('verifyCodeBox'),
         document.getElementById('verifyCodeError')
     );
-    if (this.value.length === 4) {
+    if (this.value.length === 3) {
         verifyCode(this.value);
     }
 });
 
-/* --- 인증 코드 검증 --- */
-function verifyCode(code) {
-    // TODO: 서버 API 연동으로 대체
-    if (code === '1234') {
-        timer.stop();
-        isVerified = true;
-        checkNextBtn();
-    } else {
-        isVerified = false;
+/* --- 인증 코드 검증 (gubun=7 API) --- */
+async function verifyCode(code) {
+    const kycData = KYC.loadStep();
+    const cerTrUky = kycData.cer_tr_uky;
+    if (!cerTrUky || !acnCerTrUky) {
         KYC.openModal('modalOwnerMismatch');
         checkNextBtn();
+        return;
     }
+
+    try {
+        const res = await KYC_API.confirmAccountVerify({
+            cer_tr_uky: cerTrUky,
+            acn_cer_tr_uky: acnCerTrUky,
+            synp_cer_no: code
+        });
+
+        const header = res.response_header || {};
+        const data = res.response_data || {};
+
+        if (header.result_code === '0') {
+            timer.stop();
+            isVerified = true;
+            KYC.saveStep({ acn_cer_tr_uky: acnCerTrUky });
+        } else {
+            isVerified = false;
+            const msg =
+                header.std_mesg_content ||
+                data.std_mesg_content ||
+                '인증에 실패했습니다. 입력값을 확인해 주세요.';
+            Validation.showError(
+                document.getElementById('verifyCodeBox'),
+                document.getElementById('verifyCodeError'),
+                msg
+            );
+        }
+    } catch (err) {
+        console.error('계좌 인증 확인 오류:', err);
+        isVerified = false;
+        KYC.openModal('modalOwnerMismatch');
+    }
+    checkNextBtn();
 }
 
 /* --- 타이머 만료 --- */
@@ -273,7 +339,8 @@ function checkNextBtn() {
 function goNext() {
     KYC.saveStep({
         bank: document.getElementById('selectBank').value,
-        accountVerified: true
+        accountVerified: true,
+        acn_cer_tr_uky: acnCerTrUky
     });
     KYC.goTo('../id-verify/index.html');
 }

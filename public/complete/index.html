@@ -200,8 +200,15 @@
 
 <script src="../js/common.js"></script>
 <script>
+    (function onCompleteLoad() {
+        if (typeof KYC !== 'undefined' && KYC.redirectKycCallbackIfNeeded()) {
+            return;
+        }
+    })();
+
     function goHome() {
-        // TODO: 앱/서비스 메인으로 이동
+        const data = KYC.loadStep();
+        if (data.kyc_callback_url && KYC.redirectKycCallbackIfNeeded()) return;
         sessionStorage.removeItem('kycData');
         KYC.goTo('../index.html');
     }

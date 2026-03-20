@@ -176,18 +176,31 @@
     background: var(--bg);
 }
 
-/* 주소 검색 행 */
-.address-search-row {
+/* 거주지: 우편번호 + 검색, 기본주소, 상세주소 */
+.address-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.address-zip-row {
     display: flex;
     gap: 10px;
     align-items: stretch;
 }
 
-.address-search-row .input-box {
-    flex: 1;
+.address-zip-row .input-box {
+    flex: 0 0 124px;
+    max-width: 140px;
 }
 
-.address-search-row .btn-sm {
+.address-zip-row .input-box input {
+    text-align: start;
+}
+
+.address-zip-row .btn-sm {
+    flex-shrink: 0;
     height: auto;
+    align-self: stretch;
 }
 

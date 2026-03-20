@@ -6,6 +6,18 @@ const timerEl = document.getElementById('timerCount');
 const timer = new CountdownTimer(timerEl, 180, onTimerExpire);
 
 let isPhoneVerified = false;
+let smsResponse = null; // gubun=1 응답 (cer_tr_uky, rqs_unq_no, rspd_unq_no)
+
+(function bootKycEntry() {
+    KYC.captureCallbackFromUrl();
+})();
+(async function requireToken() {
+    const ok = await KYC.ensureTokenVerified();
+    if (!ok) {
+        alert('토큰 검증이 필요합니다. 메인 화면에서 다시 시작해 주세요.');
+        KYC.goTo('../index.html');
+    }
+})();
 
 /* --- 이름 입력 처리 --- */
 document.getElementById('inputName').addEventListener('input', function (e) {
@@ -149,7 +161,10 @@ document.getElementById('inputPhone').addEventListener('input', function () {
 });
 
 /* --- 인증번호 요청 / 재전송 버튼 --- */
-document.getElementById('btnRequestCode').addEventListener('click', function () {
+document.getElementById('btnRequestCode').addEventListener('click', async function () {
+    const name = document.getElementById('inputName').value.trim();
+    const ssnFront = document.getElementById('inputSsnFront').value;
+    const ssnBackReal = document.getElementById('inputSsnBackReal').value;
     const carrier = document.getElementById('selectCarrier').value;
     const phone = document.getElementById('inputPhone').value;
 
@@ -162,32 +177,68 @@ document.getElementById('btnRequestCode').addEventListener('click', function () 
         );
         return;
     }
+    if (!KYC.validateName(name) || ssnFront.length !== 6 || ssnBackReal.length !== 1) {
+        return;
+    }
 
     Validation.clearError(
         document.getElementById('phoneBox'),
         document.getElementById('phoneError')
     );
 
-    // 인증번호 입력창 표시
-    document.getElementById('verifyRow').style.display = 'block';
-    document.getElementById('inputCode').value = '';
-    document.getElementById('codeError').classList.remove('is-show');
+    const btn = this;
+    btn.disabled = true;
 
-    // 안내 문구 전환: 기본 → 전송 완료
-    document.getElementById('smsGuide').style.display = 'none';
-    document.getElementById('smsGuideSent').style.display = 'block';
+    try {
+        const usrInf = KYC.ssnToBirthDate(ssnFront, ssnBackReal);
+        const usrSex = KYC.ssnToGender(ssnBackReal);
 
-    // 인증확인 버튼 초기화
-    const btnVerify = document.getElementById('btnVerifyCode');
-    if (btnVerify) btnVerify.disabled = true;
+        const res = await KYC_API.sendSms({
+            usr_nm: name,
+            usr_inf: usrInf,
+            usr_sex: usrSex,
+            carrier: carrier,
+            mbtl_no: phone
+        });
 
-    // 버튼 텍스트 → 재전송으로 변경
-    this.textContent = '재전송';
+        const header = res.response_header || {};
+        const data = res.response_data || {};
 
-    // 타이머 시작
-    timer.start();
-    isPhoneVerified = false;
-    checkNextBtn();
+        if (header.result_code !== '0') {
+            Validation.showError(
+                document.getElementById('phoneBox'),
+                document.getElementById('phoneError'),
+                data.std_mesg_content || header.std_mesg_content || '인증번호 발송에 실패했습니다.'
+            );
+            btn.disabled = false;
+            return;
+        }
+
+        smsResponse = {
+            cer_tr_uky: data.cer_tr_uky,
+            rqs_unq_no: data.rqs_unq_no,
+            rspd_unq_no: data.rspd_unq_no
+        };
+
+        document.getElementById('verifyRow').style.display = 'block';
+        document.getElementById('inputCode').value = '';
+        document.getElementById('codeError').classList.remove('is-show');
+        document.getElementById('smsGuide').style.display = 'none';
+        document.getElementById('smsGuideSent').style.display = 'block';
+
+        this.textContent = '재전송';
+        timer.start();
+        isPhoneVerified = false;
+        checkNextBtn();
+    } catch (err) {
+        console.error('SMS 발송 오류:', err);
+        Validation.showError(
+            document.getElementById('phoneBox'),
+            document.getElementById('phoneError'),
+            '네트워크 오류가 발생했습니다. 다시 시도해주세요.'
+        );
+    }
+    btn.disabled = false;
 });
 
 /* --- 인증번호 입력 → 6자리 완성 시 자동 인증 --- */
@@ -203,17 +254,59 @@ document.getElementById('inputCode').addEventListener('input', function () {
 });
 
 
-/* --- 인증번호 검증 (실제 서버 연동 시 API 호출로 대체) --- */
-function verifyCode(code) {
-    // TODO: 서버 API 연동으로 대체
-    // 임시: 123456 이면 성공 처리
-    if (code === '123456') {
+/* --- 인증번호 검증 (gubun=2 API) --- */
+async function verifyCode(code) {
+    if (!smsResponse || !smsResponse.cer_tr_uky) {
+        KYC.openModal('modalCodeError');
+        return;
+    }
+
+    const phone = document.getElementById('inputPhone').value.replace(/\D/g, '');
+
+    try {
+        const res = await KYC_API.verifySms({
+            cer_tr_uky: smsResponse.cer_tr_uky,
+            rqs_unq_no: smsResponse.rqs_unq_no,
+            rspd_unq_no: smsResponse.rspd_unq_no,
+            cer_no: code,
+            mbtl_no: phone
+        });
+
+        const header = res.response_header || {};
+        const data = res.response_data || {};
+
+        if (header.result_code !== '0') {
+            timer.stop();
+            isPhoneVerified = false;
+            KYC.openModal('modalCodeError');
+            checkNextBtn();
+            return;
+        }
+
         timer.stop();
         isPhoneVerified = true;
         document.getElementById('codeBox').classList.remove('is-error');
+
+        KYC.saveStep({
+            cer_tr_uky: smsResponse.cer_tr_uky,
+            auth_nm: data.auth_nm,
+            auth_brth_dt: data.auth_brth_dt,
+            auth_gndr_cd: data.auth_gndr_cd
+        });
+
+        const curStep = data.cur_step || '01';
+        if (curStep === '05') {
+            KYC.goTo('../account-verify/index.html');
+        } else if (curStep === '07') {
+            KYC.goTo('../id-verify/index.html');
+        } else if (curStep === '08') {
+            KYC.goTo('../complete/index.html');
+        }
+        /* cur_step 01: 정상 플로우 → 다음 버튼 활성화 후 personal-info로 이동 (goNext) */
+
         checkNextBtn();
-    } else {
-        isPhoneVerified = false;
+    } catch (err) {
+        console.error('인증번호 확인 오류:', err);
         KYC.openModal('modalCodeError');
         checkNextBtn();
     }
@@ -263,7 +356,11 @@ function checkNextBtn() {
 function goNext() {
     KYC.saveStep({
         name: document.getElementById('inputName').value,
-        phone: document.getElementById('inputPhone').value
+        phone: document.getElementById('inputPhone').value,
+        ssnFront: document.getElementById('inputSsnFront').value,
+        ssnBackReal: document.getElementById('inputSsnBackReal').value,
+        carrier: document.getElementById('selectCarrier').value,
+        cer_tr_uky: smsResponse ? smsResponse.cer_tr_uky : null
     });
     KYC.goTo('../personal-info/index.html');
 }

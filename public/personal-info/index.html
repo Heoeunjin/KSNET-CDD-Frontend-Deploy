@@ -109,29 +109,49 @@
                 <p class="error-msg" id="nationalityError"></p>
             </div>
 
-            <!-- 거주지 주소 -->
+            <!-- 이메일 -->
+            <div class="form-group">
+                <label class="form-label" for="inputEmail">이메일</label>
+                <div class="input-box" id="emailBox">
+                    <input type="email"
+                           id="inputEmail"
+                           placeholder="example@email.com"
+                           maxlength="50"
+                           inputmode="email">
+                </div>
+                <p class="error-msg" id="emailError"></p>
+            </div>
+
+            <!-- 거주지 주소 (우편번호 / 기본주소 / 상세주소) -->
             <div class="form-group">
                 <label class="form-label">거주지 주소</label>
 
-                <!-- 주소 검색 -->
-                <div class="address-search-row" style="margin-bottom:10px;">
+                <div class="address-block">
+                    <div class="address-zip-row">
+                        <div class="input-box is-readonly" id="zipBox">
+                            <input type="text"
+                                   id="inputZip"
+                                   placeholder="우편번호"
+                                   inputmode="numeric"
+                                   maxlength="5"
+                                   readonly>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="btnSearchAddress" onclick="searchAddress()">
+                            주소 검색
+                        </button>
+                    </div>
                     <div class="input-box is-readonly" id="addressBox">
                         <input type="text"
                                id="inputAddress"
-                               placeholder="주소 검색"
+                               placeholder="기본주소"
                                readonly>
                     </div>
-                    <button type="button" class="btn btn-outline btn-sm" id="btnSearchAddress" onclick="searchAddress()">
-                        주소 검색
-                    </button>
-                </div>
-
-                <!-- 상세주소 -->
-                <div class="input-box" id="addressDetailBox" style="display:none;">
-                    <input type="text"
-                           id="inputAddressDetail"
-                           placeholder="상세주소 입력"
-                           maxlength="50">
+                    <div class="input-box" id="addressDetailBox">
+                        <input type="text"
+                               id="inputAddressDetail"
+                               placeholder="상세주소"
+                               maxlength="50">
+                    </div>
                 </div>
 
                 <p class="error-msg" id="addressError"></p>
@@ -151,7 +171,7 @@
 </div>
 
 
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="../js/config.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/module/validation.js"></script>
 <script src="index.js"></script>

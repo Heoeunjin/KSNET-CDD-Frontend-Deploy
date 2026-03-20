@@ -5,6 +5,43 @@
 const KYC = {
 
     /**
+     * URL 쿼리에서 callbackUrl|callback 읽어 sessionStorage에 저장 (명세: 완료 후 전달)
+     */
+    captureCallbackFromUrl() {
+        try {
+            const qs = new URLSearchParams(window.location.search);
+            const raw = qs.get('callbackUrl') || qs.get('callback');
+            if (!raw) return;
+            const decoded = decodeURIComponent(raw);
+            this.saveStep({ kyc_callback_url: decoded });
+        } catch (e) {
+            console.warn('callback URL 저장 실패:', e);
+        }
+    },
+
+    /**
+     * KYC 진입 시 토큰 검증(전체 호출 흐름 표 1단계 · KYC_API.TR_CD.TOKEN_VERIFY) 1회 성공 여부
+     * @returns {Promise<boolean>}
+     */
+    async ensureTokenVerified() {
+        const data = this.loadStep();
+        if (data.kyc_token_verified) return true;
+        if (typeof KYC_API === 'undefined') return true;
+        try {
+            const res = await KYC_API.verifyToken({});
+            const h = res.response_header || {};
+            if (h.result_code === '0') {
+                this.saveStep({ kyc_token_verified: true });
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.warn('토큰 검증 요청 실패(프록시 미구동 시 무시 가능):', e);
+            return true;
+        }
+    },
+
+    /**
      * 이름 유효성 검사 (한글만, 최대 10자, 특수문자/숫자 불가)
      */
     validateName(value) {
@@ -48,6 +85,27 @@ const KYC = {
     maskSsnBack(value) {
         if (!value) return '';
         return value.charAt(0) + '*'.repeat(Math.max(0, value.length - 1));
+    },
+
+    /**
+     * 주민등록번호 → 생년월일 (YYYYMMDD)
+     * 앞6자리(YYMMDD) + 뒷첫자리(1,2=1900s, 3,4=2000s)
+     */
+    ssnToBirthDate(ssnFront, ssnBackFirst) {
+        if (!ssnFront || ssnFront.length !== 6 || !ssnBackFirst) return '';
+        const yy = ssnFront.slice(0, 2);
+        const mm = ssnFront.slice(2, 4);
+        const dd = ssnFront.slice(4, 6);
+        const cen = (ssnBackFirst === '1' || ssnBackFirst === '2') ? '19' : '20';
+        return cen + yy + mm + dd;
+    },
+
+    /**
+     * 주민등록번호 뒷자리 첫자리 → 성별 코드 (1:남, 2:여)
+     */
+    ssnToGender(ssnBackFirst) {
+        if (!ssnBackFirst) return '';
+        return (ssnBackFirst === '1' || ssnBackFirst === '3') ? '1' : '2';
     },
 
     /**
@@ -121,5 +179,25 @@ const KYC = {
      */
     goTo(path) {
         window.location.href = path;
+    },
+
+    /**
+     * KYC 완료 후 callbackUrl로 결과 전달 (GET 쿼리: ksnet_svc_tkn_frm, card_no)
+     * @returns {boolean} 리다이렉트 했으면 true
+     */
+    redirectKycCallbackIfNeeded() {
+        const data = this.loadStep();
+        const base = data.kyc_callback_url;
+        if (!base || !String(base).trim()) return false;
+        try {
+            const u = new URL(base, window.location.href);
+            if (data.ksnet_svc_tkn_frm) u.searchParams.set('ksnet_svc_tkn_frm', data.ksnet_svc_tkn_frm);
+            if (data.card_no) u.searchParams.set('card_no', data.card_no);
+            window.location.replace(u.href);
+            return true;
+        } catch (e) {
+            console.warn('callback 리다이렉트 실패:', e);
+            return false;
+        }
     }
 };

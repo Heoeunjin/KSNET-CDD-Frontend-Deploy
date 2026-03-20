@@ -293,28 +293,59 @@ const COUNTRIES = [
     renderList();
 })();
 
+/* --- 이메일 입력 --- */
+document.getElementById('inputEmail').addEventListener('input', function () {
+    Validation.clearError(
+        document.getElementById('emailBox'),
+        document.getElementById('emailError')
+    );
+    checkNextBtn();
+});
+
 /* --- 상세주소 입력 --- */
 document.getElementById('inputAddressDetail').addEventListener('input', function () {
     checkNextBtn();
 });
 
-/* --- 주소 검색 (카카오 우편번호 서비스) --- */
+/**
+ * 행안부 도로명주소 — opener.jusoCallBack (인자 25개, jusoPopup.jsp 와 동일 순서)
+ * 앞 7개만 화면에 사용, 나머지는 명세와 동일하게 전달받기만 함.
+ */
+window.jusoCallBack = function (
+    roadFullAddr,
+    roadAddrPart1,
+    addrDetail,
+    roadAddrPart2,
+    engAddr,
+    jibunAddr,
+    zipNo,
+    ..._rest
+) {
+    // roadFullAddr 은 상세입력·참고항목까지 붙인 전체 문장이라 기본주소에 쓰면 상세와 중복됨.
+    // 기본: roadAddrPart1 + 참고(roadAddrPart2) / 상세: 사용자 입력(addrDetail)만
+    const p1 = (roadAddrPart1 || '').trim();
+    const p2 = (roadAddrPart2 || '').trim();
+    const mainAddr = p1
+        ? [p1, p2].filter(Boolean).join(' ').trim()
+        : (roadFullAddr || '').trim();
+    const zone = String(zipNo != null ? zipNo : '').replace(/\D/g, '');
+    const detail = (addrDetail != null ? String(addrDetail) : '').trim();
+
+    document.getElementById('inputZip').value = zone;
+    document.getElementById('inputAddress').value = mainAddr;
+    document.getElementById('inputAddressDetail').value = detail;
+    document.getElementById('inputAddressDetail').focus();
+    checkNextBtn();
+};
+
 function searchAddress() {
     const width = 500;
     const height = 600;
     const left = Math.round((window.screen.width - width) / 2);
     const top = Math.round((window.screen.height - height) / 2);
-
-    new daum.Postcode({
-        oncomplete: function (data) {
-            const address = data.roadAddress || data.jibunAddress;
-            document.getElementById('inputAddress').value = address;
-            document.getElementById('addressDetailBox').style.display = 'flex';
-            document.getElementById('inputAddressDetail').value = '';
-            document.getElementById('inputAddressDetail').focus();
-            checkNextBtn();
-        }
-    }).open({ left, top, popupTitle: '주소 검색' });
+    const base = window.location.origin;
+    const popupUrl = `${base}/juso-popup.html`;
+    window.open(popupUrl, 'jusoPopup', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
 }
 
 /* --- 다음 버튼 활성화 조건 --- */
@@ -322,12 +353,17 @@ function checkNextBtn() {
     const lastName = document.getElementById('inputPassportLastName').value.trim();
     const firstName = document.getElementById('inputPassportFirstName').value.trim();
     const nationality = document.getElementById('selectNationality').value;
+    const email = document.getElementById('inputEmail').value.trim();
+    const zip = document.getElementById('inputZip').value.replace(/\D/g, '');
     const address = document.getElementById('inputAddress').value.trim();
     const detail = document.getElementById('inputAddressDetail').value.trim();
 
     const isValid = lastName.length > 0
         && firstName.length > 0
         && nationality !== ''
+        && email.length > 0
+        && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        && zip.length === 5
         && address.length > 0
         && detail.length > 0;
 
@@ -336,11 +372,24 @@ function checkNextBtn() {
 
 /* --- 다음 페이지 이동 --- */
 function goNext() {
+    const zipEl = document.getElementById('inputZip');
+    const addrEl = document.getElementById('inputAddress');
+    const detailEl = document.getElementById('inputAddressDetail');
+    const natDisp = document.getElementById('nationalityDisplay').textContent.trim();
+    const natName = natDisp.indexOf(' ') > 0 ? natDisp.slice(natDisp.indexOf(' ') + 1).trim() : natDisp;
+
+    const regZip = zipEl.value.replace(/\D/g, '');
+
     KYC.saveStep({
         passportName: `${document.getElementById('inputPassportLastName').value} ${document.getElementById('inputPassportFirstName').value}`.trim(),
         nationality: document.getElementById('selectNationality').value,
-        address: document.getElementById('inputAddress').value,
-        addressDetail: document.getElementById('inputAddressDetail').value
+        nationalityName: natName,
+        email: document.getElementById('inputEmail').value.trim(),
+        reg_zip: regZip,
+        reg_addr1: addrEl.value.trim(),
+        reg_addr2: detailEl.value.trim(),
+        address: addrEl.value,
+        addressDetail: detailEl.value
     });
     KYC.goTo('../additional-info/index.html');
 }

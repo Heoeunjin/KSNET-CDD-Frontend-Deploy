@@ -97,12 +97,12 @@
 
                 <!-- 인증번호 입력 -->
                 <div class="form-group">
-                    <label class="form-label">입금자명의 숫자 4자리 입력</label>
+                    <label class="form-label">입금자명의 숫자 3자리 입력</label>
                     <div class="input-box timer-wrap" id="verifyCodeBox">
                         <input type="text"
                                id="inputVerifyCode"
-                               placeholder="입금자명 숫자 4자리"
-                               maxlength="4"
+                               placeholder="입금자명 숫자 3자리"
+                               maxlength="3"
                                inputmode="numeric">
                         <span class="timer-count" id="timerCount">03:00</span>
                     </div>
@@ -114,7 +114,6 @@
                     <div class="deposit-col">
                         <span class="deposit-col-label">입금자명</span>
                         <div class="deposit-mask-boxes">
-                            <div class="deposit-mask-box">*</div>
                             <div class="deposit-mask-box">*</div>
                             <div class="deposit-mask-box">*</div>
                             <div class="deposit-mask-box">*</div>
@@ -207,7 +206,9 @@
     </div>
 </div>
 
+<script src="../js/config.js"></script>
 <script src="../js/common.js"></script>
+<script src="../js/api/kyc-api.js"></script>
 <script src="../js/module/timer.js"></script>
 <script src="../js/module/validation.js"></script>
 <script src="index.js"></script>
