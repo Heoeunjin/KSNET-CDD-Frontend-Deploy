@@ -1,16 +1,13 @@
 # KSNET 고객확인제도 (KYC)
 
-<img alt="KSNET KYC" src="https://via.placeholder.com/1200x600/1A4CC0/FFFFFF?text=KSNET+KYC" />
-
----
+<img width="2627" height="596" alt="ksnet-logo" src="https://github.com/user-attachments/assets/9da21616-86d3-4ee4-9c2f-e4cf6b5ee846" />
+<img width="809" height="184" alt="KakaoTalk_Photo_2026-03-18-17-53-59 002" src="https://github.com/user-attachments/assets/9cdf73f6-75d1-4ec4-8529-54b793f2f43a" />
 
 ## 📋 프로젝트 소개
 
 선불지갑 서비스 이용을 위한 고객확인제도(KYC) 웹 프론트엔드 프로젝트입니다.
 
 금융거래의 안전성과 자금세탁 방지 등을 위해 고객 신원 확인 절차를 화면으로 구현합니다.
-
----
 
 ## 🎯 주요 기능
 
@@ -22,15 +19,11 @@
 - 계좌 인증 (1원 인증)
 - 신분증 인증
 
----
-
 ## 연동 안내
 
 - 인입 파라미터·거래코드·필드명·오류 처리·완료 후 콜백 등은 **KSNET에서 제공하는 API 명세**를 따릅니다.
 - 비정상 응답 시 응답 본문의 메시지 필드를 사용자에게 표시하는 방식을 권장합니다.
 - 가맹점·토큰·서명·주소 API 키 등은 **코드나 README에 넣지 말고** 환경변수·백엔드에서만 관리하세요.
-
----
 
 ## 📁 프로젝트 구조
 
@@ -95,14 +88,10 @@ KSNET_CDD/
         └── index.html
 ```
 
----
-
 ## 🛠 기술 스택
 
 - HTML5 / CSS3
 - JavaScript (Vanilla JS)
-
----
 
 ## 📂 주요 디렉토리
 
@@ -117,8 +106,6 @@ KSNET_CDD/
 | **`/account-verify`**  | KYC Step 4: 계좌 1원 인증               |
 | **`/id-verify`**       | KYC Step 5: 신분증 인증                 |
 | **`/complete`**        | 고객확인 완료 페이지                    |
-
----
 
 ## 🔄 KYC 진행 플로우
 
@@ -144,7 +131,5 @@ KSNET_CDD/
                                ↓
                           고객확인 완료 (complete/)
 ```
-
----
 
 **마지막 업데이트**: 2026년 3월

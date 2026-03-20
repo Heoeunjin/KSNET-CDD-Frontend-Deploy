@@ -1,17 +1,31 @@
 /**
- * KSNET KYC - 신분증 (명세 RRN / DL / PP / FR / ETC)
+ * KSNET KYC - 신분증 (명세 selIdTypeVal: RRN / DL)
  */
 
 function getSelIdType() {
     return document.getElementById('selIdType').value;
 }
 
+function selectIdType(value) {
+    document.getElementById('selIdType').value = value;
+    onIdTypeChange();
+}
+
 function onIdTypeChange() {
     const v = getSelIdType();
-    document.querySelectorAll('.id-pane').forEach(p => { p.style.display = 'none'; });
-    const map = { RRN: 'paneRRN', DL: 'paneDL', PP: 'panePP', FR: 'paneFR', ETC: 'paneETC' };
+    document.querySelectorAll('.id-pane').forEach(p => {
+        p.style.display = 'none';
+    });
+    const map = { RRN: 'paneRRN', DL: 'paneDL' };
     const id = map[v];
     if (id) document.getElementById(id).style.display = 'block';
+
+    document.querySelectorAll('.id-type-tab').forEach(btn => {
+        const on = btn.dataset.value === v;
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+
     checkNextBtn();
 }
 
@@ -88,18 +102,6 @@ document.getElementById('inputLicenseSerial').addEventListener('input', function
 });
 document.getElementById('inputDlArea').addEventListener('input', checkNextBtn);
 
-/* --- PP / FR / ETC --- */
-['inputPpNo', 'inputPpIssue', 'inputPpExpire', 'inputPpNation', 'inputFrNo', 'inputFrIssue', 'inputFrExpire', 'inputFrNation', 'inputEtcRemark']
-    .forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', function () {
-            if (id === 'inputPpIssue' || id === 'inputPpExpire' || id === 'inputFrIssue' || id === 'inputFrExpire') {
-                this.value = KYC.formatDate(this.value);
-            }
-            checkNextBtn();
-        });
-    });
-
 function checkNextBtn() {
     const t = getSelIdType();
     let ok = false;
@@ -122,18 +124,6 @@ function checkNextBtn() {
         ok = name.length > 0 && ssnFront.length === 6 && ssnBack.length === 1
             && licenseNo.length >= 13 && serial.length > 0
             && di.length === 10 && de.length === 10 && area.length > 0;
-    } else if (t === 'PP') {
-        ok = document.getElementById('inputPpNo').value.trim().length >= 5
-            && digits10(document.getElementById('inputPpIssue')).length === 8
-            && digits10(document.getElementById('inputPpExpire')).length === 8
-            && document.getElementById('inputPpNation').value.trim().length >= 2;
-    } else if (t === 'FR') {
-        ok = document.getElementById('inputFrNo').value.trim().length >= 6
-            && digits10(document.getElementById('inputFrIssue')).length === 8
-            && digits10(document.getElementById('inputFrExpire')).length === 8
-            && document.getElementById('inputFrNation').value.trim().length > 0;
-    } else if (t === 'ETC') {
-        ok = true;
     }
 
     document.getElementById('btnNext').disabled = !ok;
@@ -154,23 +144,6 @@ function buildIdFields(t) {
             idDlArea: document.getElementById('inputDlArea').value.trim()
         };
     }
-    if (t === 'PP') {
-        return {
-            idPpNo: document.getElementById('inputPpNo').value.trim().toUpperCase(),
-            idPpIssue: digits10(document.getElementById('inputPpIssue')),
-            idPpExpire: digits10(document.getElementById('inputPpExpire')),
-            idPpNation: document.getElementById('inputPpNation').value.trim().toUpperCase()
-        };
-    }
-    if (t === 'FR') {
-        return {
-            idFrNo: document.getElementById('inputFrNo').value.replace(/\D/g, ''),
-            idFrIssue: digits10(document.getElementById('inputFrIssue')),
-            idFrExpire: digits10(document.getElementById('inputFrExpire')),
-            idFrNation: document.getElementById('inputFrNation').value.trim()
-        };
-    }
-    /* ETC: 명세 전용 필드 없음 — 빈 주민증 형식 필드로 자리만 맞춤(KSNET 정책에 따라 프록시에서 조정) */
     return { idRrnIssue: '', idRrnNo: '' };
 }
 
