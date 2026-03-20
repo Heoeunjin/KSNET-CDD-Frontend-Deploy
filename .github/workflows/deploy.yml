@@ -20,10 +20,9 @@ jobs:
         run: |
           git config user.name "Heoeunjin"
           git config user.email "${{ secrets.GIT_EMAIL }}"
-          
+
           git remote remove fork || true
           
-          # URL 형식을 가장 확실한 방법으로 변경했습니다.
-          git remote add fork https://${MY_TOKEN}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
+          git remote add fork https://x-access-token:${MY_TOKEN}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
           
           git push fork develop:develop --force
