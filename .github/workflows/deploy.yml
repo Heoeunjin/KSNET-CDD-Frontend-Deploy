@@ -17,5 +17,9 @@ jobs:
         run: |
           git config user.name "Heoeunjin"
           git config user.email "${{ secrets.GIT_EMAIL }}"
-          git remote add fork https://x-access-token:${{ secrets.FORK_DISPATCH_TOKEN }}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
+          # 기존 remote 삭제 후 다시 등록 (안전하게)
+          git remote remove fork || true
+          # 토큰을 직접 URL에 넣는 방식
+          git remote add fork https://${{ secrets.FORK_DISPATCH_TOKEN }}@github.com/Heoeunjin/KSNET-CDD-Frontend.git
+          # 강제 푸시
           git push fork develop --force
