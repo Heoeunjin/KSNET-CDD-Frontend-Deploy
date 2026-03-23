@@ -383,6 +383,19 @@ img {
     border-top: 1px solid var(--border);
 }
 
+.bottom-btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+.bottom-btn-row .btn-secondary {
+    flex: 1;
+}
+
+.bottom-btn-row .btn-primary {
+    flex: 1;
+}
+
 /* --- 인증번호 타이머 --- */
 .timer-wrap {
     position: relative;

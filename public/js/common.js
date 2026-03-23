@@ -4,16 +4,54 @@
 
 const KYC = {
 
+    decodeSafe(value) {
+        if (value == null) return '';
+        const str = String(value);
+        try {
+            return decodeURIComponent(str);
+        } catch (e) {
+            return str;
+        }
+    },
+
+    normalizeCallbackUrl(raw) {
+        const text = this.decodeSafe(raw).trim();
+        if (!text) return '';
+        try {
+            const u = new URL(text, window.location.href);
+            if (u.protocol !== 'http:' && u.protocol !== 'https:') return '';
+            return u.href;
+        } catch (e) {
+            return '';
+        }
+    },
+
     /**
-     * URL 쿼리에서 callbackUrl|callback 읽어 sessionStorage에 저장 (명세: 완료 후 전달)
+     * URL 쿼리에서 callbackUrl|callback|jsonData.callbackUrl 읽어 sessionStorage 저장
      */
     captureCallbackFromUrl() {
         try {
             const qs = new URLSearchParams(window.location.search);
-            const raw = qs.get('callbackUrl') || qs.get('callback');
-            if (!raw) return;
-            const decoded = decodeURIComponent(raw);
-            this.saveStep({ kyc_callback_url: decoded });
+
+            let callbackRaw = qs.get('callbackUrl') || qs.get('callback') || '';
+
+            // 외부에서 jsonData로 전달하는 경우도 허용
+            if (!callbackRaw) {
+                const rawJson = qs.get('jsonData');
+                if (rawJson) {
+                    try {
+                        const decoded = this.decodeSafe(rawJson);
+                        const obj = JSON.parse(decoded);
+                        callbackRaw = obj && (obj.callbackUrl || obj.callback) ? (obj.callbackUrl || obj.callback) : '';
+                    } catch (e) {
+                        console.warn('jsonData 파싱 실패:', e);
+                    }
+                }
+            }
+
+            const normalized = this.normalizeCallbackUrl(callbackRaw);
+            if (!normalized) return;
+            this.saveStep({ kyc_callback_url: normalized });
         } catch (e) {
             console.warn('callback URL 저장 실패:', e);
         }
@@ -182,22 +220,43 @@ const KYC = {
     },
 
     /**
-     * KYC 완료 후 callbackUrl로 결과 전달 (GET 쿼리: ksnet_svc_tkn_frm, card_no)
-     * @returns {boolean} 리다이렉트 했으면 true
+     * KYC 완료 후 callbackUrl로 결과 전달 (POST form + jsonData)
+     * @returns {boolean} 전송 시도 했으면 true
      */
-    redirectKycCallbackIfNeeded() {
+    submitKycCallbackIfNeeded() {
         const data = this.loadStep();
-        const base = data.kyc_callback_url;
-        if (!base || !String(base).trim()) return false;
+        const callbackUrl = this.normalizeCallbackUrl(data.kyc_callback_url);
+        if (!callbackUrl) return false;
+
+        const payload = {
+            resultCode: '200',
+            cardNo: data.card_no || '',
+            ksnetSvcTknFrm: data.ksnet_svc_tkn_frm || ''
+        };
+
         try {
-            const u = new URL(base, window.location.href);
-            if (data.ksnet_svc_tkn_frm) u.searchParams.set('ksnet_svc_tkn_frm', data.ksnet_svc_tkn_frm);
-            if (data.card_no) u.searchParams.set('card_no', data.card_no);
-            window.location.replace(u.href);
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = callbackUrl;
+            form.style.display = 'none';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'jsonData';
+            input.value = JSON.stringify(payload);
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
             return true;
         } catch (e) {
-            console.warn('callback 리다이렉트 실패:', e);
+            console.warn('callback POST 전송 실패:', e);
             return false;
         }
+    },
+
+    // 하위 호환: 기존 호출부 유지
+    redirectKycCallbackIfNeeded() {
+        return this.submitKycCallbackIfNeeded();
     }
 };

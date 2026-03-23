@@ -61,8 +61,48 @@ function onFundSourceChange() {
 function toggleLiveAddress() {
     const on = document.getElementById('chkLiveDifferent').checked;
     document.getElementById('liveAddressBlock').style.display = on ? 'block' : 'none';
+    const ownerSection = document.getElementById('ownerSection');
+    if (ownerSection) {
+        ownerSection.classList.toggle('after-live-address', on);
+    }
     checkNextBtn();
 }
+
+/**
+ * 실거주 주소 검색 — 행안부 도로명주소 팝업
+ * opener.jusoCallBack (인자 25개, jusoPopup.jsp 동일 순서)
+ */
+function searchAddressLive() {
+    const width = 500;
+    const height = 600;
+    const left = Math.round((window.screen.width - width) / 2);
+    const top = Math.round((window.screen.height - height) / 2);
+    const base = window.location.origin;
+    const popupUrl = base + '/juso-popup.html';
+    window.open(popupUrl, 'jusoPopup', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',scrollbars=yes');
+}
+
+window.jusoCallBack = function (
+    roadFullAddr,
+    roadAddrPart1,
+    addrDetail,
+    roadAddrPart2,
+    engAddr,
+    jibunAddr,
+    zipNo
+) {
+    var p1 = (roadAddrPart1 || '').trim();
+    var p2 = (roadAddrPart2 || '').trim();
+    var mainAddr = p1 ? [p1, p2].filter(Boolean).join(' ').trim() : (roadFullAddr || '').trim();
+    var zone = String(zipNo != null ? zipNo : '').replace(/\D/g, '');
+    var detail = (addrDetail != null ? String(addrDetail) : '').trim();
+
+    document.getElementById('inputLiveZip').value = zone;
+    document.getElementById('inputLiveAddr1').value = mainAddr;
+    document.getElementById('inputLiveAddr2').value = detail;
+    document.getElementById('inputLiveAddr2').focus();
+    checkNextBtn();
+};
 
 (function initForeignerBlock() {
     const kyc = KYC.loadStep();

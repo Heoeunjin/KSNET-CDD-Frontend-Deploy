@@ -183,21 +183,34 @@
             </div>
             <div id="liveAddressBlock" style="display:none;">
                 <div class="form-group">
-                    <label class="form-label" for="inputLiveZip">실거주 우편번호</label>
-                    <div class="input-box">
-                        <input type="text" id="inputLiveZip" inputmode="numeric" maxlength="5" placeholder="12345">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="inputLiveAddr1">실거주 기본주소</label>
-                    <div class="input-box">
-                        <input type="text" id="inputLiveAddr1" maxlength="200" placeholder="도로명 주소">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="inputLiveAddr2">실거주 상세주소</label>
-                    <div class="input-box">
-                        <input type="text" id="inputLiveAddr2" maxlength="200" placeholder="동·호수">
+                    <label class="form-label">실거주 주소</label>
+                    <div class="address-block">
+                        <div class="address-zip-row">
+                            <div class="input-box is-readonly" id="liveZipBox">
+                                <input type="text"
+                                       id="inputLiveZip"
+                                       placeholder="우편번호"
+                                       inputmode="numeric"
+                                       maxlength="5"
+                                       readonly>
+                            </div>
+                            <button type="button" class="btn btn-outline btn-sm" id="btnSearchLiveAddress" onclick="searchAddressLive()">
+                                주소 검색
+                            </button>
+                        </div>
+                        <div class="input-box is-readonly" id="liveAddr1Box">
+                            <input type="text"
+                                   id="inputLiveAddr1"
+                                   placeholder="기본주소"
+                                   maxlength="200"
+                                   readonly>
+                        </div>
+                        <div class="input-box" id="liveAddr2Box">
+                            <input type="text"
+                                   id="inputLiveAddr2"
+                                   placeholder="상세주소 (동·호수)"
+                                   maxlength="200">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -226,8 +239,8 @@
                 </div>
             </div>
 
-            <!-- 실소유자 여부 -->
-            <div class="form-group">
+            <!-- 실소유자 여부 (실거주 주소 펼침 시 상단 여백: .after-live-address) -->
+            <div class="form-group" id="ownerSection">
                 <label class="form-label">실소유자 여부</label>
                 <p class="owner-guide">본 서비스의 실제 이용자가 본인 자신인지 확인해주세요.</p>
                 <div class="radio-group" id="ownerGroup">
@@ -271,9 +284,14 @@
 
     <!-- 하단 버튼 -->
     <div class="bottom-btn-area">
-        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
-            다음
-        </button>
+        <div class="bottom-btn-row">
+            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                뒤로가기
+            </button>
+            <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+                다음
+            </button>
+        </div>
     </div>
 
 </div>
