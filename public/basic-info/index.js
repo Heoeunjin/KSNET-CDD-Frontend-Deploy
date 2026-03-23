@@ -24,12 +24,33 @@ document.getElementById('inputName').addEventListener('input', function (e) {
     // 한글 IME 입력 중에는 값 변형을 하지 않음 (조합 완성 후 처리)
     if (e.isComposing) return;
 
-    // 한글 이외의 문자 제거
-    this.value = this.value.replace(/[^가-힣]/g, '');
-    Validation.clearError(
-        document.getElementById('nameBox'),
-        document.getElementById('nameError')
-    );
+    const nameBox = document.getElementById('nameBox');
+    const nameError = document.getElementById('nameError');
+    const raw = this.value;
+    const hasInvalidChar = /[^가-힣]/.test(raw);
+
+    // 한글 이외의 문자는 제거하되, 사용자에게 이유를 즉시 안내
+    this.value = raw.replace(/[^가-힣]/g, '');
+    const isValidKoreanName = this.value && KYC.validateName(this.value);
+
+    // 현재 값이 유효하면 이전 경고는 즉시 해제
+    if (isValidKoreanName) {
+        Validation.clearError(nameBox, nameError);
+    } else if (hasInvalidChar) {
+        Validation.showError(
+            nameBox,
+            nameError,
+            '한글로 입력해주세요.'
+        );
+    } else if (this.value && !KYC.validateName(this.value)) {
+        Validation.showError(
+            nameBox,
+            nameError,
+            '이름은 한글만 입력 가능합니다. (최대 10자)'
+        );
+    } else {
+        Validation.clearError(nameBox, nameError);
+    }
     checkNextBtn();
 });
 
