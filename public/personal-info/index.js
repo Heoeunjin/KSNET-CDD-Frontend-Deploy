@@ -20,7 +20,7 @@ document.getElementById('inputPassportFirstName').addEventListener('input', func
     checkNextBtn();
 });
 
-/* --- 국적 데이터 (195개국, 대한민국 최상단) --- */
+/* --- 국적 데이터: KR 단독 상단 → 「전체 국가」→ JP·US·CN → 나머지 가나다순 --- */
 const COUNTRIES = [
     { code: 'KR', name: '대한민국', flag: '🇰🇷' },
     { code: 'AF', name: '아프가니스탄', flag: '🇦🇫' },
@@ -221,25 +221,61 @@ const COUNTRIES = [
     { code: 'XK', name: '코소보', flag: '🇽🇰' },
 ];
 
-/* --- 국적 커스텀 드롭다운 --- */
-(function initNationalityDropdown() {
-    const box = document.getElementById('nationalityBox');
+/** 전체 국가 섹션 헤더 바로 아래에 고정 노출 (명세 자주 쓰는 국적) */
+const NATN_PIN_AFTER_ALL_HEADER = ['JP', 'US', 'CN'];
+const EXCLUDED_FROM_ALPHA = new Set(['KR'].concat(NATN_PIN_AFTER_ALL_HEADER));
+
+function getCountryByCode(code) {
+    for (let i = 0; i < COUNTRIES.length; i++) {
+        if (COUNTRIES[i].code === code) {
+            return COUNTRIES[i];
+        }
+    }
+    return null;
+}
+
+function getCountriesAlphaRest() {
+    return COUNTRIES.filter(function (c) {
+        return !EXCLUDED_FROM_ALPHA.has(c.code);
+    }).sort(function (a, b) {
+        return a.name.localeCompare(b.name, 'ko');
+    });
+}
+
+/* --- 국적 fixed 바텀시트 (계좌 은행 선택과 동일 패턴) --- */
+(function initNationalitySheet() {
+    const trigger = document.getElementById('nationalityTrigger');
     const display = document.getElementById('nationalityDisplay');
-    const dropdown = document.getElementById('nationalityDropdown');
     const list = document.getElementById('nationalityList');
     const hiddenInput = document.getElementById('selectNationality');
+    const sheet = document.getElementById('nationalitySheet');
+    const backdrop = document.getElementById('nationalitySheetBackdrop');
 
     let selectedCode = '';
+    let isOpen = false;
 
     function renderList() {
         list.innerHTML = '';
-        // 대한민국 최상단, 이후 전체 국가 섹션
-        list.appendChild(makeOption(COUNTRIES[0]));
+        const kr = getCountryByCode('KR');
+        if (kr) {
+            list.appendChild(makeOption(kr));
+        }
+
         const sep = document.createElement('div');
         sep.className = 'nationality-section-label';
         sep.textContent = '전체 국가';
         list.appendChild(sep);
-        COUNTRIES.slice(1).forEach(c => list.appendChild(makeOption(c)));
+
+        NATN_PIN_AFTER_ALL_HEADER.forEach(function (code) {
+            const c = getCountryByCode(code);
+            if (c) {
+                list.appendChild(makeOption(c));
+            }
+        });
+
+        getCountriesAlphaRest().forEach(function (c) {
+            list.appendChild(makeOption(c));
+        });
     }
 
     function makeOption(country) {
@@ -247,8 +283,7 @@ const COUNTRIES = [
         el.className = 'nationality-option' + (country.code === selectedCode ? ' is-selected' : '');
         el.dataset.code = country.code;
         el.innerHTML = `<span class="flag">${country.flag}</span><span class="country-name">${country.name}</span>`;
-        el.addEventListener('click', function (e) {
-            e.stopPropagation();
+        el.addEventListener('click', function () {
             selectCountry(country);
         });
         return el;
@@ -259,38 +294,119 @@ const COUNTRIES = [
         hiddenInput.value = country.code;
         display.textContent = country.flag + '  ' + country.name;
         display.classList.add('is-selected');
-        closeDropdown();
+        closeNationalitySheet();
         checkNextBtn();
     }
 
-    function openDropdown() {
-        box.classList.add('is-open');
+    let sheetGestureInit = false;
+
+    /** 은행 바텀시트와 동일: 리스트 스크롤 시 확장, 핸들 드래그로 확장·닫기 */
+    function initNationalitySheetGesture(sheetEl, body) {
+        if (sheetGestureInit || !body) return;
+        sheetGestureInit = true;
+
+        let lastScrollTop = 0;
+        body.addEventListener('scroll', function () {
+            const st = this.scrollTop;
+            if (st > 0) {
+                sheetEl.classList.add('is-expanded');
+            } else if (st === 0 && lastScrollTop > 0) {
+                sheetEl.classList.remove('is-expanded');
+            }
+            lastScrollTop = st;
+        });
+
+        const handle = sheetEl.querySelector('.nationality-sheet-handle');
+        if (!handle) return;
+
+        let startY = 0;
+
+        function onDragStart(e) {
+            startY = e.touches ? e.touches[0].clientY : e.clientY;
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('touchmove', onDragMove, { passive: true });
+            document.addEventListener('touchend', onDragEnd);
+        }
+        function onDragMove(e) {
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            const diff = startY - y;
+            if (diff > 30) {
+                sheetEl.classList.add('is-expanded');
+            } else if (diff < -30) {
+                if (sheetEl.classList.contains('is-expanded')) {
+                    sheetEl.classList.remove('is-expanded');
+                } else {
+                    closeNationalitySheet();
+                }
+            }
+        }
+        function onDragEnd() {
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+            document.removeEventListener('touchmove', onDragMove);
+            document.removeEventListener('touchend', onDragEnd);
+        }
+
+        handle.addEventListener('mousedown', onDragStart);
+        handle.addEventListener('touchstart', onDragStart, { passive: true });
+    }
+
+    function openNationalitySheet() {
+        if (isOpen) return;
+        isOpen = true;
+        sheet.classList.remove('is-expanded');
+        const body = sheet.querySelector('.nationality-sheet-body');
+        if (body) {
+            body.scrollTop = 0;
+        }
+        trigger.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        backdrop.classList.add('is-open');
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
         renderList();
+        initNationalitySheetGesture(sheet, body);
     }
 
-    function closeDropdown() {
-        box.classList.remove('is-open');
+    function closeNationalitySheet(force) {
+        if (!isOpen && !force) return;
+        isOpen = false;
+        trigger.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+        backdrop.classList.remove('is-open');
+        sheet.classList.remove('is-open');
+        sheet.classList.remove('is-expanded');
+        sheet.setAttribute('aria-hidden', 'true');
     }
 
-    box.addEventListener('click', function (e) {
-        if (box.classList.contains('is-open')) {
-            closeDropdown();
+    window.closeNationalitySheet = closeNationalitySheet;
+
+    trigger.addEventListener('click', function () {
+        if (isOpen) {
+            closeNationalitySheet();
         } else {
-            openDropdown();
+            openNationalitySheet();
         }
     });
 
-    dropdown.addEventListener('click', function (e) {
-        e.stopPropagation();
-    });
-
-    document.addEventListener('click', function (e) {
-        if (!box.contains(e.target)) {
-            closeDropdown();
+    trigger.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openNationalitySheet();
         }
     });
 
-    renderList();
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+            closeNationalitySheet();
+        }
+    });
+
+    closeNationalitySheet(true);
+    window.addEventListener('pageshow', function () {
+        closeNationalitySheet(true);
+    });
 })();
 
 /* --- 이메일 입력 --- */

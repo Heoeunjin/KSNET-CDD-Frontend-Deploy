@@ -66,39 +66,42 @@
     letter-spacing: -0.5px;
 }
 
-/* 바텀시트 backdrop */
+/* 바텀시트 backdrop — fixed: 문서 하단 스크롤 시 시트가 보이지 않도록 */
 .bank-sheet-backdrop {
     display: none;
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     z-index: 300;
-    border-radius: inherit;
 }
 
 .bank-sheet-backdrop.is-open {
     display: block;
 }
 
-/* 바텀시트 */
+/* 바텀시트 — 뷰포트 하단 고정 (.kyc-wrap max-width 480px 와 정렬) */
 .bank-sheet {
-    position: absolute;
+    position: fixed;
+    left: 50%;
     bottom: 0;
-    left: 0;
-    right: 0;
+    width: 100%;
+    max-width: 480px;
+    transform: translateX(-50%) translateY(100%);
     background: #fff;
     border-radius: 20px 20px 0 0;
     z-index: 301;
     display: flex;
     flex-direction: column;
     height: 62%;
-    transform: translateY(100%);
+    max-height: 85vh;
+    pointer-events: none;
     transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-                height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .bank-sheet.is-open {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
 }
 
 .bank-sheet.is-expanded {

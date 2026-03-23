@@ -19,29 +19,71 @@ let smsResponse = null; // gubun=1 응답 (cer_tr_uky, rqs_unq_no, rspd_unq_no)
     }
 })();
 
-/* --- 이름 입력 처리 --- */
-document.getElementById('inputName').addEventListener('input', function (e) {
-    // 한글 IME 입력 중에는 값 변형을 하지 않음 (조합 완성 후 처리)
-    if (e.isComposing) return;
+/* --- 이름 입력 처리 (IME 조합 중에는 값/에러 동기화 스킵 → compositionend 에서 정리) --- */
+(function initNameField() {
+    const inputNameEl = document.getElementById('inputName');
+    const nameBox = document.getElementById('nameBox');
+    const nameError = document.getElementById('nameError');
+    let nameImeComposing = false;
 
-    // 한글 이외의 문자 제거
-    this.value = this.value.replace(/[^가-힣]/g, '');
-    Validation.clearError(
-        document.getElementById('nameBox'),
-        document.getElementById('nameError')
-    );
-    checkNextBtn();
-});
+    function syncNameField() {
+        const raw = inputNameEl.value;
+        const stripped = raw.replace(/[^가-힣]/g, '');
+        inputNameEl.value = stripped;
 
-document.getElementById('inputName').addEventListener('blur', function () {
-    if (this.value && !KYC.validateName(this.value)) {
-        Validation.showError(
-            document.getElementById('nameBox'),
-            document.getElementById('nameError'),
-            '이름은 한글만 입력 가능합니다. (최대 10자)'
-        );
+        const isValidKoreanName = stripped.length > 0 && KYC.validateName(stripped);
+        const hadNonHangulRemoved = raw !== stripped;
+
+        if (isValidKoreanName) {
+            Validation.clearError(nameBox, nameError);
+        } else if (hadNonHangulRemoved) {
+            Validation.showError(
+                nameBox,
+                nameError,
+                '한글로 입력해주세요.'
+            );
+        } else if (stripped.length > 0 && !KYC.validateName(stripped)) {
+            Validation.showError(
+                nameBox,
+                nameError,
+                '이름은 한글만 입력 가능합니다. (최대 10자)'
+            );
+        } else {
+            Validation.clearError(nameBox, nameError);
+        }
+        checkNextBtn();
     }
-});
+
+    inputNameEl.addEventListener('compositionstart', function () {
+        nameImeComposing = true;
+    });
+
+    inputNameEl.addEventListener('compositionend', function () {
+        nameImeComposing = false;
+        syncNameField();
+    });
+
+    inputNameEl.addEventListener('input', function (e) {
+        if (e.isComposing || nameImeComposing) {
+            return;
+        }
+        syncNameField();
+    });
+
+    inputNameEl.addEventListener('blur', function () {
+        if (nameImeComposing) {
+            return;
+        }
+        syncNameField();
+        if (this.value && !KYC.validateName(this.value)) {
+            Validation.showError(
+                nameBox,
+                nameError,
+                '이름은 한글만 입력 가능합니다. (최대 10자)'
+            );
+        }
+    });
+})();
 
 /* --- 주민등록번호 앞자리 --- */
 document.getElementById('inputSsnFront').addEventListener('input', function () {

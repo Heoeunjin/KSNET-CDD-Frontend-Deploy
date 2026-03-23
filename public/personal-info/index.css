@@ -51,11 +51,11 @@
 }
 
 /* ============================================================
-   국적 커스텀 드롭다운
+   국적 — 트리거 + fixed 바텀시트 (스크롤 시 목록이 페이지에 노출되지 않음)
    ============================================================ */
-.nationality-select {
+.nationality-trigger {
     position: relative;
-    background-color: #fff;
+    background: #fff;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 0 36px 0 16px;
@@ -68,11 +68,12 @@
     transition: border-color 0.15s;
 }
 
-.nationality-select:focus-within {
+.nationality-trigger:focus-visible {
     border-color: var(--primary);
+    outline: none;
 }
 
-.nationality-select .select-arrow {
+.nationality-trigger .select-arrow {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -84,11 +85,11 @@
     transition: transform 0.2s;
 }
 
-.nationality-select.is-open .select-arrow {
+.nationality-trigger.is-open .select-arrow {
     transform: translateY(-50%) rotate(180deg);
 }
 
-.nationality-display {
+.nationality-trigger-label {
     font-size: 15px;
     color: var(--text-hint);
     white-space: nowrap;
@@ -96,35 +97,104 @@
     text-overflow: ellipsis;
 }
 
-.nationality-display.is-selected {
+.nationality-trigger-label.is-selected {
     color: var(--text);
 }
 
-.nationality-dropdown {
+.nationality-sheet-backdrop {
     display: none;
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
-    z-index: 200;
-    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 300;
 }
 
-.nationality-select.is-open .nationality-dropdown {
+.nationality-sheet-backdrop.is-open {
     display: block;
 }
 
-
-.nationality-list {
-    max-height: 220px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+.nationality-sheet {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    transform: translateX(-50%) translateY(100%);
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    z-index: 301;
+    display: flex;
+    flex-direction: column;
+    /* 은행 선택 바텀시트와 동일: 처음 ~62%, 스크롤·드래그 후 ~82% */
+    height: 62%;
+    max-height: 85vh;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+        height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
+
+.nationality-sheet.is-open {
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.nationality-sheet.is-expanded {
+    height: 82%;
+}
+
+.nationality-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+    cursor: grab;
+}
+
+.nationality-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 10px;
+    flex-shrink: 0;
+}
+
+.nationality-sheet-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.nationality-sheet-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-hint);
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nationality-sheet-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+.nationality-sheet-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 0 0 24px;
+}
+
 
 .nationality-option {
     display: flex;

@@ -93,17 +93,14 @@
                 <p class="error-msg" id="passportError"></p>
             </div>
 
-            <!-- 국적 (커스텀 드롭다운) -->
+            <!-- 국적 (바텀시트 — 클릭 시에만 표시) -->
             <div class="form-group">
                 <label class="form-label">국적</label>
-                <div class="nationality-select" id="nationalityBox">
-                    <div class="nationality-display" id="nationalityDisplay">국적 선택</div>
+                <div class="nationality-trigger" id="nationalityTrigger" role="button" tabindex="0" aria-expanded="false" aria-controls="nationalitySheet">
+                    <div class="nationality-trigger-label" id="nationalityDisplay">국적 선택</div>
                     <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                    <div class="nationality-dropdown" id="nationalityDropdown">
-                        <div class="nationality-list" id="nationalityList"></div>
-                    </div>
                     <input type="hidden" id="selectNationality">
                 </div>
                 <p class="error-msg" id="nationalityError"></p>
@@ -175,6 +172,21 @@
 
 </div>
 
+<div class="nationality-sheet-backdrop" id="nationalitySheetBackdrop" onclick="closeNationalitySheet()"></div>
+<div class="nationality-sheet" id="nationalitySheet" aria-hidden="true">
+    <div class="nationality-sheet-handle"></div>
+    <div class="nationality-sheet-header">
+        <h3 class="nationality-sheet-title">국적 선택</h3>
+        <button type="button" class="nationality-sheet-close" onclick="closeNationalitySheet()" aria-label="닫기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+        </button>
+    </div>
+    <div class="nationality-sheet-body">
+        <div class="nationality-list" id="nationalityList"></div>
+    </div>
+</div>
 
 <script src="../js/config.js"></script>
 <script src="../js/common.js"></script>
