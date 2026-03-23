@@ -244,9 +244,14 @@
 
     <!-- 하단 버튼 -->
     <div class="bottom-btn-area" id="bottomBtnArea">
-        <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
-            다음
-        </button>
+        <div class="bottom-btn-row">
+            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                뒤로가기
+            </button>
+            <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+                다음
+            </button>
+        </div>
     </div>
 
 </div>

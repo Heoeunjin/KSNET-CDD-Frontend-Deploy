@@ -95,3 +95,36 @@
     color: var(--primary);
     font-weight: 600;
 }
+
+/* 실거주 주소 블록이 펼쳐졌을 때만 실소유자 섹션 위 간격 */
+.form-group#ownerSection.after-live-address {
+    margin-top: 28px;
+}
+
+/* 실거주 주소 검색 (personal-info와 동일 구조) */
+.address-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.address-zip-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.address-zip-row .input-box {
+    flex: 0 0 124px;
+    max-width: 140px;
+}
+
+.address-zip-row .input-box input {
+    text-align: start;
+}
+
+.address-zip-row .btn-sm {
+    flex-shrink: 0;
+    height: auto;
+    align-self: stretch;
+}
