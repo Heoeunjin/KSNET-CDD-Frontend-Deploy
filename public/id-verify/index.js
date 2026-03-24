@@ -33,53 +33,16 @@ function digits10(el) {
     return (el && el.value) ? el.value.replace(/\D/g, '') : '';
 }
 
-function initKoreanNameField(inputId, boxId, errorId) {
-    const inputEl = document.getElementById(inputId);
-    const boxEl = document.getElementById(boxId);
-    const errorEl = document.getElementById(errorId);
-    if (!inputEl) return;
-
-    let imeComposing = false;
-
-    function syncNameField() {
-        const raw = inputEl.value;
-        const stripped = raw.replace(/[^가-힣]/g, '');
-        inputEl.value = stripped;
-
-        const isValidKoreanName = stripped.length > 0 && KYC.validateName(stripped);
-        const hadNonHangulRemoved = raw !== stripped;
-
-        if (isValidKoreanName) {
-            Validation.clearError(boxEl, errorEl);
-        } else if (hadNonHangulRemoved) {
-            Validation.showError(boxEl, errorEl, '한글로 입력해주세요.');
-        } else if (stripped.length > 0 && !KYC.validateName(stripped)) {
-            Validation.showError(boxEl, errorEl, '이름은 한글만 입력 가능합니다. (최대 10자)');
-        } else {
-            Validation.clearError(boxEl, errorEl);
-        }
-        checkNextBtn();
-    }
-
-    inputEl.addEventListener('compositionstart', function () {
-        imeComposing = true;
-    });
-    inputEl.addEventListener('compositionend', function () {
-        imeComposing = false;
-        syncNameField();
-    });
-    inputEl.addEventListener('input', function (e) {
-        if (e.isComposing || imeComposing) return;
-        syncNameField();
-    });
-    inputEl.addEventListener('blur', function () {
-        if (imeComposing) return;
-        syncNameField();
-    });
+function applyVerifiedName() {
+    const kycData = KYC.loadStep();
+    const verifiedName = String(kycData.auth_nm || kycData.name || '').trim();
+    const rrnNameEl = document.getElementById('inputResidentName');
+    const dlNameEl = document.getElementById('inputLicenseName');
+    if (rrnNameEl) rrnNameEl.value = verifiedName;
+    if (dlNameEl) dlNameEl.value = verifiedName;
 }
 
 /* --- RRN --- */
-initKoreanNameField('inputResidentName', 'residentNameBox', 'residentNameError');
 document.getElementById('inputResidentSsnFront').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 6);
     if (this.value.length === 6) document.getElementById('inputResidentSsnBack').focus();
@@ -87,13 +50,9 @@ document.getElementById('inputResidentSsnFront').addEventListener('input', funct
 });
 document.getElementById('inputResidentSsnBack').addEventListener('input', function () {
     const real = document.getElementById('inputResidentSsnBackReal');
-    const digits = this.value.replace(/\D/g, '').slice(0, 1);
+    const digits = this.value.replace(/\D/g, '').slice(0, 7);
     real.value = digits;
-    if (digits.length === 0) this.value = '';
-    else {
-        this.value = digits + '●'.repeat(6);
-        try { this.setSelectionRange(1, 1); } catch (e) {}
-    }
+    this.value = digits;
     checkNextBtn();
 });
 document.getElementById('inputResidentIssueDate').addEventListener('input', function () {
@@ -102,23 +61,6 @@ document.getElementById('inputResidentIssueDate').addEventListener('input', func
 });
 
 /* --- DL --- */
-initKoreanNameField('inputLicenseName', 'licenseNameBox', 'licenseNameError');
-document.getElementById('inputLicenseSsnFront').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 6);
-    if (this.value.length === 6) document.getElementById('inputLicenseSsnBack').focus();
-    checkNextBtn();
-});
-document.getElementById('inputLicenseSsnBack').addEventListener('input', function () {
-    const real = document.getElementById('inputLicenseSsnBackReal');
-    const digits = this.value.replace(/\D/g, '').slice(0, 1);
-    real.value = digits;
-    if (digits.length === 0) this.value = '';
-    else {
-        this.value = digits + '●'.repeat(6);
-        try { this.setSelectionRange(1, 1); } catch (e) {}
-    }
-    checkNextBtn();
-});
 document.getElementById('inputLicenseNo').addEventListener('input', function () {
     let val = this.value.replace(/[^0-9]/g, '');
     if (val.length > 2) val = val.slice(0, 2) + '-' + val.slice(2);
@@ -131,35 +73,31 @@ document.getElementById('inputLicenseSerial').addEventListener('input', function
     this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     checkNextBtn();
 });
-['inputDlIssue', 'inputDlExpire'].forEach(id => {
+['inputDlIssue'].forEach(id => {
     document.getElementById(id).addEventListener('input', function () {
         this.value = KYC.formatDate(this.value);
         checkNextBtn();
     });
 });
-document.getElementById('inputDlArea').addEventListener('input', checkNextBtn);
 
 function checkNextBtn() {
     const t = getSelIdType();
     let ok = false;
 
     if (t === 'RRN') {
-        const name = document.getElementById('inputResidentName').value;
         const ssnFront = document.getElementById('inputResidentSsnFront').value;
         const ssnBack = document.getElementById('inputResidentSsnBackReal').value;
         const issue = document.getElementById('inputResidentIssueDate').value;
-        ok = name.length > 0 && ssnFront.length === 6 && ssnBack.length === 1 && issue.length === 10;
+        // KSNET 가이드: 주민등록증 검증은 발급일자 + 주민번호(13자리) 기준
+        ok = ssnFront.length === 6 && ssnBack.length === 7 && issue.length === 10;
     } else if (t === 'DL') {
-        const name = document.getElementById('inputLicenseName').value;
-        const ssnFront = document.getElementById('inputLicenseSsnFront').value;
-        const ssnBack = document.getElementById('inputLicenseSsnBackReal').value;
         const licenseNo = document.getElementById('inputLicenseNo').value;
         const serial = document.getElementById('inputLicenseSerial').value;
         const di = document.getElementById('inputDlIssue').value;
-        const de = document.getElementById('inputDlExpire').value;
-        ok = name.length > 0 && ssnFront.length === 6 && ssnBack.length === 1
-            && licenseNo.length >= 13 && serial.length > 0
-            && di.length === 10 && de.length === 10;
+        // KSNET 가이드: 운전면허 검증은 면허번호 + 생년월일(yyyymmdd) + 암호값
+        ok = licenseNo.replace(/\D/g, '').length > 0
+            && digits10(document.getElementById('inputDlIssue')).length === 8
+            && serial.length > 0;
     }
 
     document.getElementById('btnNext').disabled = !ok;
@@ -167,18 +105,18 @@ function checkNextBtn() {
 
 function buildIdFields(t) {
     if (t === 'RRN') {
+        const rrnFront = document.getElementById('inputResidentSsnFront').value.replace(/\D/g, '').slice(0, 6);
+        const rrnBack = document.getElementById('inputResidentSsnBackReal').value.replace(/\D/g, '').slice(0, 7);
         return {
             idRrnIssue: digits10(document.getElementById('inputResidentIssueDate')),
-            idRrnNo: document.getElementById('inputResidentSsnFront').value
+            idRrnNo: rrnFront + rrnBack
         };
     }
     if (t === 'DL') {
         return {
             idDlNo: document.getElementById('inputLicenseNo').value.replace(/\D/g, ''),
             idDlIssue: digits10(document.getElementById('inputDlIssue')),
-            idDlExpire: digits10(document.getElementById('inputDlExpire')),
-            idDlSecureno: document.getElementById('inputLicenseSerial').value.trim(),
-            idDlArea: ''
+            idDlSecureno: document.getElementById('inputLicenseSerial').value.trim()
         };
     }
     return { idRrnIssue: '', idRrnNo: '' };
@@ -249,4 +187,5 @@ async function goNext() {
 }
 
 onIdTypeChange();
+applyVerifiedName();
 checkNextBtn();

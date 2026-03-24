@@ -98,11 +98,12 @@
                     <div class="input-box" id="residentNameBox">
                         <input type="text"
                                id="inputResidentName"
-                               placeholder="홍길동"
+                               placeholder="본인인증 이름 자동적용"
                                maxlength="10"
-                               inputmode="text">
+                               inputmode="text"
+                               readonly>
                     </div>
-                    <p class="error-msg" id="residentNameError"></p>
+                    <p class="helper-text">본인인증된 이름으로 자동 적용됩니다.</p>
                 </div>
 
                 <!-- 주민등록번호 -->
@@ -130,7 +131,7 @@
                 </div>
 
                 <!-- 발급일자 -->
-                <div class="form-group">
+                <div class="form-group issue-field-spacer">
                     <label class="form-label" for="inputResidentIssueDate">발급일자</label>
                     <div class="input-box" id="residentIssueDateBox">
                         <input type="text"
@@ -153,41 +154,25 @@
             </div>
             <form autocomplete="off">
 
-                <!-- 이름 -->
+                <!-- 이름(자동 적용, 수정 불가) -->
                 <div class="form-group">
                     <label class="form-label" for="inputLicenseName">이름</label>
                     <div class="input-box" id="licenseNameBox">
                         <input type="text"
                                id="inputLicenseName"
-                               placeholder="홍길동"
+                               placeholder="본인인증 이름 자동적용"
                                maxlength="10"
-                               inputmode="text">
+                               inputmode="text"
+                               readonly>
                     </div>
-                    <p class="error-msg" id="licenseNameError"></p>
+                    <p class="helper-text">본인인증된 이름으로 자동 적용됩니다.</p>
                 </div>
 
-                <!-- 주민등록번호 -->
-                <div class="form-group">
-                    <label class="form-label">주민등록번호</label>
-                    <div class="ssn-wrap">
-                        <div class="input-box" id="licenseSsnFrontBox">
-                            <input type="text"
-                                   id="inputLicenseSsnFront"
-                                   placeholder="123456"
-                                   maxlength="6"
-                                   inputmode="numeric">
-                        </div>
-                        <span class="ssn-dash">-</span>
-                        <div class="input-box ssn-back-box" id="licenseSsnBackBox">
-                            <input type="text"
-                                   id="inputLicenseSsnBack"
-                                   placeholder="●●●●●●●"
-                                   maxlength="7"
-                                   inputmode="numeric">
-                            <input type="hidden" id="inputLicenseSsnBackReal">
-                        </div>
+                <div class="form-group issue-field-spacer">
+                    <label class="form-label" for="inputDlIssue">생년월일</label>
+                    <div class="input-box">
+                        <input type="text" id="inputDlIssue" placeholder="YYYY.MM.DD" maxlength="10" inputmode="numeric">
                     </div>
-                    <p class="error-msg" id="licenseSsnError"></p>
                 </div>
 
                 <!-- 면허번호 -->
@@ -204,7 +189,7 @@
                 </div>
 
                 <!-- 식별번호 -->
-                <div class="form-group">
+                <div class="form-group issue-field-spacer">
                     <label class="form-label" for="inputLicenseSerial">식별번호</label>
                     <div class="input-box" id="licenseSerialBox">
                         <input type="text"
@@ -214,25 +199,6 @@
                                inputmode="text">
                     </div>
                     <p class="error-msg" id="licenseSerialError"></p>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="inputDlIssue">발급일자 (명세 idDlIssue)</label>
-                    <div class="input-box">
-                        <input type="text" id="inputDlIssue" placeholder="YYYY.MM.DD" maxlength="10" inputmode="numeric">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="inputDlExpire">만료일자 (명세 idDlExpire)</label>
-                    <div class="input-box">
-                        <input type="text" id="inputDlExpire" placeholder="YYYY.MM.DD" maxlength="10" inputmode="numeric">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="inputDlArea">지역 코드 (면허증 상 지역)</label>
-                    <div class="input-box">
-                        <input type="text" id="inputDlArea" placeholder="예: 11 서울" maxlength="10">
-                    </div>
                 </div>
 
             </form>
