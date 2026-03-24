@@ -185,7 +185,7 @@ const KYC_API = {
             selIdTypeVal: data.selIdTypeVal || 'RRN',
             uploadFileName: data.uploadFileName != null ? data.uploadFileName : '',
             savedFileName: data.savedFileName != null ? data.savedFileName : '',
-            uploadFileSize: data.uploadFileSize != null ? data.uploadFileSize : '',
+            uploadFileSize: data.uploadFileSize != null ? data.uploadFileSize : '0',
             ...idFields
         });
     }

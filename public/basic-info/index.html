@@ -213,6 +213,28 @@
     </div>
 </div>
 
+<!-- 재진입 안내 (cur_step 05 / 07) -->
+<div class="modal-overlay" id="modalResumeReentry">
+    <div class="modal-box">
+        <div class="modal-title">이전 진행 내역을 확인했어요</div>
+        <div class="modal-desc">이미 입력하신 정보가 있어 현재 진행 단계로 이동합니다.<br>일부 단계는 건너뛸 수 있습니다.</div>
+        <div class="modal-btns">
+            <button type="button" class="btn btn-primary" onclick="onResumeReentryContinue()">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- 이미 완료 안내 (cur_step 08) -->
+<div class="modal-overlay" id="modalAlreadyCompleted">
+    <div class="modal-box">
+        <div class="modal-title">안내</div>
+        <div class="modal-desc">이미 고객 확인 절차가 완료된 상태입니다.</div>
+        <div class="modal-btns">
+            <button type="button" class="btn btn-primary" onclick="onAlreadyCompletedConfirm()">확인</button>
+        </div>
+    </div>
+</div>
+
 <script src="../js/config.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/api/kyc-api.js"></script>

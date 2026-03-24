@@ -213,6 +213,62 @@ const KYC = {
     },
 
     /**
+     * gubun=2(SMS 확인) 응답 데이터를 세션에 병합 (재진입 시 서버 기입력값 반영)
+     * @param {Record<string, *>} responseData verifySms response_data (+ 필요 시 cer_tr_uky 등 병합 객체)
+     */
+    mergeVerifySmsResponse(responseData) {
+        if (!responseData || typeof responseData !== 'object') return;
+
+        const out = {};
+        Object.keys(responseData).forEach((k) => {
+            const v = responseData[k];
+            if (v === null || v === undefined) return;
+            const t = typeof v;
+            if (t === 'string' || t === 'number' || t === 'boolean') {
+                out[k] = v;
+            }
+        });
+
+        // KSNET 재진입(cur_step=05/07) 응답은 환경에 따라 한글 이름 키가 다를 수 있어 정규화
+        const nameCandidates = [out.auth_nm, out.usr_nm, out.user_nm, out.kor_nm, out.name];
+        const normalizedName = nameCandidates.find((v) => String(v || '').trim() !== '');
+        if (normalizedName) {
+            out.auth_nm = String(normalizedName).trim();
+            out.name = out.auth_nm;
+        }
+        if (out.mbtl_no != null && String(out.mbtl_no).trim() !== '') {
+            out.phone = this.formatPhone(String(out.mbtl_no));
+        }
+        if (out.eng_nm) {
+            const eng = String(out.eng_nm).trim();
+            out.passportName = eng;
+            const parts = eng.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2) {
+                out.passportLastName = parts[0];
+                out.passportFirstName = parts.slice(1).join(' ');
+            } else if (parts.length === 1) {
+                out.passportLastName = parts[0];
+                out.passportFirstName = '';
+            }
+        }
+        if (out.natn_cd) {
+            out.nationality = String(out.natn_cd).toUpperCase();
+        }
+        if (out.natn_nm) {
+            out.nationalityName = out.natn_nm;
+        }
+        if (out.eml_addr) {
+            out.email = out.eml_addr;
+        }
+        // KSNET 응답 변형: auth_brth_dt 대신 brth_dt로 내려오는 케이스 정규화
+        if ((!out.auth_brth_dt || String(out.auth_brth_dt).trim() === '') && out.brth_dt) {
+            out.auth_brth_dt = String(out.brth_dt).trim();
+        }
+
+        this.saveStep(out);
+    },
+
+    /**
      * 페이지 이동
      */
     goTo(path) {
@@ -221,6 +277,7 @@ const KYC = {
 
     /**
      * KYC 완료 후 callbackUrl로 결과 전달 (POST form + jsonData)
+     * KSNET 안내: jsonData 내 card_no, ksnet_svc_tkn_frm 스네이크케이스
      * @returns {boolean} 전송 시도 했으면 true
      */
     submitKycCallbackIfNeeded() {
@@ -230,8 +287,8 @@ const KYC = {
 
         const payload = {
             resultCode: '200',
-            cardNo: data.card_no || '',
-            ksnetSvcTknFrm: data.ksnet_svc_tkn_frm || ''
+            card_no: data.card_no || '',
+            ksnet_svc_tkn_frm: data.ksnet_svc_tkn_frm || ''
         };
 
         try {
@@ -253,6 +310,14 @@ const KYC = {
             console.warn('callback POST 전송 실패:', e);
             return false;
         }
+    },
+
+    /**
+     * 완료 콜백 전송 (submitKycCallbackIfNeeded 별칭)
+     * @returns {boolean}
+     */
+    kycComplete() {
+        return this.submitKycCallbackIfNeeded();
     },
 
     // 하위 호환: 기존 호출부 유지

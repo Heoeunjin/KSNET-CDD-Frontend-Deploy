@@ -104,14 +104,6 @@ window.jusoCallBack = function (
     checkNextBtn();
 };
 
-(function initForeignerBlock() {
-    const kyc = KYC.loadStep();
-    const nat = (kyc.nationality || 'KR').toUpperCase();
-    if (nat !== 'KR') {
-        document.getElementById('foreignerBlock').style.display = 'block';
-    }
-})();
-
 ['inputCompNm', 'inputDeptNm', 'inputLiveZip', 'inputLiveAddr1', 'inputLiveAddr2',
     'inputFrgnRegNo', 'inputRsdncCntry', 'inputFundEtcCntn', 'inputRealOwnNm'
 ].forEach(id => {
@@ -198,6 +190,144 @@ const TXPURPOSE_MAP = {
     living: 'SAVE', online_shopping: 'OTHER'
 };
 
+function setCustomSelectByValue(boxId, displayId, hiddenId, value) {
+    if (value == null || value === '') return;
+    const box = document.getElementById(boxId);
+    const display = document.getElementById(displayId);
+    const hidden = document.getElementById(hiddenId);
+    if (!box || !display || !hidden) return;
+    const options = box.querySelectorAll('.custom-select-option');
+    let chosen = null;
+    options.forEach(function (o) {
+        if (o.dataset.value === value) chosen = o;
+    });
+    if (!chosen) return;
+    hidden.value = value;
+    display.textContent = chosen.textContent.trim();
+    display.classList.add('is-selected');
+    options.forEach(function (o) {
+        o.classList.toggle('is-selected', o === chosen);
+    });
+}
+
+function inferFundSourceFromSession(k) {
+    if (k.fund_slry_yn === 'Y') return 'salary';
+    if (k.fund_bsns_yn === 'Y') return 'business';
+    if (k.fund_invt_yn === 'Y') return 'financial';
+    if (k.fund_inht_yn === 'Y') return 'inheritance';
+    if (k.fund_real_yn === 'Y') return 'rental';
+    if (k.fund_etc_yn === 'Y') return 'allowance';
+    return '';
+}
+
+function invtPurpApiToUi(code) {
+    const m = {
+        INVEST: 'investment',
+        SAVE: 'living',
+        TRADE: 'business',
+        OTHER: 'shopping'
+    };
+    return m[code] || '';
+}
+
+function occpApiToUi(code) {
+    const m = {
+        EMPLOYEE: 'employee',
+        SELF: 'self_employed',
+        PUBLIC: 'public_official',
+        PROFESSIONAL: 'professional',
+        STUDENT: 'student',
+        HOUSEWIFE: 'housewife',
+        RETIRED: 'retired',
+        OTHER: 'unemployed'
+    };
+    return m[code] || '';
+}
+
+/**
+ * gubun=2 재진입(cur_step 05) 등 세션에 내려온 추가정보 필드를 폼에 반영
+ */
+function applyAdditionalPrefillFromSession() {
+    const k = KYC.loadStep();
+
+    const occpUi = occpApiToUi(k.occp_cd);
+    if (occpUi) setCustomSelectByValue('occupationBox', 'occupationDisplay', 'selectOccupation', occpUi);
+
+    const fundUi = inferFundSourceFromSession(k);
+    if (fundUi) {
+        setCustomSelectByValue('fundSourceBox', 'fundSourceDisplay', 'selectFundSource', fundUi);
+        onFundSourceChange();
+    }
+
+    const txUi = invtPurpApiToUi(k.invt_purp_cd);
+    if (txUi) setCustomSelectByValue('txPurposeBox', 'txPurposeDisplay', 'selectTxPurpose', txUi);
+
+    if (k.ann_incm_cd) setCustomSelectByValue('annIncmBox', 'annIncmDisplay', 'selectAnnIncm', k.ann_incm_cd);
+
+    if (k.pep_yn === 'Y' || k.pep_yn === 'N') {
+        setCustomSelectByValue('pepBox', 'pepDisplay', 'selectPep', k.pep_yn);
+    }
+
+    const comp = document.getElementById('inputCompNm');
+    if (comp && k.comp_nm) comp.value = k.comp_nm;
+    const dept = document.getElementById('inputDeptNm');
+    if (dept && k.dept_nm) dept.value = k.dept_nm;
+
+    if (k.fund_etc_cntn) {
+        const el = document.getElementById('inputFundEtcCntn');
+        if (el) el.value = k.fund_etc_cntn;
+    }
+
+    if (k.live_same_yn === 'N') {
+        const chk = document.getElementById('chkLiveDifferent');
+        if (chk) {
+            chk.checked = true;
+            toggleLiveAddress();
+        }
+        if (k.live_zip) {
+            const z = document.getElementById('inputLiveZip');
+            if (z) z.value = String(k.live_zip).replace(/\D/g, '').slice(0, 5);
+        }
+        if (k.live_addr1) {
+            const a1 = document.getElementById('inputLiveAddr1');
+            if (a1) a1.value = k.live_addr1;
+        }
+        if (k.live_addr2) {
+            const a2 = document.getElementById('inputLiveAddr2');
+            if (a2) a2.value = k.live_addr2;
+        }
+    }
+
+    const fr = document.getElementById('inputFrgnRegNo');
+    if (fr && k.frgn_reg_no) fr.value = k.frgn_reg_no;
+    const rc = document.getElementById('inputRsdncCntry');
+    if (rc && k.rsdnc_cntry) rc.value = k.rsdnc_cntry;
+
+    if (k.real_own_yn === 'N') {
+        selectOwner('no');
+        if (k.real_own_nm) {
+            const nm = document.getElementById('inputRealOwnNm');
+            if (nm) nm.value = k.real_own_nm;
+        }
+        if (k.real_own_rltn) {
+            setCustomSelectByValue('realOwnRltnBox', 'realOwnRltnDisplay', 'selectRealOwnRltn', k.real_own_rltn);
+        }
+    } else if (k.real_own_yn === 'Y') {
+        selectOwner('yes');
+    }
+}
+
+(function initForeignerAndPrefill() {
+    applyAdditionalPrefillFromSession();
+    const kyc = KYC.loadStep();
+    const nat = (kyc.nationality || 'KR').toUpperCase();
+    if (nat !== 'KR') {
+        const fb = document.getElementById('foreignerBlock');
+        if (fb) fb.style.display = 'block';
+    }
+    checkNextBtn();
+})();
+
 async function goNext() {
     const kycData = KYC.loadStep();
     const cerTrUky = kycData.cer_tr_uky;
@@ -216,7 +346,6 @@ async function goNext() {
     const frgnYn = natnCd !== 'KR' ? 'Y' : 'N';
 
     const fund = FUND_MAP[fundSource] || { slry: 'N', bsns: 'N', invt: 'N', inht: 'N', real: 'N', etc: 'Y' };
-    const rrnoBack = (kycData.ssnBackReal || '') + '000000';
 
     const liveDiff = document.getElementById('chkLiveDifferent').checked;
     const fundEtcCntn = fund.etc === 'Y'
@@ -228,8 +357,8 @@ async function goNext() {
         eng_nm: (kycData.passportName || '').trim(),
         natn_cd: natnApi,
         natn_nm: natnApi === 'OTHER' ? (kycData.nationalityName || kycData.nationality || '').trim() : '',
-        rrno_frnt: kycData.ssnFront || '',
-        rrno_back: rrnoBack,
+        rrno_frnt: '',
+        rrno_back: '',
         eml_addr: kycData.email || '',
         reg_zip: kycData.reg_zip || '',
         reg_addr1: kycData.reg_addr1 || '',

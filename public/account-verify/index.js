@@ -227,6 +227,11 @@ async function requestVerify() {
         return;
     }
 
+    // gubun=6 예금주명: gubun=2에서 내려온 한글 이름을 우선 사용
+    const acntNm = String(
+        kycData.auth_nm || kycData.usr_nm || kycData.user_nm || kycData.kor_nm || kycData.name || ''
+    ).trim();
+
     const btn = document.getElementById('btnRequestVerify');
     btn.disabled = true;
 
@@ -235,7 +240,7 @@ async function requestVerify() {
             cer_tr_uky: cerTrUky,
             bankCode: bank,
             acno: accountNo,
-            acntNm: kycData.auth_nm || ''
+            acntNm
         });
 
         const header = res.response_header || {};
