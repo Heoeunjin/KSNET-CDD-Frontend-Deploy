@@ -7,6 +7,7 @@ const timer = new CountdownTimer(timerEl, 180, onTimerExpire);
 
 let isPhoneVerified = false;
 let smsResponse = null; // gubun=1 응답 (cer_tr_uky, rqs_unq_no, rspd_unq_no)
+let pendingAlreadyCompleted = false;
 
 (function bootKycEntry() {
     KYC.captureCallbackFromUrl();
@@ -348,11 +349,8 @@ async function verifyCode(code) {
             return;
         }
         if (curStep === '08') {
-            alert('이미 고객 확인 절차가 완료된 상태입니다.');
-            if (KYC.kycComplete()) {
-                return;
-            }
-            KYC.goTo('../complete/index.html');
+            pendingAlreadyCompleted = true;
+            KYC.openModal('modalAlreadyCompleted');
             return;
         }
         /* cur_step 01: 정상 플로우 → 다음 버튼 활성화 후 personal-info로 이동 (goNext) */
@@ -381,6 +379,14 @@ function onResumeReentryContinue() {
         KYC.goTo('../id-verify/index.html');
         return;
     }
+}
+
+function onAlreadyCompletedConfirm() {
+    KYC.closeModal('modalAlreadyCompleted');
+    if (!pendingAlreadyCompleted) return;
+    pendingAlreadyCompleted = false;
+    if (KYC.kycComplete()) return;
+    KYC.goTo('../complete/index.html');
 }
 
 /* --- 타이머 만료 콜백 --- */
