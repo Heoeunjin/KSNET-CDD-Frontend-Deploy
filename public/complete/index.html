@@ -201,14 +201,14 @@
 <script src="../js/common.js"></script>
 <script>
     (function onCompleteLoad() {
-        if (typeof KYC !== 'undefined' && KYC.submitKycCallbackIfNeeded()) {
+        if (typeof KYC !== 'undefined' && KYC.kycComplete()) {
             return;
         }
     })();
 
     function goHome() {
         const data = KYC.loadStep();
-        if (data.kyc_callback_url && KYC.submitKycCallbackIfNeeded()) return;
+        if (data.kyc_callback_url && KYC.kycComplete()) return;
         sessionStorage.removeItem('kycData');
         KYC.goTo('../index.html');
     }

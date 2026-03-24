@@ -246,6 +246,7 @@ document.getElementById('btnRequestCode').addEventListener('click', async functi
         const header = res.response_header || {};
         const data = res.response_data || {};
 
+
         if (header.result_code !== '0') {
             Validation.showError(
                 document.getElementById('phoneBox'),
@@ -329,20 +330,30 @@ async function verifyCode(code) {
         isPhoneVerified = true;
         document.getElementById('codeBox').classList.remove('is-error');
 
-        KYC.saveStep({
-            cer_tr_uky: smsResponse.cer_tr_uky,
-            auth_nm: data.auth_nm,
-            auth_brth_dt: data.auth_brth_dt,
-            auth_gndr_cd: data.auth_gndr_cd
+        // 발송 시점 키 + 확인 응답(서버 기입력 포함) 병합 후 세션 반영
+        const merged = Object.assign({}, smsResponse, data, { mbtl_no: phone });
+        KYC.mergeVerifySmsResponse(merged);
+        const mergedStep = KYC.loadStep();
+        console.log('[SMS_VERIFY_DEBUG] merged_session', {
+            cur_step: data.cur_step || '',
+            auth_nm: mergedStep.auth_nm || '',
+            auth_brth_dt: mergedStep.auth_brth_dt || '',
+            brth_dt: mergedStep.brth_dt || ''
         });
 
-        const curStep = data.cur_step || '01';
-        if (curStep === '05') {
-            KYC.goTo('../account-verify/index.html');
-        } else if (curStep === '07') {
-            KYC.goTo('../id-verify/index.html');
-        } else if (curStep === '08') {
+        const curStep = String(data.cur_step || '01').trim();
+        if (curStep === '05' || curStep === '07') {
+            KYC.saveStep({ kyc_resume_cur_step: curStep });
+            KYC.openModal('modalResumeReentry');
+            return;
+        }
+        if (curStep === '08') {
+            alert('이미 고객 확인 절차가 완료된 상태입니다.');
+            if (KYC.kycComplete()) {
+                return;
+            }
             KYC.goTo('../complete/index.html');
+            return;
         }
         /* cur_step 01: 정상 플로우 → 다음 버튼 활성화 후 personal-info로 이동 (goNext) */
 
@@ -351,6 +362,24 @@ async function verifyCode(code) {
         console.error('인증번호 확인 오류:', err);
         KYC.openModal('modalCodeError');
         checkNextBtn();
+    }
+}
+
+/**
+ * 재진입 안내 모달 [계속] — cur_step 05: 추가정보 확인 경로(personal → additional) 후 계좌인증, 07: 신분증
+ */
+function onResumeReentryContinue() {
+    KYC.closeModal('modalResumeReentry');
+    const d = KYC.loadStep();
+    const step = String(d.kyc_resume_cur_step || '').trim();
+    KYC.saveStep({ kyc_resume_cur_step: '' });
+    if (step === '05') {
+        KYC.goTo('../personal-info/index.html');
+        return;
+    }
+    if (step === '07') {
+        KYC.goTo('../id-verify/index.html');
+        return;
     }
 }
 

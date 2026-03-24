@@ -33,12 +33,53 @@ function digits10(el) {
     return (el && el.value) ? el.value.replace(/\D/g, '') : '';
 }
 
+function initKoreanNameField(inputId, boxId, errorId) {
+    const inputEl = document.getElementById(inputId);
+    const boxEl = document.getElementById(boxId);
+    const errorEl = document.getElementById(errorId);
+    if (!inputEl) return;
+
+    let imeComposing = false;
+
+    function syncNameField() {
+        const raw = inputEl.value;
+        const stripped = raw.replace(/[^가-힣]/g, '');
+        inputEl.value = stripped;
+
+        const isValidKoreanName = stripped.length > 0 && KYC.validateName(stripped);
+        const hadNonHangulRemoved = raw !== stripped;
+
+        if (isValidKoreanName) {
+            Validation.clearError(boxEl, errorEl);
+        } else if (hadNonHangulRemoved) {
+            Validation.showError(boxEl, errorEl, '한글로 입력해주세요.');
+        } else if (stripped.length > 0 && !KYC.validateName(stripped)) {
+            Validation.showError(boxEl, errorEl, '이름은 한글만 입력 가능합니다. (최대 10자)');
+        } else {
+            Validation.clearError(boxEl, errorEl);
+        }
+        checkNextBtn();
+    }
+
+    inputEl.addEventListener('compositionstart', function () {
+        imeComposing = true;
+    });
+    inputEl.addEventListener('compositionend', function () {
+        imeComposing = false;
+        syncNameField();
+    });
+    inputEl.addEventListener('input', function (e) {
+        if (e.isComposing || imeComposing) return;
+        syncNameField();
+    });
+    inputEl.addEventListener('blur', function () {
+        if (imeComposing) return;
+        syncNameField();
+    });
+}
+
 /* --- RRN --- */
-document.getElementById('inputResidentName').addEventListener('input', function (e) {
-    if (e.isComposing) return;
-    this.value = this.value.replace(/[^가-힣]/g, '');
-    checkNextBtn();
-});
+initKoreanNameField('inputResidentName', 'residentNameBox', 'residentNameError');
 document.getElementById('inputResidentSsnFront').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 6);
     if (this.value.length === 6) document.getElementById('inputResidentSsnBack').focus();
@@ -61,11 +102,7 @@ document.getElementById('inputResidentIssueDate').addEventListener('input', func
 });
 
 /* --- DL --- */
-document.getElementById('inputLicenseName').addEventListener('input', function (e) {
-    if (e.isComposing) return;
-    this.value = this.value.replace(/[^가-힣]/g, '');
-    checkNextBtn();
-});
+initKoreanNameField('inputLicenseName', 'licenseNameBox', 'licenseNameError');
 document.getElementById('inputLicenseSsnFront').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 6);
     if (this.value.length === 6) document.getElementById('inputLicenseSsnBack').focus();
@@ -120,10 +157,9 @@ function checkNextBtn() {
         const serial = document.getElementById('inputLicenseSerial').value;
         const di = document.getElementById('inputDlIssue').value;
         const de = document.getElementById('inputDlExpire').value;
-        const area = document.getElementById('inputDlArea').value.trim();
         ok = name.length > 0 && ssnFront.length === 6 && ssnBack.length === 1
             && licenseNo.length >= 13 && serial.length > 0
-            && di.length === 10 && de.length === 10 && area.length > 0;
+            && di.length === 10 && de.length === 10;
     }
 
     document.getElementById('btnNext').disabled = !ok;
@@ -141,10 +177,19 @@ function buildIdFields(t) {
             idDlNo: document.getElementById('inputLicenseNo').value.replace(/\D/g, ''),
             idDlIssue: digits10(document.getElementById('inputDlIssue')),
             idDlExpire: digits10(document.getElementById('inputDlExpire')),
-            idDlArea: document.getElementById('inputDlArea').value.trim()
+            idDlSecureno: document.getElementById('inputLicenseSerial').value.trim(),
+            idDlArea: ''
         };
     }
     return { idRrnIssue: '', idRrnNo: '' };
+}
+
+function showIdErrorModal(message) {
+    const desc = document.getElementById('modalIdErrorDesc');
+    if (desc) {
+        desc.textContent = message || '신분증 인증에 실패했습니다. 입력값을 확인해 주세요.';
+    }
+    KYC.openModal('modalIdError');
 }
 
 async function goNext() {
@@ -162,6 +207,12 @@ async function goNext() {
     const idFields = buildIdFields(t);
     const btn = document.getElementById('btnNext');
     btn.disabled = true;
+    console.log('[ID_VERIFY_DEBUG] pre-submit', {
+        selIdTypeVal: t,
+        auth_nm: kycData.auth_nm || '',
+        auth_brth_dt: kycData.auth_brth_dt || '',
+        idFields
+    });
 
     try {
         const res = await KYC_API.submitIdCard({
@@ -171,7 +222,7 @@ async function goNext() {
             idFields,
             uploadFileName: '',
             savedFileName: '',
-            uploadFileSize: ''
+            uploadFileSize: '0'
         });
 
         const header = res.response_header || {};
@@ -179,7 +230,7 @@ async function goNext() {
 
         if (header.result_code !== '0') {
             const msg = header.std_mesg_content || data.std_mesg_content || '신분증 인증에 실패했습니다.';
-            alert(msg);
+            showIdErrorModal(msg);
             btn.disabled = false;
             return;
         }
@@ -192,7 +243,7 @@ async function goNext() {
         KYC.goTo('../complete/index.html');
     } catch (err) {
         console.error('신분증 등록 오류:', err);
-        alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        showIdErrorModal('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
         btn.disabled = false;
     }
 }

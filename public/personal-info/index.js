@@ -2,11 +2,40 @@
  * KSNET KYC - 추가 기본정보 입력 스크립트
  */
 
-/* --- 이전 단계 정보 불러와서 표시 --- */
+/* --- 이전 단계 정보 불러와서 표시 (+ gubun=2 재진입 시 서버 기입력 프리필) --- */
 (function loadPrevData() {
     const data = KYC.loadStep();
-    document.getElementById('displayName').textContent = data.name || '-';
+    document.getElementById('displayName').textContent = data.name || data.auth_nm || '-';
     document.getElementById('displayPhone').textContent = data.phone || '-';
+
+    const lastEl = document.getElementById('inputPassportLastName');
+    const firstEl = document.getElementById('inputPassportFirstName');
+    if (lastEl && data.passportLastName) {
+        lastEl.value = data.passportLastName;
+    }
+    if (firstEl && data.passportFirstName) {
+        firstEl.value = data.passportFirstName;
+    }
+    if (data.email) {
+        const emailEl = document.getElementById('inputEmail');
+        if (emailEl) emailEl.value = data.email;
+    }
+    if (data.reg_zip) {
+        const zipEl = document.getElementById('inputZip');
+        if (zipEl) zipEl.value = data.reg_zip;
+    }
+    if (data.reg_addr1) {
+        const addrEl = document.getElementById('inputAddress');
+        if (addrEl) addrEl.value = data.reg_addr1;
+    }
+    if (data.reg_addr2) {
+        const detailEl = document.getElementById('inputAddressDetail');
+        if (detailEl) detailEl.value = data.reg_addr2;
+    }
+
+    if (typeof checkNextBtn === 'function') {
+        checkNextBtn();
+    }
 })();
 
 /* --- 여권 영문명 (영문만 허용) --- */
@@ -407,6 +436,20 @@ function getCountriesAlphaRest() {
     window.addEventListener('pageshow', function () {
         closeNationalitySheet(true);
     });
+
+    /** 세션에 nationality(서버 natn_cd 등)가 있으면 국적 선택 동기화 */
+    (function applyStoredNationality() {
+        const kyc = KYC.loadStep();
+        const code = (kyc.nationality || '').trim().toUpperCase();
+        if (!code) return;
+        const c = getCountryByCode(code);
+        if (c) {
+            selectCountry(c);
+        }
+        if (typeof checkNextBtn === 'function') {
+            checkNextBtn();
+        }
+    })();
 })();
 
 /* --- 이메일 입력 --- */
