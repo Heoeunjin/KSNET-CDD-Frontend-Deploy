@@ -145,12 +145,6 @@ async function goNext() {
     const idFields = buildIdFields(t);
     const btn = document.getElementById('btnNext');
     btn.disabled = true;
-    console.log('[ID_VERIFY_DEBUG] pre-submit', {
-        selIdTypeVal: t,
-        auth_nm: kycData.auth_nm || '',
-        auth_brth_dt: kycData.auth_brth_dt || '',
-        idFields
-    });
 
     try {
         const res = await KYC_API.submitIdCard({

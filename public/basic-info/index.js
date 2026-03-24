@@ -334,13 +334,6 @@ async function verifyCode(code) {
         // 발송 시점 키 + 확인 응답(서버 기입력 포함) 병합 후 세션 반영
         const merged = Object.assign({}, smsResponse, data, { mbtl_no: phone });
         KYC.mergeVerifySmsResponse(merged);
-        const mergedStep = KYC.loadStep();
-        console.log('[SMS_VERIFY_DEBUG] merged_session', {
-            cur_step: data.cur_step || '',
-            auth_nm: mergedStep.auth_nm || '',
-            auth_brth_dt: mergedStep.auth_brth_dt || '',
-            brth_dt: mergedStep.brth_dt || ''
-        });
 
         const curStep = String(data.cur_step || '01').trim();
         if (curStep === '05' || curStep === '07') {
