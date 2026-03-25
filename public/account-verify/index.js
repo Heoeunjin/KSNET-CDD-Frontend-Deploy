@@ -11,7 +11,7 @@ let isVerified = false;
 let currentSheetTab = 'bank';
 let acnCerTrUky = null; // gubun=6 응답값 (gubun=7에서 사용)
 
-/* --- 은행/증권사 데이터 (API code는 명세 유지, 화면 노출만 이용·규모 기준 대략 순) --- */
+/* --- 은행/증권사 데이터 --- */
 const BANKS = [
     { code: 'KB',        name: 'KB국민',             color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
     { code: 'SHINHAN',   name: '신한',               color: '#0046FF', text: '신한' },
