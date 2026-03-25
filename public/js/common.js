@@ -189,6 +189,44 @@ const KYC = {
     },
 
     /**
+     * 공통 에러 모달 표시 (페이지별 별도 마크업가 없어도 동작)
+     */
+    showErrorModal(message, title = '안내', onConfirm = null) {
+        let modal = document.getElementById('modalCommonError');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'modalCommonError';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-box">
+                    <div class="modal-title" id="modalCommonErrorTitle"></div>
+                    <div class="modal-desc" id="modalCommonErrorDesc"></div>
+                    <div class="modal-btns">
+                        <button class="btn btn-primary" type="button">확인</button>
+                    </div>
+                </div>
+            `;
+            const btn = modal.querySelector('button');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.closeModal('modalCommonError');
+                    const cb = modal._onConfirm;
+                    modal._onConfirm = null;
+                    if (typeof cb === 'function') cb();
+                });
+            }
+            document.body.appendChild(modal);
+        }
+
+        const titleEl = document.getElementById('modalCommonErrorTitle');
+        const descEl = document.getElementById('modalCommonErrorDesc');
+        if (titleEl) titleEl.textContent = title || '안내';
+        if (descEl) descEl.textContent = message || '오류가 발생했습니다. 다시 시도해주세요.';
+        modal._onConfirm = typeof onConfirm === 'function' ? onConfirm : null;
+        this.openModal('modalCommonError');
+    },
+
+    /**
      * 진행 상태 저장 (sessionStorage)
      */
     saveStep(stepData) {

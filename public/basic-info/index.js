@@ -15,8 +15,11 @@ let pendingAlreadyCompleted = false;
 (async function requireToken() {
     const ok = await KYC.ensureTokenVerified();
     if (!ok) {
-        alert('토큰 검증이 필요합니다. 메인 화면에서 다시 시작해 주세요.');
-        KYC.goTo('../index.html');
+        KYC.showErrorModal(
+            '토큰 검증이 필요합니다. 메인 화면에서 다시 시작해 주세요.',
+            '안내',
+            () => KYC.goTo('../index.html')
+        );
     }
 })();
 
@@ -141,6 +144,18 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
 
     if (!box || !displayEl || !dropdown || !nativeSelect || !options.length) return;
 
+    function ensureDropdownVisibleBelow() {
+        const body = document.querySelector('.kyc-body');
+        if (!body) return;
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const dropdownRect = dropdown.getBoundingClientRect();
+        const bottomPadding = 12;
+        const overflow = dropdownRect.bottom + bottomPadding - viewportHeight;
+        if (overflow > 0) {
+            body.scrollTop += overflow;
+        }
+    }
+
     function closeDropdown() {
         box.classList.remove('is-open');
     }
@@ -148,7 +163,12 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
     box.addEventListener('click', function (e) {
         // 옵션 클릭은 별도 처리
         if (e.target.classList.contains('carrier-option')) return;
-        box.classList.toggle('is-open');
+        if (box.classList.contains('is-open')) {
+            closeDropdown();
+            return;
+        }
+        box.classList.add('is-open');
+        requestAnimationFrame(ensureDropdownVisibleBelow);
     });
 
     options.forEach(function (btn) {
@@ -181,6 +201,11 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
         if (!box.contains(e.target)) {
             closeDropdown();
         }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!box.classList.contains('is-open')) return;
+        requestAnimationFrame(ensureDropdownVisibleBelow);
     });
 })();
 

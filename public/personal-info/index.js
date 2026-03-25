@@ -39,15 +39,55 @@
 })();
 
 /* --- 여권 영문명 (영문만 허용) --- */
-document.getElementById('inputPassportLastName').addEventListener('input', function () {
-    this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase();
-    checkNextBtn();
-});
+const passportLastNameInput = document.getElementById('inputPassportLastName');
+const passportFirstNameInput = document.getElementById('inputPassportFirstName');
+const passportLastNameBox = document.getElementById('passportLastNameBox');
+const passportFirstNameBox = document.getElementById('passportFirstNameBox');
+const passportErrorEl = document.getElementById('passportError');
 
-document.getElementById('inputPassportFirstName').addEventListener('input', function () {
-    this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase();
+function setPassportNameError(message) {
+    if (passportLastNameBox) passportLastNameBox.classList.add('is-error');
+    if (passportFirstNameBox) passportFirstNameBox.classList.add('is-error');
+    if (passportErrorEl) {
+        passportErrorEl.textContent = message;
+        passportErrorEl.classList.add('is-show');
+    }
+}
+
+function clearPassportNameError() {
+    if (passportLastNameBox) passportLastNameBox.classList.remove('is-error');
+    if (passportFirstNameBox) passportFirstNameBox.classList.remove('is-error');
+    if (passportErrorEl) {
+        passportErrorEl.textContent = '';
+        passportErrorEl.classList.remove('is-show');
+    }
+}
+
+function handlePassportNameInput(inputEl) {
+    const raw = inputEl.value;
+    const hadInvalid = /[^A-Za-z\s]/.test(raw);
+    const sanitized = raw.replace(/[^A-Za-z\s]/g, '').toUpperCase();
+    inputEl.value = sanitized;
+
+    if (hadInvalid) {
+        setPassportNameError('영문으로 입력해주세요.');
+    } else {
+        clearPassportNameError();
+    }
     checkNextBtn();
-});
+}
+
+if (passportLastNameInput) {
+    passportLastNameInput.addEventListener('input', function () {
+        handlePassportNameInput(this);
+    });
+}
+
+if (passportFirstNameInput) {
+    passportFirstNameInput.addEventListener('input', function () {
+        handlePassportNameInput(this);
+    });
+}
 
 /* --- 국적 데이터: KR 단독 상단 → 「전체 국가」→ JP·US·CN → 나머지 가나다순 --- */
 const COUNTRIES = [

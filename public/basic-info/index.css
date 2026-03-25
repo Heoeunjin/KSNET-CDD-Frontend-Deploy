@@ -153,6 +153,10 @@
     margin-top: 6px;
 }
 
+#smsGuide {
+    margin-bottom: 8px;
+}
+
 /* 전송 완료 안내: 위쪽(인증란~문구) 간격과 대칭 ≈ verify-input-row(8) + verify-row(10) + margin-top(6) */
 .sms-guide--sent {
     margin-bottom: 24px;

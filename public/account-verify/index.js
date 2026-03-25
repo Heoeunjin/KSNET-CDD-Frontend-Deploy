@@ -11,7 +11,7 @@ let isVerified = false;
 let currentSheetTab = 'bank';
 let acnCerTrUky = null; // gubun=6 응답값 (gubun=7에서 사용)
 
-/* --- 은행/증권사 데이터 (API code는 명세 유지, 화면 노출만 이용·규모 기준 대략 순) --- */
+/* --- 은행/증권사 데이터 --- */
 const BANKS = [
     { code: 'KB',        name: 'KB국민',             color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
     { code: 'SHINHAN',   name: '신한',               color: '#0046FF', text: '신한' },
@@ -252,8 +252,11 @@ async function requestVerify() {
     const kycData = KYC.loadStep();
     const cerTrUky = kycData.cer_tr_uky;
     if (!cerTrUky) {
-        alert('인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.');
-        KYC.goTo('../basic-info/index.html');
+        KYC.showErrorModal(
+            '인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.',
+            '안내',
+            () => KYC.goTo('../basic-info/index.html')
+        );
         return;
     }
 
@@ -281,7 +284,7 @@ async function requestVerify() {
             if (msg.includes('초과') || msg.includes('횟수')) {
                 KYC.openModal('modalLimitExceeded');
             } else {
-                alert(msg);
+                KYC.showErrorModal(msg);
             }
             btn.disabled = false;
             return;
@@ -297,7 +300,7 @@ async function requestVerify() {
         checkNextBtn();
     } catch (err) {
         console.error('1원 인증 요청 오류:', err);
-        alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        KYC.showErrorModal('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
     }
     btn.disabled = false;
 }

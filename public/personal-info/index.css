@@ -274,3 +274,7 @@
     align-self: stretch;
 }
 
+#addressDetailBox {
+    margin-bottom: 8px;
+}
+

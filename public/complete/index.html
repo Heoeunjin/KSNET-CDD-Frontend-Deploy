@@ -20,30 +20,20 @@
 
         .complete-icon {
             width: 80px;
-            height: 82px;
+            height: 80px;
             margin-bottom: 24px;
-            line-height: 0;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(26, 76, 192, 0.3);
             animation: scaleIn 0.5s ease forwards;
-        }
-
-        .complete-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-            filter: drop-shadow(0 6px 14px rgba(26, 76, 192, 0.28))
-                drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
-            animation: drawCheck 0.4s ease 0.3s both;
         }
 
         @keyframes scaleIn {
             from { transform: scale(0.5); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes drawCheck {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         .complete-title {
@@ -137,7 +127,9 @@
 
         <!-- 완료 아이콘 -->
         <div class="complete-icon" aria-hidden="true">
-            <img src="../assets/images/check.svg" alt="" width="80" height="82">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                <path d="M8 18.5L15.2 25.7L28 12.9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </div>
 
         <!-- 완료 텍스트 -->

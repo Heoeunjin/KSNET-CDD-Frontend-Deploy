@@ -101,6 +101,14 @@
     margin-top: 28px;
 }
 
+#ownerSection {
+    margin-bottom: 8px;
+}
+
+#realOwnerBlock {
+    margin-bottom: 8px;
+}
+
 /* 실거주 주소 검색 (personal-info와 동일 구조) */
 .address-block {
     display: flex;
