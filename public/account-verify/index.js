@@ -252,8 +252,11 @@ async function requestVerify() {
     const kycData = KYC.loadStep();
     const cerTrUky = kycData.cer_tr_uky;
     if (!cerTrUky) {
-        KYC.showErrorModal('인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.');
-        KYC.goTo('../basic-info/index.html');
+        KYC.showErrorModal(
+            '인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.',
+            '안내',
+            () => KYC.goTo('../basic-info/index.html')
+        );
         return;
     }
 
