@@ -48,13 +48,82 @@ document.getElementById('inputResidentSsnFront').addEventListener('input', funct
     if (this.value.length === 6) document.getElementById('inputResidentSsnBack').focus();
     checkNextBtn();
 });
-document.getElementById('inputResidentSsnBack').addEventListener('input', function () {
-    const real = document.getElementById('inputResidentSsnBackReal');
-    const digits = this.value.replace(/\D/g, '').slice(0, 7);
-    real.value = digits;
-    this.value = digits;
-    checkNextBtn();
-});
+(function initResidentSsnBackMasking() {
+    const inputEl = document.getElementById('inputResidentSsnBack');
+    const realEl = document.getElementById('inputResidentSsnBackReal');
+    if (!inputEl || !realEl) return;
+
+    function renderFromReal() {
+        const digits = String(realEl.value || '').replace(/\D/g, '').slice(0, 7);
+        realEl.value = digits;
+        if (!digits) {
+            inputEl.value = '';
+        } else {
+            inputEl.value = '●'.repeat(Math.max(0, digits.length - 1)) + digits.charAt(digits.length - 1);
+        }
+        try {
+            inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+        } catch (e) {}
+    }
+
+    inputEl.addEventListener('beforeinput', function (e) {
+        const type = e.inputType || '';
+
+        if (type === 'insertText') {
+            const d = String(e.data || '');
+            if (!/^\d$/.test(d)) {
+                e.preventDefault();
+                return;
+            }
+            e.preventDefault();
+            if (realEl.value.length >= 7) return;
+            realEl.value = (String(realEl.value || '') + d).slice(0, 7);
+            renderFromReal();
+            checkNextBtn();
+            return;
+        }
+
+        if (type === 'deleteContentBackward') {
+            e.preventDefault();
+            realEl.value = String(realEl.value || '').slice(0, -1);
+            renderFromReal();
+            checkNextBtn();
+            return;
+        }
+
+        if (type === 'insertFromPaste') {
+            // paste handler에서 처리
+            return;
+        }
+
+        // 그 외(드래그 드롭 등) 입력은 막고 현재 상태 유지
+        e.preventDefault();
+        renderFromReal();
+        checkNextBtn();
+    });
+
+    inputEl.addEventListener('paste', function (e) {
+        e.preventDefault();
+        const text = (e.clipboardData && e.clipboardData.getData('text')) ? e.clipboardData.getData('text') : '';
+        const digits = String(text || '').replace(/\D/g, '').slice(0, 7);
+        realEl.value = digits;
+        renderFromReal();
+        checkNextBtn();
+    });
+
+    inputEl.addEventListener('focus', function () {
+        renderFromReal();
+    });
+
+    inputEl.addEventListener('click', function () {
+        try {
+            inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+        } catch (e) {}
+    });
+
+    // 초기 렌더
+    renderFromReal();
+})();
 document.getElementById('inputResidentIssueDate').addEventListener('input', function () {
     this.value = KYC.formatDate(this.value);
     checkNextBtn();
