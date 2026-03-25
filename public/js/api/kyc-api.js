@@ -77,21 +77,24 @@ const KYC_API = {
     },
 
     /**
-     * account-verify 화면 code → KSNET bnk_cd (3자리).
-     * 증권·미기재 기관은 명세 확정 전 임시 매핑 — 운영 전 KSNET 코드표와 재대조.
+     * account-verify 화면 code → KSNET bnk_cd (3자리, 2026 KYC 명세 코드표).
+     * 한국포스증권(KOREA_FOSS)은 명세에 코드 미기재 시 294 임시 — 운영 시 KSNET와 재대조.
      */
     BANK_CODE_MAP: {
-        KB: '004', IBK: '003', NH: '011', KDB: '002', SUHYUP: '007',
-        SHINHAN: '088', WOORI: '020', POST: '071', HANA: '081', CITI: '027',
-        SC: '023', KAKAO: '090', KBANK: '089', TOSS: '092', GYEONGNAM: '039',
-        GWANGJU: '034', IAMBANK: '031', BUSAN: '032', JEONBUK: '037', JEJU: '035',
-        SAVINGS: '050', FOREST: '064', SEMAUL: '045', CREDIT: '048',
-        KB_SEC: '004', KYOBO: '088', DAESHIN: '088', MERITZ: '088', MIRAE: '088',
-        BUGUK: '088', SAMSUNG: '088', SANGSANGIN: '088', SINYOUNG: '088',
-        SHINHAN_SEC: '088', YUANTA: '088', EUGENE: '088', LS: '088',
-        KAKAOPAY: '090', CAPE: '088', KIWOOM: '088', TOSS_SEC: '092',
-        HANA_SEC: '081', KIS: '088', HANWHA: '088', HYUNDAI: '088',
-        BNK_SEC: '032', IAM_SEC: '031', WOORI_SEC: '020'
+        KDB: '002', IBK: '003', KB: '004', SUHYUP: '007', NH: '011',
+        WOORI: '020', SC: '023', CITI: '027', IAMBANK: '031', BUSAN: '032',
+        GWANGJU: '034', JEJU: '035', JEONBUK: '037', GYEONGNAM: '039',
+        SEMAUL: '045', CREDIT: '048', SAVINGS: '050', DEUTSCHE: '055',
+        JPMORGAN: '057', BOA: '060', BNP: '061', ICBC: '062', BOC: '063',
+        FOREST: '064', CCB: '067', POST: '071', HANA: '081', SHINHAN: '088',
+        KBANK: '089', KAKAO: '090', TOSS: '092',
+        YUANTA: '209', KB_SEC: '218', BNK_SEC: '224', IBK_SEC: '225',
+        DAOL: '227', MIRAE: '230', DAEWOO: '238', SAMSUNG: '240', NH_SEC: '247',
+        KYOBO: '261', HI: '262', HYUNDAI: '263', KIWOOM: '264', EBEST: '265',
+        SK: '266', DAESHIN: '267', IM_MERITZ: '268', HANWHA: '269', HANA_DT: '270',
+        TOSS_SEC: '271', SHINHAN_SEC: '278', DB_SEC: '279', EUGENE: '280',
+        MERITZ: '287', KAKAOPAY: '288', BUGUK: '290', SINYOUNG: '291',
+        CAPE: '292', KOREA_FOSS: '294'
     },
 
     async call(trCd, requestData) {

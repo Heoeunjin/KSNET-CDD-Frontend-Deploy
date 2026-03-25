@@ -49,6 +49,12 @@ KSNET_CDD/
     ├── intro/                  # 고객확인제도 안내 페이지
     │   └── index.html
     │
+    ├── terms/                  # 고객확인 약관 상세
+    │   ├── privacy.html        # [필수] 개인정보 수집 및 이용 동의
+    │   ├── unique-id.html      # [필수] 고유식별정보 처리 동의
+    │   ├── terms-detail.css
+    │   └── terms-detail.js
+    │
     ├── basic-info/             # 기본정보 입력 (Step 1)
     │   ├── index.html          # 이름, 주민등록번호, 통신사, 휴대폰 인증
     │   ├── index.css
@@ -85,17 +91,18 @@ KSNET_CDD/
 
 ## 📂 주요 디렉토리
 
-| 디렉토리               | 설명                                    |
-| ---------------------- | --------------------------------------- |
-| **`/css`**             | 전역 스타일 및 모듈별 CSS               |
-| **`/js`**              | 전역 공통 스크립트 및 모듈별 JS         |
-| **`/intro`**           | 고객확인제도 안내 및 설명 페이지        |
-| **`/basic-info`**      | KYC Step 1: 기본정보 입력 + 휴대폰 인증 |
-| **`/personal-info`**   | KYC Step 2: 여권영문명, 국적, 주소 입력 |
-| **`/additional-info`** | KYC Step 3: 직업, 자금원천, 거래목적    |
-| **`/account-verify`**  | KYC Step 4: 계좌 1원 인증               |
-| **`/id-verify`**       | KYC Step 5: 신분증 인증                 |
-| **`/complete`**        | 고객확인 완료 페이지                    |
+| 디렉토리               | 설명                                         |
+| ---------------------- | -------------------------------------------- |
+| **`/css`**             | 전역 스타일 및 모듈별 CSS                    |
+| **`/js`**              | 전역 공통 스크립트 및 모듈별 JS              |
+| **`/intro`**           | 고객확인제도 안내 및 설명 페이지             |
+| **`/terms`**           | 고객확인 약관 상세(개인정보·고유식별) 페이지 |
+| **`/basic-info`**      | KYC Step 1: 기본정보 입력 + 휴대폰 인증      |
+| **`/personal-info`**   | KYC Step 2: 여권영문명, 국적, 주소 입력      |
+| **`/additional-info`** | KYC Step 3: 직업, 자금원천, 거래목적         |
+| **`/account-verify`**  | KYC Step 4: 계좌 1원 인증                    |
+| **`/id-verify`**       | KYC Step 5: 신분증 인증                      |
+| **`/complete`**        | 고객확인 완료 페이지                         |
 
 ## 🔄 KYC 진행 플로우
 
@@ -103,6 +110,8 @@ KSNET_CDD/
 메인 화면
     │
     ├── [고객확인제도란?] → 안내 페이지 (intro/)
+    │
+    ├── 약관 상세 (terms/)
     │
     └── [고객확인하기] ──→ 기본정보 입력 (basic-info/)
                                │

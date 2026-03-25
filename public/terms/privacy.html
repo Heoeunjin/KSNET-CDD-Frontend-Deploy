@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>개인정보 수집 및 이용 동의 - KSNET</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="terms-detail.css">
+</head>
+<body class="terms-detail-body" data-terms-storage-key="kyc_term_privacy_agreed">
+
+<div class="kyc-wrap terms-detail-layout">
+    <header class="kyc-header">
+        <button type="button" class="btn-back" onclick="history.back()" aria-label="뒤로">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 6l-6 6 6 6"/>
+            </svg>
+        </button>
+        <div class="header-title">개인정보 수집 및 이용 동의</div>
+    </header>
+
+    <div class="terms-detail-scroll">
+        <article class="terms-doc">
+            <h1>케이에스넷 개인정보 수집 및 이용 동의</h1>
+            <p class="terms-doc-lead">㈜케이에스넷은 「특정 금융거래정보의 보고 및 이용 등에 관한 법률」 등 관련 법령에 따라 자금세탁방지제도(AML) 고객확인의무(KYC) 이행을 위하여 아래와 같이 개인정보를 수집 및 이용합니다. 회사는 고객님의 개인정보를 안전하게 처리하기 위하여 최선을 다하고 있습니다.</p>
+
+            <section class="terms-section">
+                <h3 class="terms-section-title">개인정보 수집 및 이용 목적</h3>
+                <ul class="terms-bullet-list">
+                    <li>자금세탁방지제도에 따른 고객확인의무(KYC) 이행</li>
+                </ul>
+            </section>
+
+            <section class="terms-section">
+                <h3 class="terms-section-title">수집 및 이용 항목</h3>
+                <ul class="terms-doc-item-groups">
+                    <li>
+                        <p class="terms-doc-tag">필수</p>
+                        <p class="terms-doc-item-body">이름(국문/영문), 국적, 생년월일, 휴대폰번호, 이메일, 주소, 직업, 거래자금의 원천, 거래목적, 연소득 구간, 공직자 여부, 계좌정보, 암호화된 이용자 확인값(CI), 고유식별정보(주민등록번호, 운전면허번호, 외국인등록번호 등)</p>
+                    </li>
+                    <li>
+                        <p class="terms-doc-tag">선택</p>
+                        <p class="terms-doc-item-body">직장명, 부서 및 직위</p>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="terms-section">
+                <h3 class="terms-section-title">보유 및 이용 기간</h3>
+                <ul class="terms-bullet-list">
+                    <li>관련 법령에 따라 수집 및 이용 목적 달성 후에도 일정 기간 보관되며, 법령에 따른 보존기간 경과 시 지체 없이 파기됩니다.</li>
+                </ul>
+            </section>
+
+            <section class="terms-section">
+                <h3 class="terms-section-title">동의 거부 권리 및 불이익 안내</h3>
+                <ul class="terms-bullet-list">
+                    <li>고객님은 개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있습니다.</li>
+                    <li>다만, 필수 항목에 대한 동의를 거부하실 경우 KYC 절차 진행이 제한될 수 있습니다.</li>
+                </ul>
+            </section>
+        </article>
+
+        <div class="terms-inline-consent">
+            <div class="terms-page-consent-box">
+                <label class="terms-page-consent">
+                    <input type="checkbox" id="termsPageAgree" class="terms-page-consent-input">
+                    <span class="terms-page-circle-check" aria-hidden="true"></span>
+                    <span class="terms-page-consent-label">개인정보 수집 및 이용 동의</span>
+                </label>
+            </div>
+            <p class="terms-page-consent-hint" id="termsPageHint">꼭 동의해야해요</p>
+        </div>
+    </div>
+
+    <div class="terms-page-bottom">
+        <button type="button" class="btn btn-primary terms-page-next" id="termsPageNext" disabled>확인</button>
+    </div>
+</div>
+
+<script src="terms-detail.js"></script>
+</body>
+</html>

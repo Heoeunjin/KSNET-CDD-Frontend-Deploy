@@ -62,7 +62,9 @@ document.getElementById('inputResidentIssueDate').addEventListener('input', func
 
 /* --- DL --- */
 document.getElementById('inputLicenseNo').addEventListener('input', function () {
-    let val = this.value.replace(/[^0-9]/g, '');
+    // 운전면허번호: 숫자 12자리 (표기 00-00-000000-00 → 하이픈 포함 15자)
+    let digits = this.value.replace(/[^0-9]/g, '').slice(0, 12);
+    let val = digits;
     if (val.length > 2) val = val.slice(0, 2) + '-' + val.slice(2);
     if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5);
     if (val.length > 12) val = val.slice(0, 12) + '-' + val.slice(12, 14);
@@ -94,8 +96,8 @@ function checkNextBtn() {
         const licenseNo = document.getElementById('inputLicenseNo').value;
         const serial = document.getElementById('inputLicenseSerial').value;
         const di = document.getElementById('inputDlIssue').value;
-        // KSNET 가이드: 운전면허 검증은 면허번호 + 생년월일(yyyymmdd) + 암호값
-        ok = licenseNo.replace(/\D/g, '').length > 0
+        // KSNET 가이드: 운전면허 검증은 면허번호(12자리) + 생년월일(yyyymmdd) + 암호값
+        ok = licenseNo.replace(/\D/g, '').length === 12
             && digits10(document.getElementById('inputDlIssue')).length === 8
             && serial.length > 0;
     }

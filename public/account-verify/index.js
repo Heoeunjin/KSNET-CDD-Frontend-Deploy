@@ -11,60 +11,80 @@ let isVerified = false;
 let currentSheetTab = 'bank';
 let acnCerTrUky = null; // gubun=6 응답값 (gubun=7에서 사용)
 
-/* --- 은행/증권사 데이터 --- */
+/* --- 은행/증권사 데이터 (API code는 명세 유지, 화면 노출만 이용·규모 기준 대략 순) --- */
 const BANKS = [
-    { code: 'KB',       name: 'KB국민',       color: '#FFBC00', text: 'KB' },
-    { code: 'IBK',      name: '기업',          color: '#005BAC', text: '기업' },
-    { code: 'NH',       name: '농협',          color: '#009947', text: 'NH' },
-    { code: 'KDB',      name: '산업',          color: '#004A97', text: 'KDB' },
-    { code: 'SUHYUP',   name: '수협',          color: '#0066CC', text: '수협' },
-    { code: 'SHINHAN',  name: '신한',          color: '#0046FF', text: '신한' },
-    { code: 'WOORI',    name: '우리',          color: '#007BC7', text: '우리' },
-    { code: 'POST',     name: '우체국',        color: '#E60012', text: '우체' },
-    { code: 'HANA',     name: '하나',          color: '#009B77', text: '하나' },
-    { code: 'CITI',     name: '한국씨티',      color: '#003087', text: 'Citi' },
-    { code: 'SC',       name: 'SC제일',        color: '#00AA4B', text: 'SC' },
-    { code: 'KAKAO',    name: '카카오뱅크',    color: '#F9E000', text: 'K',   textColor: '#3A1D1D' },
-    { code: 'KBANK',    name: '케이뱅크',      color: '#1A4CC0', text: 'K' },
-    { code: 'TOSS',     name: '토스뱅크',      color: '#4169E1', text: 'T' },
-    { code: 'GYEONGNAM',name: '경남',          color: '#CD2D34', text: 'BNK' },
-    { code: 'GWANGJU',  name: '광주',          color: '#0066B3', text: '광주' },
-    { code: 'IAMBANK',  name: '아이엠뱅크',    color: '#CD2D34', text: 'iM' },
-    { code: 'BUSAN',    name: '부산',          color: '#CD2D34', text: 'BNK' },
-    { code: 'JEONBUK',  name: '전북',          color: '#0066B3', text: 'JB' },
-    { code: 'JEJU',     name: '제주',          color: '#009B77', text: '제주' },
-    { code: 'SAVINGS',  name: '저축',          color: '#F5A623', text: '저축' },
-    { code: 'FOREST',   name: '산림조합',      color: '#228B22', text: '산림' },
-    { code: 'SEMAUL',   name: '새마을',        color: '#007AC2', text: '새마을' },
-    { code: 'CREDIT',   name: '신협',          color: '#1B75BB', text: '신협' },
+    { code: 'KB',        name: 'KB국민',             color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
+    { code: 'SHINHAN',   name: '신한',               color: '#0046FF', text: '신한' },
+    { code: 'WOORI',     name: '우리',               color: '#007BC7', text: '우리' },
+    { code: 'HANA',      name: '하나',               color: '#009B77', text: '하나' },
+    { code: 'NH',        name: 'NH농협',             color: '#009947', text: 'NH' },
+    { code: 'KAKAO',     name: '카카오뱅크',         color: '#F9E000', text: 'K',    textColor: '#3A1D1D' },
+    { code: 'TOSS',      name: '토스뱅크',           color: '#4169E1', text: 'T' },
+    { code: 'KBANK',     name: '케이뱅크',           color: '#1A4CC0', text: 'K' },
+    { code: 'IBK',       name: 'IBK기업',            color: '#005BAC', text: '기업' },
+    { code: 'SC',        name: 'SC제일',             color: '#00AA4B', text: 'SC' },
+    { code: 'SUHYUP',    name: '수협',               color: '#0066CC', text: '수협' },
+    { code: 'IAMBANK',   name: 'iM뱅크(대구)',       color: '#CD2D34', text: 'iM' },
+    { code: 'POST',      name: '우체국',             color: '#E60012', text: '우체' },
+    { code: 'BUSAN',     name: '부산',               color: '#CD2D34', text: 'BNK' },
+    { code: 'GYEONGNAM', name: '경남',               color: '#CD2D34', text: 'BNK' },
+    { code: 'GWANGJU',   name: '광주',               color: '#0066B3', text: '광주' },
+    { code: 'JEONBUK',   name: '전북',               color: '#0066B3', text: 'JB' },
+    { code: 'JEJU',      name: '제주',               color: '#009B77', text: '제주' },
+    { code: 'SEMAUL',    name: '새마을',             color: '#007AC2', text: '새마을' },
+    { code: 'CREDIT',    name: '신협',               color: '#1B75BB', text: '신협' },
+    { code: 'SAVINGS',   name: '저축은행',           color: '#F5A623', text: '저축' },
+    { code: 'KDB',       name: 'KDB산업',            color: '#004A97', text: 'KDB' },
+    { code: 'CITI',      name: '씨티',               color: '#003087', text: 'Citi' },
+    { code: 'FOREST',    name: '산림조합',           color: '#228B22', text: '산림' },
+    { code: 'DEUTSCHE',  name: '도이치',             color: '#0018A8', text: 'DB' },
+    { code: 'JPMORGAN',  name: 'JP모건',             color: '#012169', text: 'JP' },
+    { code: 'BOA',       name: 'BOA',               color: '#012169', text: 'BOA' },
+    { code: 'BNP',       name: 'BNP파리바',         color: '#00915A', text: 'BNP' },
+    { code: 'ICBC',      name: '중국공상',           color: '#C41230', text: '공상' },
+    { code: 'BOC',       name: '중국',               color: '#C41230', text: '중국' },
+    { code: 'CCB',       name: '중국건설',           color: '#003B7A', text: '건설' },
 ];
 
 const SECURITIES = [
-    { code: 'KB_SEC',      name: 'KB증권',        color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
-    { code: 'KYOBO',       name: '교보증권',      color: '#005BAC', text: '교보' },
-    { code: 'DAESHIN',     name: '대신증권',      color: '#00448B', text: '대신' },
-    { code: 'MERITZ',      name: '메리츠증권',    color: '#E8001C', text: 'M' },
-    { code: 'MIRAE',       name: '미래에셋',      color: '#E8001C', text: 'M' },
-    { code: 'BUGUK',       name: '부국증권',      color: '#003087', text: '부국' },
-    { code: 'SAMSUNG',     name: '삼성증권',      color: '#1428A0', text: 'S' },
-    { code: 'SANGSANGIN',  name: '상상인증권',    color: '#FF6B00', text: '상상' },
-    { code: 'SINYOUNG',    name: '신영증권',      color: '#0B5C2E', text: '신영' },
-    { code: 'SHINHAN_SEC', name: '신한투자',      color: '#0046FF', text: '신한' },
-    { code: 'YUANTA',      name: '유안타증권',    color: '#E8001C', text: 'Y' },
-    { code: 'EUGENE',      name: '유진투자',      color: '#FF6B00', text: '유진' },
-    { code: 'LS',          name: 'LS증권',        color: '#003087', text: 'LS' },
-    { code: 'KAKAOPAY',    name: '카카오페이',    color: '#F9E000', text: 'K',    textColor: '#3A1D1D' },
-    { code: 'CAPE',        name: '케이프투자',    color: '#005BAC', text: '케이프' },
-    { code: 'KIWOOM',      name: '키움증권',      color: '#E8001C', text: '키움' },
-    { code: 'TOSS_SEC',    name: '토스증권',      color: '#4169E1', text: 'T' },
-    { code: 'HANA_SEC',    name: '하나증권',      color: '#009B77', text: '하나' },
-    { code: 'KIS',         name: '한국투자',      color: '#E8001C', text: 'K' },
-    { code: 'HANWHA',      name: '한화투자',      color: '#FF6B00', text: '한화' },
-    { code: 'HYUNDAI',     name: '현대차증권',    color: '#002C5F', text: 'H' },
-    { code: 'BNK_SEC',     name: 'BNK투자',       color: '#CD2D34', text: 'BNK' },
-    { code: 'IAM_SEC',     name: '아이엠증권',    color: '#CD2D34', text: 'iM' },
-    { code: 'WOORI_SEC',   name: '우리투자',      color: '#007BC7', text: '우리' },
+    { code: 'SAMSUNG',     name: '삼성증권',            color: '#1428A0', text: 'S' },
+    { code: 'KIWOOM',      name: '키움',                color: '#E8001C', text: '키움' },
+    { code: 'MIRAE',       name: '미래에셋',            color: '#E8001C', text: 'M' },
+    { code: 'NH_SEC',      name: 'NH투자',              color: '#009947', text: 'NH' },
+    { code: 'KB_SEC',      name: 'KB증권',              color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
+    { code: 'EBEST',       name: '이베스트투자',        color: '#E8001C', text: 'K' },
+    { code: 'SHINHAN_SEC', name: '신한투자',            color: '#0046FF', text: '신한' },
+    { code: 'TOSS_SEC',    name: '토스증권',            color: '#4169E1', text: 'T' },
+    { code: 'KAKAOPAY',    name: '카카오페이증권',      color: '#F9E000', text: 'K',    textColor: '#3A1D1D' },
+    { code: 'DAESHIN',     name: '대신',                color: '#00448B', text: '대신' },
+    { code: 'HANA_DT',     name: '하나증권',            color: '#009B77', text: '하나' },
+    { code: 'YUANTA',      name: '유안타',              color: '#E8001C', text: 'Y' },
+    { code: 'HANWHA',      name: '한화투자',            color: '#FF6B00', text: '한화' },
+    { code: 'MERITZ',      name: '메리츠증권',          color: '#E8001C', text: 'M' },
+    { code: 'KYOBO',       name: '교보',                color: '#005BAC', text: '교보' },
+    { code: 'DB_SEC',      name: 'DB증권',              color: '#003087', text: 'DB' },
+    { code: 'EUGENE',      name: '유진투자',            color: '#FF6B00', text: '유진' },
+    { code: 'BNK_SEC',     name: 'BNK투자',            color: '#CD2D34', text: 'BNK' },
+    { code: 'HYUNDAI',     name: '현대차증권',          color: '#002C5F', text: 'H' },
+    { code: 'SK',          name: 'SK',                 color: '#EA002C', text: 'SK' },
+    { code: 'HI',          name: '하이투자',            color: '#E8001C', text: 'Hi' },
+    { code: 'IBK_SEC',     name: 'IBK투자',            color: '#005BAC', text: 'IBK' },
+    { code: 'DAEWOO',      name: '대우',                color: '#00448B', text: '대우' },
+    { code: 'IM_MERITZ',   name: '아이엠증권',          color: '#E8001C', text: 'iM' },
+    { code: 'BUGUK',       name: '부국',                color: '#003087', text: '부국' },
+    { code: 'SINYOUNG',    name: '신영',                color: '#0B5C2E', text: '신영' },
+    { code: 'DAOL',        name: '다올투자증권',        color: '#005BAC', text: '다올' },
+    { code: 'CAPE',        name: '케이프투자',          color: '#005BAC', text: '케이프' },
+    { code: 'KOREA_FOSS',  name: '한국포스',            color: '#003087', text: '포스' },
 ];
+
+function bankIconFolder(code) {
+    return SECURITIES.some(function (s) { return s.code === code; }) ? 'sec' : 'bank';
+}
+
+function bankIconSrc(tabOrFolder, code) {
+    return '../assets/icons/' + tabOrFolder + '/' + code + '.svg';
+}
 
 /* --- 바텀시트 --- */
 function openBankSheet() {
@@ -156,23 +176,33 @@ function renderBankGrid(tab) {
     const selectedCode = document.getElementById('selectBank').value;
     const grid = document.getElementById('bankGrid');
 
-    grid.innerHTML = list.map(item => `
+    grid.innerHTML = list.map(item => {
+        const src = bankIconSrc(tab, item.code);
+        const fg = item.textColor || '#fff';
+        return `
         <div class="bank-item${item.code === selectedCode ? ' is-selected' : ''}"
-             onclick="selectBank('${item.code}', '${item.name}', '${item.color}', '${item.text}', '${item.textColor || '#fff'}')">
-            <div class="bank-icon" style="background:${item.color}; color:${item.textColor || '#fff'}">
-                ${item.text}
+             onclick="selectBank('${item.code}', '${item.name}', '${item.color}', '${item.text}', '${fg}')">
+            <div class="bank-icon">
+                <img class="bank-icon-img" src="${src}" alt="" loading="lazy" decoding="async"
+                     onerror="this.classList.add('is-broken'); this.parentElement.classList.add('use-fallback');">
+                <span class="bank-icon-fallback" style="background:${item.color};color:${fg}">${item.text}</span>
             </div>
             <span class="bank-item-name">${item.name}</span>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 function selectBank(code, name, color, text, textColor) {
     document.getElementById('selectBank').value = code;
 
     const inner = document.getElementById('bankTriggerInner');
+    const src = bankIconSrc(bankIconFolder(code), code);
     inner.innerHTML = `
-        <div class="bank-icon-sm" style="background:${color}; color:${textColor}">${text}</div>
+        <div class="bank-icon-sm">
+            <img class="bank-icon-sm-img" src="${src}" alt=""
+                 onerror="this.classList.add('is-broken'); this.parentElement.classList.add('use-fallback');">
+            <span class="bank-icon-sm-fallback" style="background:${color};color:${textColor}">${text}</span>
+        </div>
         <span class="bank-trigger-name">${name}</span>
     `;
 
