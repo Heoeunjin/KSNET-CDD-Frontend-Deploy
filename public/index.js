@@ -88,7 +88,7 @@ async function startKyc() {
         const res = await KYC_API.verifyToken({});
         const h = res.response_header || {};
         if (h.result_code !== '0') {
-            alert(h.std_mesg_content || '토큰 검증에 실패했습니다. 이용기관에서 다시 연결해 주세요.');
+            KYC.showErrorModal(h.std_mesg_content || '토큰 검증에 실패했습니다. 이용기관에서 다시 연결해 주세요.');
             return;
         }
     } catch (e) {

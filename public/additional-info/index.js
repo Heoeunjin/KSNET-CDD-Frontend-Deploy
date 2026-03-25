@@ -332,7 +332,7 @@ async function goNext() {
     const kycData = KYC.loadStep();
     const cerTrUky = kycData.cer_tr_uky;
     if (!cerTrUky) {
-        alert('인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.');
+        KYC.showErrorModal('인증 정보가 없습니다. 기본정보부터 다시 진행해주세요.');
         KYC.goTo('../basic-info/index.html');
         return;
     }
@@ -397,7 +397,7 @@ async function goNext() {
 
         if (header.result_code !== '0') {
             const msg = (res.response_data && res.response_data.std_mesg_content) || header.std_mesg_content || '저장에 실패했습니다.';
-            alert(msg);
+            KYC.showErrorModal(msg);
             btn.disabled = false;
             return;
         }
@@ -413,7 +413,7 @@ async function goNext() {
         KYC.goTo('../account-verify/index.html');
     } catch (err) {
         console.error('추가정보 저장 오류:', err);
-        alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        KYC.showErrorModal('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
         btn.disabled = false;
     }
 }

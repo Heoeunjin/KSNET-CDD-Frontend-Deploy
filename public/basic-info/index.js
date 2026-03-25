@@ -15,7 +15,7 @@ let pendingAlreadyCompleted = false;
 (async function requireToken() {
     const ok = await KYC.ensureTokenVerified();
     if (!ok) {
-        alert('토큰 검증이 필요합니다. 메인 화면에서 다시 시작해 주세요.');
+        KYC.showErrorModal('토큰 검증이 필요합니다. 메인 화면에서 다시 시작해 주세요.');
         KYC.goTo('../index.html');
     }
 })();
