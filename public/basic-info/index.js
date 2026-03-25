@@ -141,6 +141,18 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
 
     if (!box || !displayEl || !dropdown || !nativeSelect || !options.length) return;
 
+    function ensureDropdownVisibleBelow() {
+        const body = document.querySelector('.kyc-body');
+        if (!body) return;
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const dropdownRect = dropdown.getBoundingClientRect();
+        const bottomPadding = 12;
+        const overflow = dropdownRect.bottom + bottomPadding - viewportHeight;
+        if (overflow > 0) {
+            body.scrollTop += overflow;
+        }
+    }
+
     function closeDropdown() {
         box.classList.remove('is-open');
     }
@@ -148,7 +160,12 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
     box.addEventListener('click', function (e) {
         // 옵션 클릭은 별도 처리
         if (e.target.classList.contains('carrier-option')) return;
-        box.classList.toggle('is-open');
+        if (box.classList.contains('is-open')) {
+            closeDropdown();
+            return;
+        }
+        box.classList.add('is-open');
+        requestAnimationFrame(ensureDropdownVisibleBelow);
     });
 
     options.forEach(function (btn) {
@@ -181,6 +198,11 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
         if (!box.contains(e.target)) {
             closeDropdown();
         }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!box.classList.contains('is-open')) return;
+        requestAnimationFrame(ensureDropdownVisibleBelow);
     });
 })();
 
