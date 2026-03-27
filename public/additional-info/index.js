@@ -100,7 +100,10 @@ function searchAddressLive() {
     const top = Math.round((window.screen.height - height) / 2);
     const base = window.location.origin;
     const popupUrl = base + '/juso-popup.html';
-    window.open(popupUrl, 'jusoPopup', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',scrollbars=yes');
+    KYC.openJusoPopup(
+        popupUrl,
+        'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',scrollbars=yes'
+    );
 }
 
 window.jusoCallBack = function (
@@ -123,6 +126,7 @@ window.jusoCallBack = function (
     document.getElementById('inputLiveAddr2').value = detail;
     document.getElementById('inputLiveAddr2').focus();
     checkNextBtn();
+    KYC.closeJusoPopup();
 };
 
 ['inputCompNm', 'inputDeptNm', 'inputLiveZip', 'inputLiveAddr1', 'inputLiveAddr2',
@@ -385,7 +389,7 @@ async function goNext() {
         cer_tr_uky: cerTrUky,
         eng_nm: (kycData.passportName || '').trim(),
         natn_cd: natnApi,
-        natn_nm: natnApi === 'OTHER' ? (kycData.nationalityName || kycData.nationality || '').trim() : '',
+        natn_nm: natnApi === 'OTHER' ? String(kycData.nationalityName || '').trim() : '',
         rrno_frnt: '',
         rrno_back: '',
         eml_addr: kycData.email || '',

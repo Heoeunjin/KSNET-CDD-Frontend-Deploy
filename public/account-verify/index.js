@@ -11,39 +11,40 @@ let isVerified = false;
 let currentSheetTab = 'bank';
 let acnCerTrUky = null; // gubun=6 응답값 (gubun=7에서 사용)
 
-/* --- 은행/증권사 데이터 --- */
+/* --- 은행 (금융기관코드·명칭·순번 = KSNET 은행 코드표와 동일) --- */
 const BANKS = [
+    { code: 'NH',        name: 'NH농협',             color: '#009947', text: 'NH' },
     { code: 'KB',        name: 'KB국민',             color: '#FFBC00', text: 'KB',   textColor: '#3A1D1D' },
     { code: 'SHINHAN',   name: '신한',               color: '#0046FF', text: '신한' },
     { code: 'WOORI',     name: '우리',               color: '#007BC7', text: '우리' },
     { code: 'HANA',      name: '하나',               color: '#009B77', text: '하나' },
-    { code: 'NH',        name: 'NH농협',             color: '#009947', text: 'NH' },
     { code: 'KAKAO',     name: '카카오뱅크',         color: '#F9E000', text: 'K',    textColor: '#3A1D1D' },
     { code: 'TOSS',      name: '토스뱅크',           color: '#4169E1', text: 'T' },
-    { code: 'KBANK',     name: '케이뱅크',           color: '#1A4CC0', text: 'K' },
     { code: 'IBK',       name: 'IBK기업',            color: '#005BAC', text: '기업' },
-    { code: 'SC',        name: 'SC제일',             color: '#00AA4B', text: 'SC' },
-    { code: 'SUHYUP',    name: '수협',               color: '#0066CC', text: '수협' },
-    { code: 'IAMBANK',   name: 'iM뱅크(대구)',       color: '#CD2D34', text: 'iM' },
-    { code: 'POST',      name: '우체국',             color: '#E60012', text: '우체' },
+    { code: 'SEMAUL',    name: '새마을금고',         color: '#007AC2', text: '새마' },
+    { code: 'IAMBANK',   name: 'IM뱅크',             color: '#CD2D34', text: 'iM' },
     { code: 'BUSAN',     name: '부산',               color: '#CD2D34', text: 'BNK' },
-    { code: 'GYEONGNAM', name: '경남',               color: '#CD2D34', text: 'BNK' },
-    { code: 'GWANGJU',   name: '광주',               color: '#0066B3', text: '광주' },
-    { code: 'JEONBUK',   name: '전북',               color: '#0066B3', text: 'JB' },
-    { code: 'JEJU',      name: '제주',               color: '#009B77', text: '제주' },
-    { code: 'SEMAUL',    name: '새마을',             color: '#007AC2', text: '새마을' },
+    { code: 'SC',        name: 'SC제일',             color: '#00AA4B', text: 'SC' },
+    { code: 'POST',      name: '우체국',             color: '#E60012', text: '우체' },
+    { code: 'KBANK',     name: '케이뱅크',           color: '#1A4CC0', text: 'K' },
     { code: 'CREDIT',    name: '신협',               color: '#1B75BB', text: '신협' },
-    { code: 'SAVINGS',   name: '저축은행',           color: '#F5A623', text: '저축' },
+    { code: 'GWANGJU',   name: '광주',               color: '#0066B3', text: '광주' },
+    { code: 'SUHYUP',    name: '수협',               color: '#0066CC', text: '수협' },
+    { code: 'GYEONGNAM', name: '경남',               color: '#CD2D34', text: 'BNK' },
+    { code: 'JEONBUK',   name: '전북',               color: '#0066B3', text: 'JB' },
     { code: 'KDB',       name: 'KDB산업',            color: '#004A97', text: 'KDB' },
-    { code: 'CITI',      name: '씨티',               color: '#003087', text: 'Citi' },
+    { code: 'JEJU',      name: '제주',               color: '#009B77', text: '제주' },
+    { code: 'SAVINGS',   name: '상호저축은행',       color: '#F5A623', text: '저축' },
     { code: 'FOREST',    name: '산림조합',           color: '#228B22', text: '산림' },
+    { code: 'CITI',      name: '씨티',               color: '#003087', text: 'Citi' },
     { code: 'DEUTSCHE',  name: '도이치',             color: '#0018A8', text: 'DB' },
-    { code: 'JPMORGAN',  name: 'JP모건',             color: '#012169', text: 'JP' },
-    { code: 'BOA',       name: 'BOA',               color: '#012169', text: 'BOA' },
-    { code: 'BNP',       name: 'BNP파리바',         color: '#00915A', text: 'BNP' },
-    { code: 'ICBC',      name: '중국공상',           color: '#C41230', text: '공상' },
-    { code: 'BOC',       name: '중국',               color: '#C41230', text: '중국' },
+    { code: 'JPMORGAN',  name: 'JP모간',             color: '#012169', text: 'JP' },
+    { code: 'HSBC',      name: 'HSBC',               color: '#DB0011', text: 'HSBC' },
     { code: 'CCB',       name: '중국건설',           color: '#003B7A', text: '건설' },
+    { code: 'ICBC',      name: '중국공상',           color: '#C41230', text: '공상' },
+    { code: 'BNP',       name: 'BNP파리바',         color: '#00915A', text: 'BNP' },
+    { code: 'BOA',       name: 'BOA',               color: '#012169', text: 'BOA' },
+    { code: 'BOC',       name: '중국은행',           color: '#C41230', text: '중국' },
 ];
 
 const SECURITIES = [
@@ -84,6 +85,104 @@ function bankIconFolder(code) {
 
 function bankIconSrc(tabOrFolder, code) {
     return '../assets/icons/' + tabOrFolder + '/' + code + '.svg';
+}
+
+/* --- 계좌 인증(1원) 오류코드 → 팝업/문구 (명세: 계좌 불일치 팝업) --- */
+const MSG_ACCT_NOT_FOUND = '해당 계좌가 없습니다. 계좌번호를 확인해주세요.';
+const MSG_PARTNER_NOT = '제휴기관이 아닙니다.';
+const MSG_LIFETIME_ACCT = '평생(간편)계좌는 인증이 불가합니다.';
+const MSG_VERIFY_MISMATCH = '인증번호가 일치하지 않습니다. 다시 입력해주세요.';
+const MSG_GENERIC_RETRY = '처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+const MSG_FNR1 = '거래가 원활하지 않습니다. 잠시 후 다시 시도해 주세요.';
+
+function getAccountVerifyResultCode(header, data) {
+    const h = header || {};
+    const d = data || {};
+    const raw = h.result_code != null && String(h.result_code) !== '' ? h.result_code : d.result_code;
+    return String(raw == null ? '' : raw).trim().toUpperCase();
+}
+
+function isAccountVerifySuccessCode(code) {
+    const c = String(code).trim();
+    return c === '0' || c === '0000';
+}
+
+/**
+ * @param {'request'|'confirm'} phase gubun=6 요청 / gubun=7 확인
+ * @returns {{ kind: string, message?: string }}
+ */
+function classifyAccountVerifyResponse(header, data, phase) {
+    const code = getAccountVerifyResultCode(header, data);
+    if (isAccountVerifySuccessCode(code)) return { kind: 'ok' };
+
+    const serverMsg = String(
+        (header && header.std_mesg_content) || (data && data.std_mesg_content) || ''
+    ).trim();
+
+    const accountNone = ['C001', 'C007', 'A007', 'A009', 'A019'];
+    if (accountNone.indexOf(code) !== -1) return { kind: 'account_not_found' };
+
+    if (code === 'C003') return { kind: 'partner' };
+    if (code === 'A006') return { kind: 'expired' };
+    if (code === 'A018') return { kind: 'lifetime' };
+
+    if (code === 'A011') {
+        if (phase === 'confirm') return { kind: 'verify_mismatch' };
+        return { kind: 'no_proceed', message: serverMsg || MSG_GENERIC_RETRY };
+    }
+
+    if (['C002', 'C004', 'C012', 'C999'].indexOf(code) !== -1) {
+        return { kind: 'no_proceed', message: serverMsg || MSG_GENERIC_RETRY };
+    }
+
+    if (code === 'FNR1') {
+        return { kind: 'no_proceed', message: serverMsg || MSG_FNR1 };
+    }
+
+    if (/^F[A-Z0-9]{3}$/.test(code)) {
+        return { kind: 'no_proceed', message: serverMsg || MSG_GENERIC_RETRY };
+    }
+
+    if (serverMsg.indexOf('초과') !== -1 || serverMsg.indexOf('횟수') !== -1) {
+        return { kind: 'limit_exceeded' };
+    }
+
+    return { kind: 'no_proceed', message: serverMsg || MSG_GENERIC_RETRY };
+}
+
+function applyAccountVerifyFailure(classified, phase) {
+    const verifyBox = document.getElementById('verifyCodeBox');
+    const verifyErr = document.getElementById('verifyCodeError');
+    const inputVerify = document.getElementById('inputVerifyCode');
+
+    switch (classified.kind) {
+        case 'verify_mismatch':
+            if (phase === 'confirm') {
+                Validation.showError(verifyBox, verifyErr, MSG_VERIFY_MISMATCH);
+                if (inputVerify) inputVerify.value = '';
+            } else {
+                KYC.showErrorModal(classified.message || MSG_GENERIC_RETRY);
+            }
+            break;
+        case 'account_not_found':
+            KYC.showErrorModal(MSG_ACCT_NOT_FOUND);
+            break;
+        case 'partner':
+            KYC.showErrorModal(MSG_PARTNER_NOT);
+            break;
+        case 'lifetime':
+            KYC.showErrorModal(MSG_LIFETIME_ACCT);
+            break;
+        case 'expired':
+            KYC.openModal('modalExpired');
+            break;
+        case 'limit_exceeded':
+            KYC.openModal('modalLimitExceeded');
+            break;
+        case 'no_proceed':
+        default:
+            KYC.showErrorModal(classified.message || MSG_GENERIC_RETRY);
+    }
 }
 
 /* --- 바텀시트 --- */
@@ -171,6 +270,18 @@ function switchSheetTab(tab) {
     renderBankGrid(tab);
 }
 
+const BANK_CHECK_SVG =
+    '<svg class="bank-item-check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+    '<path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+
+function escAttr(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;');
+}
+
 function renderBankGrid(tab) {
     const list = tab === 'bank' ? BANKS : SECURITIES;
     const selectedCode = document.getElementById('selectBank').value;
@@ -181,15 +292,32 @@ function renderBankGrid(tab) {
         const fg = item.textColor || '#fff';
         return `
         <div class="bank-item${item.code === selectedCode ? ' is-selected' : ''}"
-             onclick="selectBank('${item.code}', '${item.name}', '${item.color}', '${item.text}', '${fg}')">
-            <div class="bank-icon">
-                <img class="bank-icon-img" src="${src}" alt="" loading="lazy" decoding="async"
-                     onerror="this.classList.add('is-broken'); this.parentElement.classList.add('use-fallback');">
-                <span class="bank-icon-fallback" style="background:${item.color};color:${fg}">${item.text}</span>
+             role="button"
+             tabindex="0"
+             data-bank-code="${item.code}"
+             data-bank-name="${escAttr(item.name)}"
+             data-bank-color="${item.color}"
+             data-bank-text="${escAttr(item.text)}"
+             data-bank-fg="${fg}"
+             onclick="selectBankFromEl(this)"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBankFromEl(this);}">
+            <span class="bank-item-check" aria-hidden="true">${BANK_CHECK_SVG}</span>
+            <div class="bank-item-card-inner">
+                <div class="bank-icon">
+                    <img class="bank-icon-img" src="${src}" alt="" loading="lazy" decoding="async"
+                         onerror="this.classList.add('is-broken'); this.parentElement.classList.add('use-fallback');">
+                    <span class="bank-icon-fallback" style="background:${item.color};color:${fg}">${item.text}</span>
+                </div>
+                <span class="bank-item-name">${item.name}</span>
             </div>
-            <span class="bank-item-name">${item.name}</span>
         </div>`;
     }).join('');
+}
+
+function selectBankFromEl(el) {
+    if (!el || !el.dataset) return;
+    const d = el.dataset;
+    selectBank(d.bankCode, d.bankName, d.bankColor, d.bankText, d.bankFg);
 }
 
 function selectBank(code, name, color, text, textColor) {
@@ -221,8 +349,8 @@ function selectBank(code, name, color, text, textColor) {
 }
 
 /* --- 계좌번호 입력 → 재전송 상태면 초기화 --- */
-document.getElementById('inputAccountNo').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+Validation.bindImeAwareInput(document.getElementById('inputAccountNo'), function (el) {
+    el.value = el.value.replace(/\D/g, '');
 
     const btn = document.getElementById('btnRequestVerify');
     if (btn.textContent.trim() === '재전송') {
@@ -278,14 +406,11 @@ async function requestVerify() {
 
         const header = res.response_header || {};
         const data = res.response_data || {};
+        const rc = getAccountVerifyResultCode(header, data);
 
-        if (header.result_code !== '0') {
-            const msg = header.std_mesg_content || data.std_mesg_content || '인증 요청에 실패했습니다.';
-            if (msg.includes('초과') || msg.includes('횟수')) {
-                KYC.openModal('modalLimitExceeded');
-            } else {
-                KYC.showErrorModal(msg);
-            }
+        if (!isAccountVerifySuccessCode(rc)) {
+            const classified = classifyAccountVerifyResponse(header, data, 'request');
+            applyAccountVerifyFailure(classified, 'request');
             btn.disabled = false;
             return;
         }
@@ -306,14 +431,14 @@ async function requestVerify() {
 }
 
 /* --- 인증번호 입력 --- */
-document.getElementById('inputVerifyCode').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+Validation.bindImeAwareInput(document.getElementById('inputVerifyCode'), function (el) {
+    el.value = el.value.replace(/\D/g, '');
     Validation.clearError(
         document.getElementById('verifyCodeBox'),
         document.getElementById('verifyCodeError')
     );
-    if (this.value.length === 3) {
-        verifyCode(this.value);
+    if (el.value.length === 3) {
+        verifyCode(el.value);
     }
 });
 
@@ -336,27 +461,25 @@ async function verifyCode(code) {
 
         const header = res.response_header || {};
         const data = res.response_data || {};
+        const rc = getAccountVerifyResultCode(header, data);
 
-        if (header.result_code === '0') {
+        if (isAccountVerifySuccessCode(rc)) {
             timer.stop();
             isVerified = true;
             KYC.saveStep({ acn_cer_tr_uky: acnCerTrUky });
         } else {
             isVerified = false;
-            const msg =
-                header.std_mesg_content ||
-                data.std_mesg_content ||
-                '인증에 실패했습니다. 입력값을 확인해 주세요.';
-            Validation.showError(
+            Validation.clearError(
                 document.getElementById('verifyCodeBox'),
-                document.getElementById('verifyCodeError'),
-                msg
+                document.getElementById('verifyCodeError')
             );
+            const classified = classifyAccountVerifyResponse(header, data, 'confirm');
+            applyAccountVerifyFailure(classified, 'confirm');
         }
     } catch (err) {
         console.error('계좌 인증 확인 오류:', err);
         isVerified = false;
-        KYC.openModal('modalOwnerMismatch');
+        KYC.showErrorModal('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
     }
     checkNextBtn();
 }

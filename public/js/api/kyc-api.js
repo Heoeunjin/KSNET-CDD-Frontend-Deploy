@@ -2,11 +2,11 @@
  * =============================================================================
  * KSNET KYC API 공통 모듈 (프론트엔드 전용)
  * =============================================================================
- * 기준 문서: 2026.03.18_KSNET_KYC_API_Spec_front V2
+ * 기준 문서: 2026.03.18_KSNET_KYC_API_Spec_front V3
  * 엔드포인트: 단일 POST, tr_cd(거래코드)로 업무 구분
  *
  * -----------------------------------------------------------------------------
- * ★ 유지보수 안내 ★
+ * 유지보수 안내
  * -----------------------------------------------------------------------------
  * 1) KSNET과 통신하는 프론트 코드는 이 파일에만 둡니다.
  * 2) 거래코드·필드명 변경 → 해당 메서드만 수정.
@@ -20,20 +20,22 @@
  *   URL: KSNET_API_BASE_URL + KSNET_API_PATH
  *
  * -----------------------------------------------------------------------------
- * 전체 호출 흐름 표 (명세 V2) — 거래코드는 이 표만 기준으로 둠
+ * 전체 호출 흐름 표 (명세 V3) — tr_cd 는 아래 TR_CD 와 이 표를 단일 기준으로 둠
  * -----------------------------------------------------------------------------
- * 순서 | 단계              | gubun | tr_cd
- * -----|-------------------|-------|------------------
- *  1   | 토큰 검증(인입)   |  —    | S0KSCCOB01I401
- *  2   | SMS 인증번호 발송 |  1    | S0KSCCOB04I001
- *  3   | SMS 인증번호 확인 |  2    | S0KSCCOB04I201
- *  4   | SMS 재발송        |  3    | S0KSCCOB04I001 (동일)
- *  5   | 추가정보 저장     |  5    | S0KSCCOB05I101
- *  6   | 1원 계좌 요청     |  6    | S0KSCCOB05I201
- *  7   | 1원 계좌 확인     |  7    | S0KSCCOB05I301
- *  8   | 신분증·KYC 완료   |  8    | S0KSCCOB05I401
+ * 순서 | 단계              | gubun | tr_cd              | 프론트 호출 위치
+ * -----|-------------------|-------|--------------------|----------------------------------
+ *  1   | 토큰 검증(인입)   |  —    | S0KSCCOB01I401     | agreement/index.js, common.js ensureTokenVerified
+ *  2   | SMS 인증번호 발송 |  1    | S0KSCCOB04I001     | basic-info/index.js sendSms
+ *  3   | SMS 인증번호 확인 |  2    | S0KSCCOB04I201     | basic-info/index.js verifySms
+ *  4   | SMS 재발송       |  3    | S0KSCCOB04I001     | basic-info → resendSms (= sendSms 동일 tr_cd)
+ *  5   | 추가정보 저장     |  5    | S0KSCCOB05I101     | additional-info/index.js
+ *  6   | 1원 계좌 요청     |  6    | S0KSCCOB05I201     | account-verify/index.js
+ *  7   | 1원 계좌 확인     |  7    | S0KSCCOB05I301     | account-verify/index.js
+ *  8   | 신분증·KYC 완료   |  8    | S0KSCCOB05I401     | id-verify/index.js
  *
- * 명세 개정 시 → 아래 TR_CD 상수만 수정.
+ * (personal-info 등은 로컬 단계 저장만 하고 이 모듈을 직접 호출하지 않음.)
+ *
+ * 명세 개정 시 → 아래 TR_CD 상수·해당 메서드만 수정.
  *
  * -----------------------------------------------------------------------------
  * 응답: response_header.result_code === '0' 정상
@@ -77,24 +79,73 @@ const KYC_API = {
     },
 
     /**
-     * account-verify 화면 code → KSNET bnk_cd (3자리, 2026 KYC 명세 코드표).
-     * 한국포스증권(KOREA_FOSS)은 명세에 코드 미기재 시 294 임시 — 운영 시 KSNET와 재대조.
+     * 아래 순서는 public/account-verify/index.js 의 BANKS · SECURITIES 배열과 동일하게 둠.
      */
     BANK_CODE_MAP: {
-        KDB: '002', IBK: '003', KB: '004', SUHYUP: '007', NH: '011',
-        WOORI: '020', SC: '023', CITI: '027', IAMBANK: '031', BUSAN: '032',
-        GWANGJU: '034', JEJU: '035', JEONBUK: '037', GYEONGNAM: '039',
-        SEMAUL: '045', CREDIT: '048', SAVINGS: '050', DEUTSCHE: '055',
-        JPMORGAN: '057', BOA: '060', BNP: '061', ICBC: '062', BOC: '063',
-        FOREST: '064', CCB: '067', POST: '071', HANA: '081', SHINHAN: '088',
-        KBANK: '089', KAKAO: '090', TOSS: '092',
-        YUANTA: '209', KB_SEC: '218', BNK_SEC: '224', IBK_SEC: '225',
-        DAOL: '227', MIRAE: '230', DAEWOO: '238', SAMSUNG: '240', NH_SEC: '247',
-        KYOBO: '261', HI: '262', HYUNDAI: '263', KIWOOM: '264', EBEST: '265',
-        SK: '266', DAESHIN: '267', IM_MERITZ: '268', HANWHA: '269', HANA_DT: '270',
-        TOSS_SEC: '271', SHINHAN_SEC: '278', DB_SEC: '279', EUGENE: '280',
-        MERITZ: '287', KAKAOPAY: '288', BUGUK: '290', SINYOUNG: '291',
-        CAPE: '292', KOREA_FOSS: '294'
+        /* ---------- 은행 (BANKS 1~32) ---------- */
+        NH: '011', // NH농협
+        KB: '004', // KB국민
+        SHINHAN: '088', // 신한
+        WOORI: '020', // 우리
+        HANA: '081', // 하나
+        KAKAO: '090', // 카카오뱅크
+        TOSS: '092', // 토스뱅크
+        IBK: '003', // IBK기업
+        SEMAUL: '045', // 새마을금고
+        IAMBANK: '031', // IM뱅크
+        BUSAN: '032', // 부산
+        SC: '023', // SC제일
+        POST: '071', // 우체국
+        KBANK: '089', // 케이뱅크
+        CREDIT: '048', // 신협
+        GWANGJU: '034', // 광주
+        SUHYUP: '007', // 수협
+        GYEONGNAM: '039', // 경남
+        JEONBUK: '037', // 전북
+        KDB: '002', // KDB산업
+        JEJU: '035', // 제주
+        SAVINGS: '050', // 상호저축은행
+        FOREST: '064', // 산림조합
+        CITI: '027', // 씨티
+        DEUTSCHE: '055', // 도이치
+        JPMORGAN: '057', // JP모간
+        HSBC: '054', // HSBC
+        CCB: '067', // 중국건설
+        ICBC: '062', // 중국공상
+        BNP: '061', // BNP파리바
+        BOA: '060', // BOA
+        BOC: '063', // 중국은행
+
+        /* ---------- 증권사 (SECURITIES 순) ---------- */
+        SAMSUNG: '240', // 삼성증권
+        KIWOOM: '264', // 키움
+        MIRAE: '230', // 미래에셋
+        NH_SEC: '247', // NH투자
+        KB_SEC: '218', // KB증권
+        EBEST: '265', // 이베스트투자
+        SHINHAN_SEC: '278', // 신한투자
+        TOSS_SEC: '271', // 토스증권
+        KAKAOPAY: '288', // 카카오페이증권
+        DAESHIN: '267', // 대신
+        HANA_DT: '270', // 하나증권
+        YUANTA: '209', // 유안타
+        HANWHA: '269', // 한화투자
+        MERITZ: '287', // 메리츠증권
+        KYOBO: '261', // 교보
+        DB_SEC: '279', // DB증권
+        EUGENE: '280', // 유진투자
+        BNK_SEC: '224', // BNK투자
+        HYUNDAI: '263', // 현대차증권
+        SK: '266', // SK
+        HI: '262', // 하이투자
+        IBK_SEC: '225', // IBK투자
+        DAEWOO: '238', // 대우
+        IM_MERITZ: '268', // 아이엠증권
+        BUGUK: '290', // 부국
+        SINYOUNG: '291', // 신영
+        DAOL: '227', // 다올투자증권
+        CAPE: '292', // 케이프투자
+        KOREA_FOSS: '294' // 한국포스
     },
 
     async call(trCd, requestData) {
@@ -147,7 +198,10 @@ const KYC_API = {
         return this.sendSms(data);
     },
 
-    /** gubun=5 · 추가정보 */
+    /**
+     * gubun=5 · 추가정보 저장
+     * natn_cd 는 명세상 KR|US|CN|JP|OTHER 만; 그 외는 OTHER + natn_nm(한글 국가명).
+     */
     async saveAdditionalInfo(data) {
         return this.call(this.TR_CD.SAVE_ADDITIONAL, { ...data, cur_step: '05' });
     },

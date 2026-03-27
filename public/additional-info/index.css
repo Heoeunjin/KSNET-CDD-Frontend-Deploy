@@ -136,3 +136,7 @@
     height: auto;
     align-self: stretch;
 }
+
+.address-block .input-box.is-readonly {
+    background-color: #f7f8fa;
+}

@@ -43,9 +43,9 @@ function applyVerifiedName() {
 }
 
 /* --- RRN --- */
-document.getElementById('inputResidentSsnFront').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 6);
-    if (this.value.length === 6) document.getElementById('inputResidentSsnBack').focus();
+Validation.bindImeAwareInput(document.getElementById('inputResidentSsnFront'), function (el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    if (el.value.length === 6) document.getElementById('inputResidentSsnBack').focus();
     checkNextBtn();
 });
 (function initResidentSsnBackMasking() {
@@ -67,6 +67,8 @@ document.getElementById('inputResidentSsnFront').addEventListener('input', funct
     }
 
     inputEl.addEventListener('beforeinput', function (e) {
+        if (e.isComposing) return;
+
         const type = e.inputType || '';
 
         if (type === 'insertText') {
@@ -111,6 +113,11 @@ document.getElementById('inputResidentSsnFront').addEventListener('input', funct
         checkNextBtn();
     });
 
+    inputEl.addEventListener('compositionend', function () {
+        renderFromReal();
+        checkNextBtn();
+    });
+
     inputEl.addEventListener('focus', function () {
         renderFromReal();
     });
@@ -124,29 +131,30 @@ document.getElementById('inputResidentSsnFront').addEventListener('input', funct
     // 초기 렌더
     renderFromReal();
 })();
-document.getElementById('inputResidentIssueDate').addEventListener('input', function () {
-    this.value = KYC.formatDate(this.value);
+Validation.bindImeAwareInput(document.getElementById('inputResidentIssueDate'), function (el) {
+    el.value = KYC.formatDate(el.value);
     checkNextBtn();
 });
 
 /* --- DL --- */
-document.getElementById('inputLicenseNo').addEventListener('input', function () {
-    // 운전면허번호: 숫자 12자리 (표기 00-00-000000-00 → 하이픈 포함 15자)
-    let digits = this.value.replace(/[^0-9]/g, '').slice(0, 12);
+Validation.bindImeAwareInput(document.getElementById('inputLicenseNo'), function (el) {
+    let digits = el.value.replace(/[^0-9]/g, '').slice(0, 12);
     let val = digits;
     if (val.length > 2) val = val.slice(0, 2) + '-' + val.slice(2);
     if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5);
     if (val.length > 12) val = val.slice(0, 12) + '-' + val.slice(12, 14);
-    this.value = val;
+    el.value = val;
     checkNextBtn();
 });
-document.getElementById('inputLicenseSerial').addEventListener('input', function () {
-    this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+Validation.bindImeAwareInput(document.getElementById('inputLicenseSerial'), function (el) {
+    el.value = el.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     checkNextBtn();
 });
 ['inputDlIssue'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function () {
-        this.value = KYC.formatDate(this.value);
+    const node = document.getElementById(id);
+    if (!node) return;
+    Validation.bindImeAwareInput(node, function (el) {
+        el.value = KYC.formatDate(el.value);
         checkNextBtn();
     });
 });

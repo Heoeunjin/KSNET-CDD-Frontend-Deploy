@@ -5,6 +5,28 @@
 const Validation = {
 
     /**
+     * 모바일 한글/영문 키보드 IME 조합 중에는 handler를 호출하지 않음.
+     * 조합이 끝난 뒤(compositionend·일반 input)에만 sanitize/포맷을 적용해 입력이 끊기지 않게 함.
+     * @param {HTMLInputElement} el
+     * @param {(el: HTMLInputElement) => void} handler
+     */
+    bindImeAwareInput(el, handler) {
+        if (!el || typeof handler !== 'function') return;
+        let composing = false;
+        el.addEventListener('compositionstart', function () {
+            composing = true;
+        });
+        el.addEventListener('compositionend', function () {
+            composing = false;
+            handler(el);
+        });
+        el.addEventListener('input', function (e) {
+            if (e.isComposing || composing) return;
+            handler(el);
+        });
+    },
+
+    /**
      * 폼 그룹에 에러 상태 표시
      * @param {HTMLElement} inputBox - .input-box 또는 .select-box 엘리먼트
      * @param {HTMLElement} errorEl - .error-msg 엘리먼트
@@ -20,6 +42,8 @@ const Validation = {
 
     /**
      * 에러 상태 제거
+     * @param {HTMLElement} inputBox - .input-box 또는 .select-box
+     * @param {HTMLElement} errorEl - .error-msg
      */
     clearError(inputBox, errorEl) {
         if (inputBox) inputBox.classList.remove('is-error');
@@ -27,16 +51,5 @@ const Validation = {
             errorEl.textContent = '';
             errorEl.classList.remove('is-show');
         }
-    },
-
-    /**
-     * 다음 버튼 활성화 여부 체크
-     * @param {HTMLButtonElement} btn
-     * @param {Array<Function>} conditions - 각 조건 함수 배열 (모두 true일 때 활성화)
-     */
-    updateSubmitBtn(btn, conditions) {
-        if (!btn) return;
-        const isValid = conditions.every(fn => fn());
-        btn.disabled = !isValid;
     }
 };

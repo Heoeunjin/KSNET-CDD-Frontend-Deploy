@@ -3,6 +3,7 @@
    ============================================================ */
 
 .progress-wrap {
+    flex-shrink: 0;
     padding: 12px 20px;
     background-color: var(--white);
     border-bottom: 1px solid var(--border);

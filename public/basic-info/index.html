@@ -66,8 +66,9 @@
                     <input type="text"
                            id="inputName"
                            placeholder="홍길동"
-                           maxlength="10"
-                           inputmode="text">
+                           maxlength="32"
+                           inputmode="text"
+                           lang="ko">
                 </div>
                 <p class="error-msg" id="nameError"></p>
             </div>
@@ -102,24 +103,21 @@
             <div class="form-group">
                 <label class="form-label">휴대폰</label>
 
-                <!-- 통신사 선택 (커스텀 드롭다운) -->
-                <div class="select-box carrier-select" id="carrierBox" style="margin-bottom:10px;">
+                <!-- 통신사 선택 → 하단 시트로 열림 -->
+                <div class="select-box carrier-select"
+                     id="carrierBox"
+                     role="button"
+                     tabindex="0"
+                     aria-expanded="false"
+                     aria-haspopup="dialog"
+                     aria-controls="carrierSheet"
+                     style="margin-bottom:10px;">
                     <div class="carrier-display" id="carrierDisplay">
                         통신사
                     </div>
-                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none">
+                    <svg class="select-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                         <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-
-                    <!-- 커스텀 드롭다운 리스트 -->
-                    <div class="carrier-dropdown" id="carrierDropdown">
-                        <button type="button" class="carrier-option" data-value="SKT">SKT</button>
-                        <button type="button" class="carrier-option" data-value="KT">KT</button>
-                        <button type="button" class="carrier-option" data-value="LGU">LGU+</button>
-                        <button type="button" class="carrier-option" data-value="SKT_MVNO">SKT 알뜰폰</button>
-                        <button type="button" class="carrier-option" data-value="KT_MVNO">KT 알뜰폰</button>
-                        <button type="button" class="carrier-option" data-value="LGU_MVNO">LGU+ 알뜰폰</button>
-                    </div>
 
                     <!-- 실제 값 전달용 native select (숨김) -->
                     <select id="selectCarrier" class="carrier-native" aria-hidden="true" tabindex="-1">
@@ -189,6 +187,38 @@
         </div>
     </div>
 
+</div>
+
+<!-- 통신사 선택 하단 시트 -->
+<div class="carrier-sheet-backdrop" id="carrierSheetBackdrop" aria-hidden="true"></div>
+<div class="carrier-sheet" id="carrierSheet" role="dialog" aria-modal="true" aria-labelledby="carrierSheetTitle" aria-hidden="true">
+    <div class="carrier-sheet-handle" aria-hidden="true"></div>
+    <div class="carrier-sheet-header">
+        <button type="button" class="carrier-sheet-back is-hidden" id="carrierSheetBack" aria-label="이전 단계">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+        </button>
+        <h3 class="carrier-sheet-title" id="carrierSheetTitle">통신사 선택</h3>
+        <button type="button" class="carrier-sheet-close" id="carrierSheetClose" aria-label="닫기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </button>
+    </div>
+    <div class="carrier-sheet-body">
+        <div id="carrierSheetStepMain" class="carrier-sheet-step">
+            <button type="button" class="carrier-sheet-option" data-value="SKT">SKT</button>
+            <button type="button" class="carrier-sheet-option" data-value="KT">KT</button>
+            <button type="button" class="carrier-sheet-option" data-value="LGU">LGU+</button>
+            <button type="button" class="carrier-sheet-option" data-action="open-mvno">알뜰폰</button>
+        </div>
+        <div id="carrierSheetStepMvno" class="carrier-sheet-step is-hidden">
+            <button type="button" class="carrier-sheet-option" data-value="SKT_MVNO">SKT 알뜰폰</button>
+            <button type="button" class="carrier-sheet-option" data-value="KT_MVNO">KT 알뜰폰</button>
+            <button type="button" class="carrier-sheet-option" data-value="LGU_MVNO">LGU+ 알뜰폰</button>
+        </div>
+    </div>
 </div>
 
 <!-- 인증번호 불일치 모달 -->

@@ -88,6 +88,19 @@ const KYC = {
     },
 
     /**
+     * 이름 입력란 라이브 필터용: 완성 음절(가-힣) + 한글 호환 자모(ㄱ-ㅎ, ㅏ-ㅣ, U+3131–U+318E).
+     * 모바일 IME는 조합 중 composition 이벤트 없이 자모만 넣는 경우가 있어, 이를 지우면 입력이 안 되는 것처럼 보임.
+     */
+    sanitizeNameInputLive(value) {
+        return String(value || '').replace(/[^가-힣\u3131-\u318E]/g, '');
+    },
+
+    /** 완성된 한글 음절만 추출 (검증·글자 수 제한용) */
+    extractHangulSyllables(value) {
+        return String(value || '').replace(/[^가-힣]/g, '');
+    },
+
+    /**
      * 주민등록번호 앞자리 유효성 검사 (숫자 6자리)
      */
     validateSsnFront(value) {
@@ -290,10 +303,12 @@ const KYC = {
             }
         }
         if (out.natn_cd) {
-            out.nationality = String(out.natn_cd).toUpperCase();
+            const natCd = String(out.natn_cd).trim().toUpperCase();
+            /** 명세: natn_cd 는 KR·US·CN·JP·OTHER 만. OTHER 일 땐 화면용 ISO 코드는 비우고 natn_nm 으로 매칭 */
+            out.nationality = natCd === 'OTHER' ? '' : natCd;
         }
-        if (out.natn_nm) {
-            out.nationalityName = out.natn_nm;
+        if (out.natn_nm != null && String(out.natn_nm).trim() !== '') {
+            out.nationalityName = String(out.natn_nm).trim();
         }
         if (out.eml_addr) {
             out.email = out.eml_addr;
@@ -304,6 +319,30 @@ const KYC = {
         }
 
         this.saveStep(out);
+    },
+
+    /**
+     * 행안부 도로명주소 팝업 참조 (모바일은 자식 창의 window.close()가 무시되는 경우가 많음 → 부모가 close)
+     */
+    _jusoPopupWindow: null,
+
+    openJusoPopup(url, features) {
+        try {
+            if (this._jusoPopupWindow && !this._jusoPopupWindow.closed) {
+                this._jusoPopupWindow.close();
+            }
+        } catch (e) { /* ignore */ }
+        this._jusoPopupWindow = window.open(url, 'jusoPopup', features || '');
+        return this._jusoPopupWindow;
+    },
+
+    closeJusoPopup() {
+        const w = this._jusoPopupWindow;
+        this._jusoPopupWindow = null;
+        if (!w) return;
+        try {
+            if (!w.closed) w.close();
+        } catch (e) { /* ignore */ }
     },
 
     /**
@@ -355,11 +394,6 @@ const KYC = {
      * @returns {boolean}
      */
     kycComplete() {
-        return this.submitKycCallbackIfNeeded();
-    },
-
-    // 하위 호환: 기존 호출부 유지
-    redirectKycCallbackIfNeeded() {
         return this.submitKycCallbackIfNeeded();
     }
 };

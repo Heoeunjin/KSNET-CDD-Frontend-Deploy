@@ -32,11 +32,17 @@ let pendingAlreadyCompleted = false;
 
     function syncNameField() {
         const raw = inputNameEl.value;
-        const stripped = raw.replace(/[^가-힣]/g, '');
+        let stripped = KYC.sanitizeNameInputLive(raw);
+        const hadNonHangulRemoved = raw !== stripped;
+
+        let syllablesOnly = KYC.extractHangulSyllables(stripped);
+        if (syllablesOnly.length > 10) {
+            stripped = syllablesOnly.slice(0, 10);
+            syllablesOnly = stripped;
+        }
         inputNameEl.value = stripped;
 
-        const isValidKoreanName = stripped.length > 0 && KYC.validateName(stripped);
-        const hadNonHangulRemoved = raw !== stripped;
+        const isValidKoreanName = syllablesOnly.length > 0 && KYC.validateName(syllablesOnly);
 
         if (isValidKoreanName) {
             Validation.clearError(nameBox, nameError);
@@ -46,7 +52,7 @@ let pendingAlreadyCompleted = false;
                 nameError,
                 '한글로 입력해주세요.'
             );
-        } else if (stripped.length > 0 && !KYC.validateName(stripped)) {
+        } else if (syllablesOnly.length > 0 && !KYC.validateName(syllablesOnly)) {
             Validation.showError(
                 nameBox,
                 nameError,
@@ -56,6 +62,7 @@ let pendingAlreadyCompleted = false;
             Validation.clearError(nameBox, nameError);
         }
         checkNextBtn();
+        checkRequestBtn();
     }
 
     inputNameEl.addEventListener('compositionstart', function () {
@@ -79,7 +86,8 @@ let pendingAlreadyCompleted = false;
             return;
         }
         syncNameField();
-        if (this.value && !KYC.validateName(this.value)) {
+        const syllables = KYC.extractHangulSyllables(this.value);
+        if (syllables.length > 0 && !KYC.validateName(syllables)) {
             Validation.showError(
                 nameBox,
                 nameError,
@@ -90,10 +98,9 @@ let pendingAlreadyCompleted = false;
 })();
 
 /* --- 주민등록번호 앞자리 --- */
-document.getElementById('inputSsnFront').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 6);
-    if (this.value.length === 6) {
-        // 앞자리 6자리 모두 입력되면 자동으로 뒷자리로 포커스 이동
+Validation.bindImeAwareInput(document.getElementById('inputSsnFront'), function (el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    if (el.value.length === 6) {
         const backInput = document.getElementById('inputSsnBack');
         if (backInput) {
             backInput.focus();
@@ -103,87 +110,154 @@ document.getElementById('inputSsnFront').addEventListener('input', function () {
         }
     }
     checkNextBtn();
+    checkRequestBtn();
 });
 
 /* --- 주민등록번호 뒷자리 마스킹 (첫 자리만 숫자, 나머지 ●) --- */
-document.getElementById('inputSsnBack').addEventListener('input', function () {
+Validation.bindImeAwareInput(document.getElementById('inputSsnBack'), function (el) {
     const realInputEl = document.getElementById('inputSsnBackReal');
-    // 사용자가 입력할 수 있는 실제 숫자는 첫 번째 자리 한 자리만 허용
-    const digits = this.value.replace(/\D/g, '').slice(0, 1);
+    const digits = el.value.replace(/\D/g, '').slice(0, 1);
 
-    // 실제 값은 hidden input에 저장
     if (realInputEl) {
         realInputEl.value = digits;
     }
 
-    // 화면에는 첫 자리만 숫자, 나머지는 ●로 고정 6개 표시 (총 7자리처럼 보이게)
     if (digits.length === 0) {
-        this.value = '';
+        el.value = '';
     } else {
         const first = digits.charAt(0);
         const masked = first + '●'.repeat(6);
-        this.value = masked;
-        // 커서를 첫 번째 자리 뒤(인덱스 1)에 고정
+        el.value = masked;
         try {
-            this.setSelectionRange(1, 1);
-        } catch (e) {
-            // 일부 브라우저에서 setSelectionRange 미지원 시 무시
-        }
+            el.setSelectionRange(1, 1);
+        } catch (e) {}
     }
 
     checkNextBtn();
+    checkRequestBtn();
 });
 
-/* --- 통신사 선택 (커스텀 드롭다운) → 인증번호 요청 버튼 활성화 체크 --- */
-(function initCarrierDropdown() {
+/* --- 통신사 선택 (하단 시트): 이통 3사 → 알뜰폰 선택 시 알뜰 사업자만 노출 --- */
+(function initCarrierSheet() {
     const box = document.getElementById('carrierBox');
     const displayEl = document.getElementById('carrierDisplay');
-    const dropdown = document.getElementById('carrierDropdown');
     const nativeSelect = document.getElementById('selectCarrier');
-    const options = dropdown ? dropdown.querySelectorAll('.carrier-option') : [];
+    const backdrop = document.getElementById('carrierSheetBackdrop');
+    const sheet = document.getElementById('carrierSheet');
+    const btnClose = document.getElementById('carrierSheetClose');
+    const btnBack = document.getElementById('carrierSheetBack');
+    const titleEl = document.getElementById('carrierSheetTitle');
+    const stepMain = document.getElementById('carrierSheetStepMain');
+    const stepMvno = document.getElementById('carrierSheetStepMvno');
 
-    if (!box || !displayEl || !dropdown || !nativeSelect || !options.length) return;
+    if (!box || !displayEl || !nativeSelect || !backdrop || !sheet || !stepMain || !stepMvno) return;
 
-    function ensureDropdownVisibleBelow() {
-        const body = document.querySelector('.kyc-body');
-        if (!body) return;
-        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        const dropdownRect = dropdown.getBoundingClientRect();
-        const bottomPadding = 12;
-        const overflow = dropdownRect.bottom + bottomPadding - viewportHeight;
-        if (overflow > 0) {
-            body.scrollTop += overflow;
-        }
+    const MVNO_VALUES = ['SKT_MVNO', 'KT_MVNO', 'LGU_MVNO'];
+    const allOptions = sheet.querySelectorAll('.carrier-sheet-option');
+
+    let isOpen = false;
+
+    function isMvnoCarrierValue(v) {
+        return MVNO_VALUES.indexOf(v) !== -1;
     }
 
-    function closeDropdown() {
-        box.classList.remove('is-open');
+    function syncOptionActiveState() {
+        const v = nativeSelect.value;
+        allOptions.forEach(function (b) {
+            const val = b.getAttribute('data-value') || '';
+            b.classList.toggle('is-active', val !== '' && val === v);
+        });
     }
 
-    box.addEventListener('click', function (e) {
-        // 옵션 클릭은 별도 처리
-        if (e.target.classList.contains('carrier-option')) return;
-        if (box.classList.contains('is-open')) {
-            closeDropdown();
-            return;
+    function showMainStep() {
+        stepMain.classList.remove('is-hidden');
+        stepMvno.classList.add('is-hidden');
+        if (btnBack) btnBack.classList.add('is-hidden');
+        if (titleEl) titleEl.textContent = '통신사 선택';
+    }
+
+    function showMvnoStep() {
+        stepMain.classList.add('is-hidden');
+        stepMvno.classList.remove('is-hidden');
+        if (btnBack) btnBack.classList.remove('is-hidden');
+        if (titleEl) titleEl.textContent = '알뜰 사업자 선택';
+    }
+
+    function openCarrierSheet() {
+        if (isOpen) return;
+        isOpen = true;
+        const v = nativeSelect.value;
+        if (isMvnoCarrierValue(v)) {
+            showMvnoStep();
+        } else {
+            showMainStep();
         }
+        syncOptionActiveState();
         box.classList.add('is-open');
-        requestAnimationFrame(ensureDropdownVisibleBelow);
+        box.setAttribute('aria-expanded', 'true');
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeCarrierSheet() {
+        if (!isOpen) return;
+        isOpen = false;
+        showMainStep();
+        box.classList.remove('is-open');
+        box.setAttribute('aria-expanded', 'false');
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        sheet.classList.remove('is-open');
+        sheet.setAttribute('aria-hidden', 'true');
+    }
+
+    window.closeCarrierSheet = closeCarrierSheet;
+
+    box.addEventListener('click', function () {
+        if (isOpen) {
+            closeCarrierSheet();
+        } else {
+            openCarrierSheet();
+        }
     });
 
-    options.forEach(function (btn) {
+    box.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (isOpen) {
+                closeCarrierSheet();
+            } else {
+                openCarrierSheet();
+            }
+        }
+    });
+
+    backdrop.addEventListener('click', closeCarrierSheet);
+    if (btnClose) btnClose.addEventListener('click', closeCarrierSheet);
+    if (btnBack) {
+        btnBack.addEventListener('click', function () {
+            showMainStep();
+            syncOptionActiveState();
+        });
+    }
+
+    allOptions.forEach(function (btn) {
         btn.addEventListener('click', function () {
+            const action = this.getAttribute('data-action') || '';
+            if (action === 'open-mvno') {
+                showMvnoStep();
+                return;
+            }
+
             const value = this.getAttribute('data-value') || '';
             const label = this.textContent.trim();
 
-            // native select 값 동기화
             nativeSelect.value = value;
-
-            // 표시 텍스트 변경
             displayEl.textContent = label || '통신사';
 
-            // 선택 상태 표시
-            options.forEach(function (b) { b.classList.remove('is-active'); });
+            allOptions.forEach(function (b) { b.classList.remove('is-active'); });
             if (value) {
                 this.classList.add('is-active');
                 box.classList.add('is-selected');
@@ -191,29 +265,26 @@ document.getElementById('inputSsnBack').addEventListener('input', function () {
                 box.classList.remove('is-selected');
             }
 
-            closeDropdown();
+            closeCarrierSheet();
             checkRequestBtn();
         });
     });
 
-    // 바깥 영역 클릭 시 드롭다운 닫기
-    document.addEventListener('click', function (e) {
-        if (!box.contains(e.target)) {
-            closeDropdown();
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+            closeCarrierSheet();
         }
     });
 
-    window.addEventListener('resize', function () {
-        if (!box.classList.contains('is-open')) return;
-        requestAnimationFrame(ensureDropdownVisibleBelow);
+    window.addEventListener('pageshow', function () {
+        closeCarrierSheet();
     });
 })();
 
 /* --- 휴대폰 번호 입력 --- */
-document.getElementById('inputPhone').addEventListener('input', function () {
-    this.value = KYC.formatPhone(this.value.replace(/\D/g, ''));
+Validation.bindImeAwareInput(document.getElementById('inputPhone'), function (el) {
+    el.value = KYC.formatPhone(el.value.replace(/\D/g, ''));
 
-    // 번호 변경 시 버튼을 "인증번호 요청"으로 복원, 인증창 초기화
     const btn = document.getElementById('btnRequestCode');
     if (btn && btn.textContent.trim() === '재전송') {
         btn.textContent = '인증번호 요청';
@@ -311,14 +382,14 @@ document.getElementById('btnRequestCode').addEventListener('click', async functi
 });
 
 /* --- 인증번호 입력 → 6자리 완성 시 자동 인증 --- */
-document.getElementById('inputCode').addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '');
+Validation.bindImeAwareInput(document.getElementById('inputCode'), function (el) {
+    el.value = el.value.replace(/\D/g, '');
     Validation.clearError(
         document.getElementById('codeBox'),
         document.getElementById('codeError')
     );
-    if (this.value.length === 6) {
-        verifyCode(this.value);
+    if (el.value.length === 6) {
+        verifyCode(el.value);
     }
 });
 
@@ -371,7 +442,7 @@ async function verifyCode(code) {
             KYC.openModal('modalAlreadyCompleted');
             return;
         }
-        /* cur_step 01: 정상 플로우 → 다음 버튼 활성화 후 personal-info로 이동 (goNext) */
+        // cur_step 01: 정상 플로우 — checkNextBtn 후 [다음]으로 personal-info (goNext)
 
         checkNextBtn();
     } catch (err) {
@@ -416,7 +487,8 @@ function onTimerExpire() {
 
 /* --- 인증번호 요청 버튼 활성화 조건 --- */
 function checkRequestBtn() {
-    const name = document.getElementById('inputName').value;
+    const nameRaw = document.getElementById('inputName').value;
+    const nameSyllables = KYC.extractHangulSyllables(String(nameRaw || '').trim());
     const ssnFront = document.getElementById('inputSsnFront').value;
     const ssnBackReal = document.getElementById('inputSsnBackReal').value;
     const carrier = document.getElementById('selectCarrier').value;
@@ -424,7 +496,7 @@ function checkRequestBtn() {
     const btn = document.getElementById('btnRequestCode');
 
     const isAllTextFilled =
-        KYC.validateName(name) &&
+        KYC.validateName(nameSyllables) &&
         KYC.validateSsnFront(ssnFront) &&
         ssnBackReal.length === 1 &&
         carrier &&
@@ -435,11 +507,13 @@ function checkRequestBtn() {
 
 /* --- 다음 버튼 활성화 조건 --- */
 function checkNextBtn() {
-    const name = document.getElementById('inputName').value;
+    const nameSyllables = KYC.extractHangulSyllables(
+        String(document.getElementById('inputName').value || '').trim()
+    );
     const ssnFront = document.getElementById('inputSsnFront').value;
     const ssnBackReal = document.getElementById('inputSsnBackReal').value;
 
-    const isValid = KYC.validateName(name)
+    const isValid = KYC.validateName(nameSyllables)
         && KYC.validateSsnFront(ssnFront)
         && ssnBackReal.length === 1
         && isPhoneVerified;

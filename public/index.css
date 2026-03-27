@@ -337,3 +337,249 @@ a.terms-row-detail.terms-ag-c3 {
     color: var(--text-hint);
 }
 
+/* agreement/: 전체동의·구분선·하단 고정 CTA */
+#agreementMain.agreement-app {
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+    background: linear-gradient(160deg, #ebf0fb 0%, #ffffff 50%);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+#agreementMain .agreement-page-header.kyc-header {
+    flex-shrink: 0;
+    height: auto;
+    min-height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    box-sizing: border-box;
+    position: relative;
+    z-index: 15;
+    background-color: transparent;
+    border-bottom: 1px solid var(--border);
+}
+
+/* 그라데이션 위에서 뒤로가기 탭 영역만 살짝 구분 */
+#agreementMain .agreement-page-header .btn-back:active {
+    background-color: rgba(255, 255, 255, 0.55);
+}
+
+#agreementMain .agreement-scroll {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 24px 0;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+/* 상단 여백 < 중간 여백 → 로고·문구는 더 위, 약관은 여전히 하단 쪽 */
+#agreementMain .agreement-v-spacer--top {
+    flex: 0.32 1 0;
+    min-height: 12px;
+}
+
+#agreementMain .agreement-v-spacer--mid {
+    flex: 1 1 0;
+    min-height: 16px;
+}
+
+#agreementMain .agreement-hero-cluster {
+    flex: 0 0 auto;
+    width: 100%;
+    text-align: left;
+}
+
+#agreementMain .agreement-hero {
+    text-align: left;
+    margin-bottom: 0;
+}
+
+#agreementMain .agreement-cdd-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 4px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-sub);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--transition);
+}
+
+#agreementMain .agreement-cdd-link:active {
+    color: var(--primary);
+}
+
+#agreementMain .agreement-logo img {
+    display: block;
+    height: 36px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+#agreementMain .agreement-welcome {
+    margin: 22px 0 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#agreementMain .agreement-welcome-line {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+    word-break: keep-all;
+}
+
+#agreementMain .agreement-terms {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-top: 0;
+}
+
+/* 체크 원·본문·화살표 열 정렬 (참고 UI와 동일한 좌측 수직축) */
+#agreementMain .agreement-terms .terms-agreement-row {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 36px;
+    column-gap: 12px;
+    align-items: center;
+}
+
+#agreementMain .agreement-terms .terms-ag-c1 {
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    justify-content: flex-start;
+    align-self: center;
+}
+
+#agreementMain .agreement-terms .terms-check-wrap {
+    width: 24px;
+    min-width: 24px;
+    justify-content: flex-start;
+}
+
+#agreementMain .agreement-terms .terms-circle-check {
+    margin: 0;
+}
+
+#agreementMain .agreement-terms .terms-ag-c2 {
+    align-self: center;
+    min-width: 0;
+}
+
+#agreementMain .agreement-terms .terms-ag-c3 {
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+    height: 36px;
+    justify-content: flex-end;
+    align-self: center;
+}
+
+#agreementMain .agreement-terms .terms-ag-c3--empty {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#agreementMain .agreement-divider {
+    border: none;
+    height: 1px;
+    margin: 6px 0 6px;
+    background-color: var(--border);
+    width: 100%;
+}
+
+#agreementMain .terms-agreement-row.agreement-row-pad {
+    min-height: 0;
+    padding: 6px 0;
+    align-items: center;
+}
+
+#agreementMain .terms-all-label {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+#agreementMain .terms-row-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.35;
+}
+
+#agreementMain .terms-req-mark {
+    font-weight: 500;
+    color: var(--text-sub);
+    margin-left: 2px;
+}
+
+#agreementMain .terms-agreement-row:not(.terms-agreement-row--all) .terms-row-text {
+    color: var(--text);
+}
+
+#agreementMain .terms-agreement-row:not(.terms-agreement-row--all):not(:has(.terms-input:checked)) .terms-row-text {
+    color: #333;
+}
+
+#agreementMain .terms-agreement-row:not(.terms-agreement-row--all):not(:has(.terms-input:checked)) .terms-req-mark {
+    color: var(--text-sub);
+}
+
+#agreementMain a.terms-row-detail.terms-ag-c3 {
+    color: #c8ccd4;
+}
+
+#agreementMain .agreement-footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 100%;
+    max-width: 480px;
+    padding: 14px 24px calc(14px + env(safe-area-inset-bottom, 0px));
+    background-color: var(--white);
+    border-top: 1px solid var(--border);
+    box-sizing: border-box;
+}
+
+#agreementMain .agreement-next-btn {
+    width: 100%;
+    height: 52px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+#agreementMain .agreement-next-btn.btn-primary:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(26, 76, 192, 0.22);
+}
+
+#agreementMain .agreement-next-btn.btn-primary:disabled {
+    background-color: #ececec;
+    color: #b0b0b0;
+    cursor: not-allowed;
+    opacity: 1;
+}
+

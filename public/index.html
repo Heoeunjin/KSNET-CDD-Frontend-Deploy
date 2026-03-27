@@ -58,67 +58,9 @@
             </div>
         </div>
 
-        <!-- 고객확인 약관 동의 -->
-        <div class="terms-block" id="termsBlock">
-            <h2 class="terms-header-title">고객확인 약관 동의</h2>
-
-            <div class="terms-agreement-rows">
-                <div class="terms-agreement-row terms-agreement-row--all">
-                    <label class="terms-ag-c1">
-                        <input type="checkbox" id="termsAgreeAll" class="terms-input">
-                        <span class="terms-check-wrap">
-                            <span class="terms-circle-check" aria-hidden="true"></span>
-                        </span>
-                    </label>
-                    <label class="terms-ag-c2" for="termsAgreeAll">
-                        <span class="terms-all-label">모든 항목에 동의합니다.</span>
-                    </label>
-                    <span class="terms-ag-c3 terms-ag-c3--empty" aria-hidden="true"></span>
-                </div>
-
-                <div class="terms-agreement-row">
-                    <label class="terms-ag-c1">
-                        <input type="checkbox" id="termsPrivacy" class="terms-input">
-                        <span class="terms-check-wrap">
-                            <span class="terms-check-icon" aria-hidden="true">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
-                        </span>
-                    </label>
-                    <label class="terms-ag-c2" for="termsPrivacy">
-                        <span class="terms-row-text">[필수] 개인정보 수집 및 이용 동의</span>
-                    </label>
-                    <a href="terms/privacy.html" class="terms-ag-c3 terms-row-detail" aria-label="상세보기">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/></svg>
-                    </a>
-                </div>
-
-                <div class="terms-agreement-row">
-                    <label class="terms-ag-c1">
-                        <input type="checkbox" id="termsUniqueId" class="terms-input">
-                        <span class="terms-check-wrap">
-                            <span class="terms-check-icon" aria-hidden="true">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
-                        </span>
-                    </label>
-                    <label class="terms-ag-c2" for="termsUniqueId">
-                        <span class="terms-row-text">[필수] 고유식별정보 처리 동의</span>
-                    </label>
-                    <a href="terms/unique-id.html" class="terms-ag-c3 terms-row-detail" aria-label="상세보기">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 버튼 영역 -->
+        <!-- 버튼 영역 → 약관 동의 페이지로 이동 -->
         <div class="main-btns">
-            <button class="btn btn-primary btn-lg" type="button" id="btnStartKyc" disabled>
+            <button class="btn btn-primary btn-lg" type="button" id="btnToAgreement" onclick="KYC.goTo('agreement/index.html')">
                 고객확인하기
             </button>
             <button class="btn btn-text" onclick="KYC.goTo('intro/index.html')">
@@ -135,7 +77,6 @@
 
 <script src="js/config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/api/kyc-api.js"></script>
 <script src="index.js"></script>
 </body>
 </html>

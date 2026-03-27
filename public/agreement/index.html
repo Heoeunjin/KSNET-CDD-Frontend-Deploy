@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>고객확인 약관 동의 - KSNET</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+<div class="kyc-wrap agreement-app" id="agreementMain">
+
+    <header class="kyc-header agreement-page-header">
+        <button type="button" class="btn-back" onclick="KYC.goTo('../index.html')" aria-label="뒤로">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+        </button>
+        <span class="header-title">약관동의</span>
+    </header>
+
+    <div class="agreement-scroll">
+
+        <div class="agreement-v-spacer agreement-v-spacer--top" aria-hidden="true"></div>
+
+        <div class="agreement-hero-cluster">
+            <header class="agreement-hero">
+                <div class="agreement-logo">
+                    <img src="../assets/images/ksnet-logo.png" alt="KSNET" width="132" height="40">
+                </div>
+                <h1 class="agreement-welcome">
+                    <span class="agreement-welcome-line">케이에스넷 선불지갑 사용을 위한</span>
+                    <span class="agreement-welcome-line">고객확인을 시작합니다.</span>
+                </h1>
+            </header>
+            <button type="button" class="agreement-cdd-link" onclick="KYC.goTo('../intro/index.html')">
+                고객확인제도란
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="agreement-v-spacer agreement-v-spacer--mid" aria-hidden="true"></div>
+
+        <div class="agreement-terms" id="termsBlock">
+
+            <div class="terms-agreement-row terms-agreement-row--all agreement-row-pad">
+                <label class="terms-ag-c1">
+                    <input type="checkbox" id="termsAgreeAll" class="terms-input">
+                    <span class="terms-check-wrap">
+                        <span class="terms-circle-check" aria-hidden="true"></span>
+                    </span>
+                </label>
+                <label class="terms-ag-c2" for="termsAgreeAll">
+                    <span class="terms-all-label">약관 전체동의</span>
+                </label>
+                <span class="terms-ag-c3 terms-ag-c3--empty" aria-hidden="true"></span>
+            </div>
+
+            <hr class="agreement-divider" aria-hidden="true">
+
+            <div class="terms-agreement-row agreement-row-pad">
+                <label class="terms-ag-c1">
+                    <input type="checkbox" id="termsPrivacy" class="terms-input">
+                    <span class="terms-check-wrap">
+                        <span class="terms-circle-check" aria-hidden="true"></span>
+                    </span>
+                </label>
+                <label class="terms-ag-c2" for="termsPrivacy">
+                    <span class="terms-row-text">개인정보 수집 및 이용 동의<span class="terms-req-mark">(필수)</span></span>
+                </label>
+                <a href="terms/privacy.html" class="terms-ag-c3 terms-row-detail" aria-label="상세보기">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/></svg>
+                </a>
+            </div>
+
+            <div class="terms-agreement-row agreement-row-pad">
+                <label class="terms-ag-c1">
+                    <input type="checkbox" id="termsUniqueId" class="terms-input">
+                    <span class="terms-check-wrap">
+                        <span class="terms-circle-check" aria-hidden="true"></span>
+                    </span>
+                </label>
+                <label class="terms-ag-c2" for="termsUniqueId">
+                    <span class="terms-row-text">고유식별정보 처리 동의<span class="terms-req-mark">(필수)</span></span>
+                </label>
+                <a href="terms/unique-id.html" class="terms-ag-c3 terms-row-detail" aria-label="상세보기">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l4 4-4 4"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="agreement-footer">
+        <button type="button" class="btn btn-primary agreement-next-btn" id="btnStartKyc" disabled>
+            다음
+        </button>
+    </footer>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/api/kyc-api.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

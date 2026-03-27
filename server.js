@@ -25,6 +25,15 @@ const KSNET_TARGET =
  * jusoPopup.jsp opener.jusoCallBack 인자 순서와 동일
  * roadFullAddr … emdNo 까지 25개
  */
+/** 모바일에서 window.close() 실패 시 표시 (자동 닫기가 막힌 경우) */
+const JUSO_CLOSE_FALLBACK_HTML =
+    '<div style="font-family:system-ui,-apple-system,sans-serif;padding:24px 20px;text-align:center;font-size:15px;line-height:1.55;color:#111;">' +
+    '<p style="margin:0 0 8px;">주소가 적용되었습니다.</p>' +
+    '<p style="margin:0;font-size:13px;color:#555;">창이 남아 있으면 아래 버튼이나 브라우저에서 이 탭을 닫아 주세요.</p>' +
+    '<p style="margin:20px 0 0;">' +
+    '<button type="button" onclick="window.close()" style="padding:12px 22px;font-size:15px;border-radius:10px;border:1px solid #ccc;background:#fff;">닫기</button>' +
+    '</p></div>';
+
 const JUSO_CALLBACK_ORDER = [
     'roadFullAddr', 'roadAddrPart1', 'addrDetail', 'roadAddrPart2', 'engAddr',
     'jibunAddr', 'zipNo', 'admCd', 'rnMgtSn', 'bdMgtSn', 'detBdNmList',
@@ -73,8 +82,8 @@ function renderJusoFirstLoad(confmKey, addrLinkUrl, resultType) {
 <title>주소 검색</title>
 </head>
 <script>
-// opener 관련 오류 시 부모·팝업 도메인에 맞게 document.domain 설정
-// document.domain = "example.com";
+// opener 연동 오류 시에만: 행안부 가이드에 따라 부모·팝업 공통 상위 도메인으로 설정
+// document.domain = 'example.com';
 function init() {
   var url = location.href.split('#')[0];
   var confmKey = ${JSON.stringify(confmKey)};
@@ -106,14 +115,16 @@ function mergeJusoParams(req) {
     return { ...req.query, ...body };
 }
 
-/** jusoPopup.jsp 두 번째 분기 (inputYn == "Y") — opener.jusoCallBack 후 close */
+/** jusoPopup.jsp 두 번째 분기 (inputYn == "Y") — opener.jusoCallBack 후 닫기 (모바일은 부모가 close) */
 function renderJusoCallback(params) {
     const q = params || {};
     const args = JUSO_CALLBACK_ORDER.map((k) => JSON.stringify(q[k] != null ? String(q[k]) : ''));
+    const fallbackInner = JSON.stringify(JUSO_CLOSE_FALLBACK_HTML);
     return `<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>주소 적용</title>
 </head>
 <body onload="init();">
@@ -129,7 +140,23 @@ function init() {
     console.error(e);
     alert('주소 반영 중 오류가 발생했습니다.');
   }
-  window.close();
+  setTimeout(function () {
+    try {
+      if (window.opener && window.opener.KYC && typeof window.opener.KYC.closeJusoPopup === 'function') {
+        window.opener.KYC.closeJusoPopup();
+      }
+    } catch (e2) {}
+    try {
+      window.close();
+    } catch (e3) {}
+  }, 0);
+  setTimeout(function () {
+    try {
+      if (document.visibilityState === 'visible' && document.body) {
+        document.body.innerHTML = ${fallbackInner};
+      }
+    } catch (e4) {}
+  }, 600);
 }
 </script>
 </body>
@@ -169,8 +196,10 @@ function sendJusoPopup(req, res) {
     res.type('text/html; charset=utf-8').send(renderJusoFirstLoad(confmKey, addrLinkUrl, resultType));
 }
 
-/** 행안부 도로명주소 — jusoPopup.jsp 와 동일 흐름 (승인키: JUSO_CONFM_KEY) */
-/** 콜백은 POST 로 오므로 GET·POST 모두 처리 */
+/**
+ * 행안부 도로명주소 — jusoPopup.jsp 와 동일 흐름 (승인키: JUSO_CONFM_KEY).
+ * 콜백은 POST 로 오므로 GET·POST 모두 처리.
+ */
 app.get('/juso-popup.html', sendJusoPopup);
 app.post('/juso-popup.html', sendJusoPopup);
 
