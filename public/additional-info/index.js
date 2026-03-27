@@ -138,7 +138,13 @@ function selectOwner(value) {
     document.getElementById('ownerNo').classList.toggle('is-selected', value === 'no');
 
     const realBlock = document.getElementById('realOwnerBlock');
-    if (realBlock) realBlock.style.display = value === 'no' ? 'block' : 'none';
+    if (realBlock) realBlock.style.display = 'none';
+
+    if (value === 'no') {
+        const btn = document.getElementById('btnNext');
+        if (btn) btn.disabled = true;
+        KYC.openModal('modalNotOwner');
+    }
 
     checkNextBtn();
 }
@@ -178,13 +184,8 @@ function checkNextBtn() {
         ok = ok && etc.length > 0;
     }
 
-    if (ownerStatus === 'no') {
-        const nm = document.getElementById('inputRealOwnNm').value.trim();
-        const rltn = document.getElementById('selectRealOwnRltn').value;
-        ok = ok && nm.length > 0 && rltn !== '';
-    } else {
-        ok = ok && ownerStatus === 'yes';
-    }
+    if (ownerStatus === 'no') ok = false;
+    else ok = ok && ownerStatus === 'yes';
 
     document.getElementById('btnNext').disabled = !ok;
 }
@@ -350,6 +351,10 @@ function applyAdditionalPrefillFromSession() {
 })();
 
 async function goNext() {
+    if (ownerStatus === 'no') {
+        KYC.openModal('modalNotOwner');
+        return;
+    }
     const kycData = KYC.loadStep();
     const cerTrUky = kycData.cer_tr_uky;
     if (!cerTrUky) {
