@@ -631,8 +631,9 @@ function searchAddress() {
     const height = 600;
     const left = Math.round((window.screen.width - width) / 2);
     const top = Math.round((window.screen.height - height) / 2);
-    const base = window.location.origin;
-    const popupUrl = `${base}/juso-popup.html`;
+    const popupUrl = typeof window.kycJusoPopupUrl === 'function'
+        ? window.kycJusoPopupUrl()
+        : `${window.location.origin}/juso-popup.html`;
     KYC.openJusoPopup(
         popupUrl,
         `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`
