@@ -44,14 +44,17 @@
 
 const KYC_API = {
     /**
-     * 기본: 동일 출처 `/api/kyc/callback` (npm start 로 같은 포트에서 띄울 때)
-     * Live Server 등 다른 포트만 쓸 때: js/config.js 에서 window.KYC_PROXY_BASE 설정
+     * 기본: 동일 출처 `/api/kyc/callback` (또는 config.js 의 KYC_PATH_PREFIX 반영)
+     * 다른 호스트의 프록시: window.KYC_PROXY_BASE
      */
     get PROXY_URL() {
-        const base = typeof window !== 'undefined' && window.KYC_PROXY_BASE;
-        return base
-            ? `${String(base).replace(/\/$/, '')}/api/kyc/callback`
-            : '/api/kyc/callback';
+        const w = typeof window !== 'undefined' ? window : null;
+        const base = w && w.KYC_PROXY_BASE;
+        if (base) {
+            return `${String(base).replace(/\/$/, '')}/api/kyc/callback`;
+        }
+        const prefix = w && w.kycAppPath ? w.kycAppPath('/api/kyc/callback') : '/api/kyc/callback';
+        return prefix;
     },
     CONTENT_TYPE: 'application/json; charset=UTF-8',
 
